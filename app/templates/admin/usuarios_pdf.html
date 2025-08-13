@@ -1,0 +1,182 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <title>Reporte de Usuarios</title>
+    <style>
+        body {
+            font-family: 'Arial', sans-serif;
+            margin: 20px;
+            color: #333;
+        }
+        header {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            border-bottom: 3px solid #28a745;
+            padding-bottom: 10px;
+            margin-bottom: 20px;
+        }
+        header img {
+            height: 45px;
+            margin-right: 18px;
+        }
+        header h1 {
+            color: #28a745;
+            font-size: 26px;
+            margin: 0;
+            flex-grow: 1;
+            text-align: center;
+            letter-spacing: 1px;
+        }
+        .resumen {
+            margin-bottom: 20px;
+            display: table;
+            width: 100%;
+            table-layout: fixed;
+        }
+        .resumen .card {
+            display: table-cell;
+            background: #f8f9fa;
+            border: 2px solid #28a745;
+            border-radius: 10px;
+            padding: 12px;
+            text-align: center;
+            vertical-align: middle;
+        }
+        .resumen .icon {
+            font-size: 28px;
+            color: #28a745;
+            display: block;
+            margin-bottom: 5px;
+        }
+        .resumen h3 {
+            margin: 4px 0;
+            font-size: 20px;
+            color: #28a745;
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-bottom: 25px;
+            font-size: 12px;
+        }
+        table thead {
+            background-color: #28a745;
+            color: white;
+        }
+        table th, table td {
+            border: 1px solid #b7e0c2;
+            padding: 7px 4px;
+            text-align: center;
+        }
+        table th {
+            font-size: 13px;
+            letter-spacing: 0.5px;
+        }
+        table tbody tr:nth-child(even) {
+            background-color: #f8f9fa;
+        }
+        .badge {
+            display: inline-block;
+            padding: 2px 8px;
+            border-radius: 8px;
+            font-size: 11px;
+            color: #fff;
+        }
+        .badge-success { background: #28a745; }
+        .badge-danger { background: #dc3545; }
+        .badge-info { background: #17a2b8; }
+        .badge-warning { background: #ffc107; color: #333; }
+        .badge-primary { background: #007bff; }
+        .badge-secondary { background: #6c757d; }
+        .badge-admin { background: #343a40; }
+        .badge-empleado { background: #17a2b8; }
+        .badge-cliente { background: #007bff; }
+        .nowrap { white-space: nowrap; }
+        footer {
+            position: fixed;
+            bottom: 10px;
+            text-align: center;
+            font-size: 11px;
+            color: #777;
+            width: 100%;
+        }
+    </style>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+</head>
+<body>
+<header>
+    <img src="{{ logo_path }}" alt="Logo de la página">
+    <h1>Reporte de Usuarios Registrados</h1>
+</header>
+<div class="resumen">
+    <div class="card">
+        <span class="icon"><i class="fas fa-users"></i></span>
+        <h3>{{ total_usuarios }}</h3>
+        <p>Total de Usuarios</p>
+    </div>
+    <div class="card">
+        <span class="icon"><i class="fas fa-user-check"></i></span>
+        <h3>{{ usuarios_ }}</h3>
+        <p>Usuarios Activos</p>
+    </div>
+    <div class="card">
+        <span class="icon"><i class="fas fa-calendar-day"></i></span>
+        <h3>{{ fecha_generacion }}</h3>
+        <p>Fecha de Generación</p>
+    </div>
+</div>
+<table>
+    <thead>
+        <tr>
+            <th>ID</th>
+            <th>Nombre Completo</th>
+            <th>Email</th>
+            <th>Teléfono</th>
+            <th>Rol</th>
+            <th>Estado</th>
+            <th>Fecha de Registro</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for usuario in usuarios %}
+        <tr>
+            <td>{{ usuario.Id }}</td>
+            <td>{{ usuario.Nombre or 'Sin nombre' }}</td>
+            <td>{{ usuario.Email or 'Sin email' }}</td>
+            <td>{{ usuario.Telefono or 'No especificado' }}</td>
+            <td>
+                {% if usuario.rol %}
+                    <span class="badge badge-{{ usuario.rol.Nombre|lower }}">{{ usuario.rol.Nombre|title }}</span>
+                {% else %}
+                    <span class="badge badge-secondary">Sin rol</span>
+                {% endif %}
+            </td>
+            <td>
+                {% if usuario.Estado %}
+                    <span class="badge badge-success">Activo</span>
+                {% else %}
+                    <span class="badge badge-danger">Inactivo</span>
+                {% endif %}
+            </td>
+            <td class="nowrap">
+                {% if usuario.FechaRegistro %}
+                    {{ usuario.FechaRegistro.strftime('%d/%m/%Y') }}
+                {% else %}
+                    <span class="badge badge-warning">Sin fecha</span>
+                {% endif %}
+            </td>
+        </tr>
+        {% else %}
+        <tr>
+            <td colspan="7">No hay usuarios registrados</td>
+        </tr>
+        {% endfor %}
+    </tbody>
+</table>
+<footer>
+    ⚽ Flash Reserver - Reporte generado automáticamente
+</footer>
+</body>
+</html>

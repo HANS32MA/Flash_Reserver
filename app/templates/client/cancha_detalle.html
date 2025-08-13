@@ -1,0 +1,976 @@
+{% extends "base.html" %}
+
+{% block title %}{{ cancha.Nombre }} - Flash Reserver{% endblock %}
+
+{% block content %}
+<div class="container-fluid mt-4">
+    <div class="row">
+        <!-- Columna principal -->
+        <div class="col-lg-8">
+            <!-- Header principal de la cancha -->
+            <div class="card shadow-sm mb-4 dark-mode-card">
+                <div class="card-body p-4 dark-mode-body">
+                    <div class="row align-items-center">
+                        <div class="col-md-8">
+                            <h1 class="display-6 fw-bold text-primary mb-2 dark-mode-text">{{ cancha.Nombre }}</h1>
+                            <div class="d-flex align-items-center mb-3">
+                                <span class="badge bg-primary me-2">
+                                    <i class="fas fa-futbol me-1"></i>
+                                {{ cancha.tipo_cancha.Nombre if cancha.tipo_cancha else 'Sin tipo' }}
+                                </span>
+                                <span class="badge bg-info me-2">
+                                    <i class="fas fa-tag me-1"></i>
+                                {{ cancha.categoria.Nombre if cancha.categoria else 'Sin categoría' }}
+                                </span>
+                                <span class="badge bg-{{ 'success' if cancha.Estado == 'Disponible' else 'warning' }}">
+                                    <i class="fas fa-circle me-1"></i>
+                                    {{ cancha.Estado }}
+                                </span>
+                            </div>
+                            <p class="text-muted mb-0 dark-mode-text-muted">
+                                <i class="fas fa-map-marker-alt me-2"></i>
+                                {{ cancha.Direccion }}{% if cancha.Barrio %}, {{ cancha.Barrio }}{% endif %}{% if cancha.Ciudad %}, {{ cancha.Ciudad }}{% endif %}
+                            </p>
+                        </div>
+                        <div class="col-md-4 text-md-end">
+                            <div class="h2 text-success mb-2 dark-mode-text">{{ "{:,.0f}".format(cancha.PrecioHora) }}</div>
+                            <div class="text-muted mb-3 dark-mode-text-muted">por hora</div>
+                            <a href="{{ url_for('client.reservar', cancha_id=cancha.Id) }}" 
+                               class="btn btn-primary btn-lg w-100 mb-3">
+                                <i class="fas fa-calendar-plus me-2"></i>
+                                Reservar Ahora
+                            </a>
+                            <!-- Botón de información -->
+                            <button class="btn btn-outline-info w-100" onclick="openInfoModal()" title="Ver información detallada">
+                                <i class="fas fa-info-circle me-2"></i>
+                                Información Detallada
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Galería de imágenes funcional -->
+            <div class="card shadow-sm mb-4 dark-mode-card">
+                <div class="card-header bg-light dark-mode-header">
+                    <h5 class="mb-0 fw-bold dark-mode-text">
+                        <i class="fas fa-images me-2 text-primary"></i>
+                        Galería de Imágenes
+                    </h5>
+                </div>
+                <div class="card-body p-0 dark-mode-body">
+                    {% if cancha.Imagen %}
+                        <!-- Imagen principal de la cancha -->
+                        <div class="main-image-container mb-3">
+                            <img src="{{ url_for('static', filename=cancha.Imagen) }}" 
+                                 alt="{{ cancha.Nombre }}"
+                                 class="img-fluid w-100 cursor-pointer"
+                                 onclick="openImageModal(this.src, '{{ cancha.Nombre }}')"
+                                 style="height: 300px; object-fit: cover; cursor: pointer; transition: transform 0.3s ease;"
+                                 onerror="this.onerror=null; this.src='{{ url_for('static', filename='images/default-cancha.jpg') }}';">
+                        </div>
+                    {% endif %}
+                    
+                    {% if cancha.imagen %}
+                        <!-- Galería de imágenes adicionales -->
+                        <div class="row g-2 px-3 pb-3">
+                            {% for imagen in cancha.imagen %}
+                            <div class="col-md-3 col-4 col-6">
+                                <div class="image-container position-relative">
+                                    <img src="{{ url_for('static', filename=imagen.Ruta) }}" 
+                                     alt="{{ cancha.Nombre }}"
+                                         class="img-fluid w-100 h-100 object-fit-cover cursor-pointer"
+                                         onclick="openImageModal(this.src, '{{ cancha.Nombre }}')"
+                                         style="height: 120px; cursor: pointer; transition: transform 0.3s ease;"
+                                         onerror="this.onerror=null; this.src='{{ url_for('static', filename='images/default-cancha.jpg') }}';">
+                                    <div class="image-overlay">
+                                        <i class="fas fa-search-plus text-white"></i>
+                                    </div>
+                                </div>
+                            </div>
+                            {% endfor %}
+                        </div>
+                    {% endif %}
+                    
+                    {% if not cancha.Imagen and not cancha.imagen %}
+                        <div class="text-center text-muted py-5">
+                            <i class="fas fa-image fa-4x mb-3 opacity-50"></i>
+                            <p class="h5">No hay imágenes disponibles para esta cancha</p>
+                            <p class="text-muted">Contacta con el administrador para agregar imágenes</p>
+                        </div>
+                    {% endif %}
+                </div>
+            </div>
+
+            <!-- Comentarios y calificaciones -->
+            <div class="card shadow-sm mb-4 dark-mode-card">
+                <div class="card-header bg-light dark-mode-header">
+                    <h5 class="mb-0 fw-bold dark-mode-text">
+                        <i class="fas fa-comments me-2 text-primary"></i>
+                        Comentarios y Calificaciones
+                    </h5>
+                </div>
+                <div class="card-body dark-mode-body">
+                    <!-- Formulario para nuevo comentario -->
+                    <div class="new-comment-form mb-4">
+                        <h6 class="fw-bold mb-3">
+                            <i class="fas fa-plus-circle me-2 text-success"></i>
+                            Agregar Comentario
+                        </h6>
+                        <form action="{{ url_for('client.comentar_cancha', cancha_id=cancha.Id) }}" method="post" class="new-comment-form">
+                            <div class="mb-3">
+                                <label for="calificacion" class="form-label fw-bold dark-mode-text">Calificación</label>
+                                <div class="rating-input">
+                                    <input type="radio" name="calificacion" value="5" id="star5" class="d-none" checked>
+                                    <label for="star5" class="star-label"><i class="far fa-star"></i></label>
+                                    <input type="radio" name="calificacion" value="4" id="star4" class="d-none">
+                                    <label for="star4" class="star-label"><i class="far fa-star"></i></label>
+                                    <input type="radio" name="calificacion" value="3" id="star3" class="d-none">
+                                    <label for="star3" class="star-label"><i class="far fa-star"></i></label>
+                                    <input type="radio" name="calificacion" value="2" id="star2" class="d-none">
+                                    <label for="star2" class="star-label"><i class="far fa-star"></i></label>
+                                    <input type="radio" name="calificacion" value="1" id="star1" class="d-none">
+                                    <label for="star1" class="star-label"><i class="far fa-star"></i></label>
+                        </div>
+                        </div>
+                            <div class="mb-3">
+                                <label for="comentario" class="form-label fw-bold dark-mode-text">Tu Comentario</label>
+                                <textarea class="form-control dark-mode-input" id="comentario" name="comentario" rows="3" 
+                                          placeholder="Comparte tu experiencia con esta cancha..." required></textarea>
+                        </div>
+                            <button type="submit" class="btn btn-success">
+                                <i class="fas fa-paper-plane me-2"></i>
+                                Publicar Comentario
+                            </button>
+                        </form>
+                    </div>
+                    
+                    <!-- Lista de comentarios existentes -->
+                    {% if comentarios %}
+                        <div class="comments-list">
+                            <h6 class="fw-bold mb-3 dark-mode-text">
+                                <i class="fas fa-list me-2 text-primary"></i>
+                                Comentarios ({{ comentarios|length }})
+                            </h6>
+                            {% for comentario in comentarios %}
+                            <div class="comment-item border-bottom pb-3 mb-3 dark-mode-comment-item">
+                                <div class="d-flex align-items-start">
+                                    <div class="flex-shrink-0">
+                                        {% if comentario.usuario.FotoPerfil %}
+                                            <img src="{{ url_for('static', filename=comentario.usuario.FotoPerfil) }}" 
+                                                 alt="Foto de {{ comentario.usuario.Nombre }}" 
+                                                 class="rounded-circle user-comment-avatar" 
+                                                 style="width: 50px; height: 50px; object-fit: cover; border: 2px solid #e9ecef;"
+                                                 onclick="openImageModal('{{ url_for('static', filename=comentario.usuario.FotoPerfil) }}', '{{ comentario.usuario.Nombre }}')">
+                                        {% else %}
+                                            <img src="{{ url_for('static', filename='images/default-user.png') }}" 
+                                                 alt="Usuario" 
+                                                 class="rounded-circle user-comment-avatar" 
+                                                 style="width: 50px; height: 50px; object-fit: cover; border: 2px solid #e9ecef;">
+                    {% endif %}
+                </div>
+                                    <div class="flex-grow-1 ms-3">
+                                        <div class="d-flex justify-content-between align-items-center mb-2">
+                                            <h6 class="mb-0 fw-bold dark-mode-text">{{ comentario.usuario.Nombre }}</h6>
+                                            <div class="text-warning">
+                                                {% for i in range(5) %}
+                                                    {% if i < comentario.Calificacion %}
+                                                        <i class="fas fa-star"></i>
+                                                    {% else %}
+                                                        <i class="far fa-star"></i>
+                                                    {% endif %}
+                                                {% endfor %}
+                                            </div>
+                                        </div>
+                                        <p class="mb-1 dark-mode-text">{{ comentario.Comentario }}</p>
+                                        <small class="text-muted dark-mode-text-muted">
+                                            <i class="fas fa-calendar me-1"></i>
+                                            {{ comentario.FechaCreacion.strftime('%d/%m/%Y %H:%M') }}
+                                        </small>
+                </div>
+            </div>
+                </div>
+                            {% endfor %}
+                        </div>
+                    {% else %}
+                        <div class="text-center text-muted py-4 dark-mode-no-comments">
+                            <i class="fas fa-comments fa-3x mb-3 opacity-50"></i>
+                            <p class="h6 dark-mode-text">No hay comentarios aún</p>
+                            <p class="text-muted dark-mode-text-muted">¡Sé el primero en comentar sobre esta cancha!</p>
+                        </div>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+
+        <!-- Sidebar -->
+        <div class="col-lg-4">
+
+
+            <!-- Información de Contacto -->
+            <div class="card shadow-sm mb-4 dark-mode-card">
+                <div class="card-header bg-info text-white">
+                    <h5 class="mb-0 fw-bold">
+                        <i class="fas fa-phone me-2"></i>
+                        Contacto
+                    </h5>
+                </div>
+                <div class="card-body dark-mode-body">
+                    <div class="contact-item mb-3">
+                        <div class="d-flex align-items-center">
+                            <div class="contact-icon bg-info bg-opacity-10 rounded-circle p-2 me-3">
+                                <i class="fas fa-phone text-info"></i>
+                            </div>
+                            <div>
+                                <h6 class="mb-1 fw-bold">Teléfono</h6>
+                        <p class="mb-0">+57 300 123 4567</p>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="contact-item mb-3">
+                        <div class="d-flex align-items-center">
+                            <div class="contact-icon bg-info bg-opacity-10 rounded-circle p-2 me-3">
+                                <i class="fas fa-envelope text-info"></i>
+                            </div>
+                            <div>
+                                <h6 class="mb-1 fw-bold">Email</h6>
+                        <p class="mb-0">info@flashreserver.com</p>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="contact-item mb-4">
+                        <div class="d-flex align-items-center">
+                            <div class="contact-icon bg-info bg-opacity-10 rounded-circle p-2 me-3">
+                                <i class="fas fa-clock text-info"></i>
+                            </div>
+                            <div>
+                                <h6 class="mb-1 fw-bold">Atención</h6>
+                                <p class="mb-0">Lun-Dom: 6:00 AM - 10:00 PM</p>
+                            </div>
+                        </div>
+                    </div>
+                    <a href="https://wa.me/573001234567" target="_blank" class="btn btn-success w-100 mb-2">
+                        <i class="fab fa-whatsapp me-2"></i>
+                        WhatsApp
+                    </a>
+                    <a href="tel:+573001234567" class="btn btn-outline-primary w-100">
+                        <i class="fas fa-phone me-2"></i>
+                        Llamar Ahora
+                    </a>
+                </div>
+            </div>
+
+            <!-- Disponibilidad en tiempo real -->
+            <div class="card shadow-sm mb-4 dark-mode-card">
+                <div class="card-header bg-success text-white">
+                    <h5 class="mb-0 fw-bold">
+                        <i class="fas fa-chart-pie me-2"></i>
+                        Disponibilidad
+                    </h5>
+                </div>
+                <div class="card-body dark-mode-body">
+                    <div class="text-center mb-3">
+                        <div class="display-6 fw-bold text-success">{{ "%.1f"|format(porcentaje_disponibilidad) }}%</div>
+                        <div class="text-muted">Disponible</div>
+                    </div>
+                    <div class="progress mb-3" style="height: 10px;">
+                        <div class="progress-bar bg-success" role="progressbar" 
+                             style="width: {{ porcentaje_disponibilidad }}%"></div>
+                    </div>
+                    <div class="row text-center">
+                        <div class="col-6">
+                            <div class="h5 fw-bold text-success">{{ slots_disponibles }}</div>
+                            <div class="text-muted small">Slots Libres</div>
+                        </div>
+                        <div class="col-6">
+                            <div class="h5 fw-bold text-muted">{{ slots_totales }}</div>
+                            <div class="text-muted small">Total Slots</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Canchas Similares -->
+            {% if similares %}
+            <div class="card shadow-sm mb-4 dark-mode-card">
+                <div class="card-header bg-primary text-white">
+                    <h5 class="mb-0 fw-bold">
+                        <i class="fas fa-thumbs-up me-2"></i>
+                        Canchas Similares
+                    </h5>
+                </div>
+                <div class="card-body p-0 dark-mode-body">
+                    <div class="similar-courts-container">
+                        {% for similar in similares %}
+                        <div class="similar-court-item p-3 dark-mode-item">
+                            <div class="d-flex align-items-center">
+                                <div class="flex-shrink-0 me-3">
+                                    <img src="{{ url_for('static', filename=similar.Imagen) if similar.Imagen else url_for('static', filename='images/default-cancha.jpg') }}" 
+                                         class="rounded" 
+                                         style="width: 60px; height: 60px; object-fit: cover;"
+                                         alt="{{ similar.Nombre }}"
+                                         onerror="this.onerror=null; this.src='{{ url_for('static', filename='images/default-cancha.jpg') }}';">
+                                </div>
+                                <div class="flex-grow-1">
+                                    <h6 class="fw-bold mb-1 dark-mode-text">{{ similar.Nombre }}</h6>
+                                    <p class="text-muted small mb-1 dark-mode-text-muted">
+                                        {{ similar.tipo_cancha.Nombre if similar.tipo_cancha else 'Sin tipo' }}
+                                    </p>
+                    <div class="d-flex justify-content-between align-items-center">
+                                        <span class="text-success fw-bold dark-mode-text">${{ "{:,.0f}".format(similar.PrecioHora) }}</span>
+                                        <a href="{{ url_for('client.ver_cancha', cancha_id=similar.Id) }}" 
+                                           class="btn btn-sm btn-outline-primary">
+                                            Ver
+                                        </a>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        {% if not loop.last %}
+                        <hr class="my-0 mx-3">
+                        {% endif %}
+                        {% endfor %}
+                    </div>
+                </div>
+            </div>
+            {% endif %}
+
+            <div class="card shadow-sm">
+    </div>
+</div>
+
+<!-- Modal para ver imagen -->
+<div class="modal fade" id="imageModal" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-xl">
+        <div class="modal-content dark-mode-card">
+            <div class="modal-header dark-mode-header">
+                <h5 class="modal-title dark-mode-text" id="imageModalTitle">Imagen de la Cancha</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body text-center p-0 dark-mode-body">
+                <img id="modalImage" src="" alt="Imagen de la cancha" class="img-fluid w-100">
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Modal para mapa -->
+<div class="modal fade" id="mapModal" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content dark-mode-card">
+            <div class="modal-header dark-mode-header">
+                <h5 class="modal-title dark-mode-text">Ubicación de la Cancha</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body dark-mode-body">
+                <div id="map" style="height: 400px; width: 100%;"></div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Modal para información detallada -->
+<div class="modal fade" id="infoModal" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content dark-mode-card">
+            <div class="modal-header bg-primary text-white">
+                <h6 class="modal-title mb-0">
+                    <i class="fas fa-info-circle me-2"></i>
+                    {{ cancha.Nombre }}
+                </h6>
+                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body p-4 dark-mode-body">
+                <!-- Información básica compacta -->
+                <div class="row g-3 mb-4">
+                    <div class="col-md-6">
+                        <div class="d-flex align-items-center mb-2">
+                            <i class="fas fa-map-marker-alt text-primary me-2"></i>
+                            <strong class="dark-mode-text">Ubicación</strong>
+                        </div>
+                        <p class="mb-1 small dark-mode-text-muted">{{ cancha.Direccion }}</p>
+                        {% if cancha.Barrio %}<p class="mb-1 small dark-mode-text-muted">{{ cancha.Barrio }}</p>{% endif %}
+                        {% if cancha.Ciudad %}<p class="mb-0 small dark-mode-text-muted">{{ cancha.Ciudad }}</p>{% endif %}
+                    </div>
+                    <div class="col-md-6">
+                        <div class="d-flex align-items-center mb-2">
+                            <i class="fas fa-clock text-success me-2"></i>
+                            <strong class="dark-mode-text">Horarios</strong>
+                        </div>
+                        {% if cancha.horarios %}
+                            <p class="mb-1 small dark-mode-text-muted">Lun-Dom: {{ cancha.horarios[0].HoraInicio.strftime('%I:%M %p') }} - {{ cancha.horarios[0].HoraFin.strftime('%I:%M %p') }}</p>
+                        {% else %}
+                            <p class="mb-0 small dark-mode-text-muted">6:00 AM - 10:00 PM</p>
+                        {% endif %}
+                    </div>
+                    <div class="col-md-6">
+                        <div class="d-flex align-items-center mb-2">
+                            <i class="fas fa-users text-info me-2"></i>
+                            <strong class="dark-mode-text">Capacidad</strong>
+                        </div>
+                        <p class="mb-0 small dark-mode-text-muted">{{ cancha.Capacidad if cancha.Capacidad else 'No especificada' }} personas</p>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="d-flex align-items-center mb-2">
+                            <i class="fas fa-chart-line text-warning me-2"></i>
+                            <strong class="dark-mode-text">Disponibilidad</strong>
+                        </div>
+                        <div class="progress mb-1" style="height: 6px;">
+                            <div class="progress-bar bg-success" style="width: {{ porcentaje_disponibilidad }}%"></div>
+                        </div>
+                        <p class="mb-0 small dark-mode-text-muted">{{ "%.1f"|format(porcentaje_disponibilidad) }}% disponible</p>
+                    </div>
+                </div>
+
+                <!-- Descripción compacta -->
+                {% if cancha.Descripcion %}
+                <div class="mb-4">
+                    <div class="d-flex align-items-center mb-2">
+                        <i class="fas fa-align-left text-primary me-2"></i>
+                        <strong class="dark-mode-text">Descripción</strong>
+                    </div>
+                    <p class="mb-0 small dark-mode-text-muted">{{ cancha.Descripcion }}</p>
+                </div>
+                {% endif %}
+
+                <!-- Servicios compactos -->
+                <div class="row g-3 mb-4">
+                    <div class="col-md-6">
+                        <div class="d-flex align-items-center mb-2">
+                            <i class="fas fa-check-circle text-success me-2"></i>
+                            <strong class="dark-mode-text">Servicios Incluidos</strong>
+                        </div>
+                        <div class="row g-1">
+                            <div class="col-6"><small class="dark-mode-text-muted"><i class="fas fa-check text-success me-1"></i>Iluminación</small></div>
+                            <div class="col-6"><small class="dark-mode-text-muted"><i class="fas fa-check text-success me-1"></i>Vestuarios</small></div>
+                            <div class="col-6"><small class="dark-mode-text-muted"><i class="fas fa-check text-success me-1"></i>Estacionamiento</small></div>
+                            <div class="col-6"><small class="dark-mode-text-muted"><i class="fas fa-check text-success me-1"></i>Equipos</small></div>
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="d-flex align-items-center mb-2">
+                            <i class="fas fa-plus-circle text-info me-2"></i>
+                            <strong class="dark-mode-text">Servicios Extra</strong>
+                        </div>
+                        <div class="row g-1">
+                            <div class="col-6"><small class="dark-mode-text-muted"><i class="fas fa-check text-info me-1"></i>WiFi</small></div>
+                            <div class="col-6"><small class="dark-mode-text-muted"><i class="fas fa-check text-info me-1"></i>Seguridad</small></div>
+                            <div class="col-6"><small class="dark-mode-text-muted"><i class="fas fa-check text-info me-1"></i>Área descanso</small></div>
+                            <div class="col-6"><small class="dark-mode-text-muted"><i class="fas fa-check text-info me-1"></i>Tienda</small></div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Horarios populares compactos -->
+                <div>
+                    <div class="d-flex align-items-center mb-2">
+                        <i class="fas fa-fire text-warning me-2"></i>
+                        <strong class="dark-mode-text">Horarios Populares</strong>
+                    </div>
+                    <div class="row g-2">
+                        <div class="col-md-6">
+                            <div class="d-flex justify-content-between align-items-center p-2 bg-light dark-mode-popular-time rounded">
+                                <small class="dark-mode-text-muted"><i class="fas fa-sun text-warning me-1"></i>6:00-8:00 AM</small>
+                                <span class="badge bg-success small">Libre</span>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="d-flex justify-content-between align-items-center p-2 bg-light dark-mode-popular-time rounded">
+                                <small class="dark-mode-text-muted"><i class="fas fa-cloud-sun text-info me-1"></i>8:00-10:00 AM</small>
+                                <span class="badge bg-warning small">Ocupado</span>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="d-flex justify-content-between align-items-center p-2 bg-light dark-mode-popular-time rounded">
+                                <small class="dark-mode-text-muted"><i class="fas fa-sun text-warning me-1"></i>6:00-8:00 PM</small>
+                                <span class="badge bg-danger small">Ocupado</span>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="d-flex justify-content-between align-items-center p-2 bg-light dark-mode-popular-time rounded">
+                                <small class="dark-mode-text-muted"><i class="fas fa-moon text-secondary me-1"></i>8:00-10:00 PM</small>
+                                <span class="badge bg-success small">Libre</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer dark-mode-footer">
+                <button type="button" class="btn btn-secondary btn-sm" data-bs-dismiss="modal">Cerrar</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Estilos personalizados -->
+<style>
+.image-container {
+    position: relative;
+    overflow: hidden;
+}
+
+.image-container:hover img {
+    transform: scale(1.05);
+}
+
+.image-overlay {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: rgba(0,0,0,0.5);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    opacity: 0;
+    transition: opacity 0.3s ease;
+}
+
+.image-container:hover .image-overlay {
+    opacity: 1;
+}
+
+.info-item {
+    padding: 1rem;
+    border-radius: 8px;
+    transition: all 0.3s ease;
+}
+
+.info-item:hover {
+    background-color: rgba(0,0,0,0.02);
+    transform: translateY(-2px);
+}
+
+.info-icon {
+    width: 60px;
+    height: 60px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.contact-item {
+    transition: all 0.3s ease;
+}
+
+.contact-item:hover {
+    transform: translateX(5px);
+}
+
+.contact-icon {
+    width: 40px;
+    height: 40px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.popular-time {
+    padding: 0.75rem;
+    border-radius: 6px;
+    transition: all 0.3s ease;
+}
+
+.popular-time:hover {
+    background-color: rgba(0,0,0,0.05);
+}
+
+.comment-item {
+    transition: all 0.3s ease;
+}
+
+.comment-item:hover {
+    background-color: rgba(0,0,0,0.02);
+    border-radius: 8px;
+    padding: 1rem;
+    margin: -1rem;
+}
+
+/* Estilos para los avatares de comentarios */
+.user-comment-avatar {
+    transition: all 0.3s ease;
+    cursor: pointer;
+}
+
+.user-comment-avatar:hover {
+    transform: scale(1.1);
+    box-shadow: 0 4px 8px rgba(0,0,0,0.2);
+    border-color: #007bff !important;
+}
+
+.sticky-top {
+    z-index: 1020;
+}
+
+/* Estilos para el sistema de calificación */
+.rating-input {
+    display: flex;
+    flex-direction: row-reverse;
+    gap: 5px;
+}
+
+.star-label {
+    cursor: pointer;
+    font-size: 1.5rem;
+    color: #ddd;
+    transition: color 0.2s ease;
+}
+
+.star-label:hover,
+.star-label:hover ~ .star-label,
+input[type="radio"]:checked ~ .star-label {
+    color: #ffc107;
+}
+
+.rating-input input[type="radio"]:checked + .star-label {
+    color: #ffc107;
+}
+
+/* Estilos para la galería de imágenes */
+.main-image-container {
+    position: relative;
+    overflow: hidden;
+    border-radius: 8px;
+}
+
+.main-image-container:hover img {
+    transform: scale(1.02);
+}
+
+/* Estilos para comentarios */
+.new-comment-form {
+    background-color: #060d145c;
+    padding: 1.5rem;
+    border-radius: 8px;
+    border: 1px solid #e9ecef;
+}
+
+.comments-list {
+    border-top: 1px solid #e9ecef;
+    padding-top: 1.5rem;
+}
+
+/* Estilos para canchas similares */
+.similar-courts-container {
+    max-height: 400px;
+    overflow-y: auto;
+    scrollbar-width: thin;
+    scrollbar-color: #007bff #e9ecef;
+}
+
+.similar-courts-container::-webkit-scrollbar {
+    width: 8px;
+}
+
+.similar-courts-container::-webkit-scrollbar-track {
+    background: #e9ecef;
+    border-radius: 4px;
+}
+
+.similar-courts-container::-webkit-scrollbar-thumb {
+    background: #007bff;
+    border-radius: 4px;
+}
+
+.similar-courts-container::-webkit-scrollbar-thumb:hover {
+    background: #0056b3;
+}
+
+.similar-court-item {
+    transition: all 0.3s ease;
+    border-bottom: 1px solid #f8f9fa;
+}
+
+.similar-court-item:last-child {
+    border-bottom: none;
+}
+
+.similar-court-item:hover {
+    transform: translateX(5px);
+    background-color: rgba(0,0,0,0.02);
+    border-radius: 8px;
+    padding: 0.5rem;
+    margin: -0.5rem;
+}
+
+/* Estilos para tema oscuro */
+.dark-mode-header {
+    background-color: #343a40 !important;
+    color: #ffffff !important;
+    border-color: #495057 !important;
+}
+
+.dark-mode-body {
+    background-color: #495057 !important;
+    color: #ffffff !important;
+}
+
+.dark-mode-input {
+    background-color: #6c757d !important;
+    border-color: #495057 !important;
+    color: #ffffff !important;
+}
+
+.dark-mode-input::placeholder {
+    color: #adb5bd !important;
+}
+
+.dark-mode-input:focus {
+    background-color: #6c757d !important;
+    border-color: #007bff !important;
+    color: #ffffff !important;
+    box-shadow: 0 0 0 0.2rem rgba(0, 123, 255, 0.25);
+}
+
+/* Ajustes para tema oscuro en comentarios */
+.dark-mode .comment-item {
+    border-color: #6c757d !important;
+}
+
+.dark-mode .comment-item:hover {
+    background-color: rgba(255,255,255,0.05) !important;
+}
+
+.dark-mode .new-comment-form {
+    background-color: #495057 !important;
+    border-color: #6c757d !important;
+}
+
+/* Estilos para dark mode en cancha_detalle.html */
+.dark-mode-card {
+    background-color: #343a40 !important;
+    border-color: #495057 !important;
+}
+
+.dark-mode-header {
+    background-color: #495057 !important;
+    border-color: #6c757d !important;
+}
+
+.dark-mode-body {
+    background-color: #343a40 !important;
+    color: #f8f9fa !important;
+}
+
+.dark-mode-text {
+    color: #f8f9fa !important;
+}
+
+.dark-mode-text-muted {
+    color: #adb5bd !important;
+}
+
+.dark-mode-item {
+    background-color: #495057 !important;
+    border-color: #6c757d !important;
+}
+
+.dark-mode-item:hover {
+    background-color: #5a6268 !important;
+}
+
+.dark-mode .similar-court-item {
+    border-bottom-color: #6c757d !important;
+}
+
+.dark-mode .similar-court-item:hover {
+    background-color: rgba(255,255,255,0.05) !important;
+}
+
+.dark-mode .contact-item {
+    border-color: #6c757d !important;
+}
+
+.dark-mode .contact-item:hover {
+    background-color: rgba(255,255,255,0.05) !important;
+}
+
+.dark-mode .info-item {
+    background-color: #495057 !important;
+    border-color: #6c757d !important;
+}
+
+.dark-mode .info-item:hover {
+    background-color: #5a6268 !important;
+}
+
+.dark-mode .popular-time {
+    background-color: #495057 !important;
+    border-color: #6c757d !important;
+}
+
+.dark-mode .popular-time:hover {
+    background-color: #5a6268 !important;
+}
+
+.dark-mode .image-overlay {
+    background: rgba(0,0,0,0.7) !important;
+}
+
+.dark-mode .btn-close {
+    filter: invert(1) grayscale(100%) brightness(200%);
+}
+
+/* Estilos específicos para el modal en dark mode */
+.dark-mode-popular-time {
+    background-color: #495057 !important;
+    border-color: #6c757d !important;
+}
+
+.dark-mode-popular-time:hover {
+    background-color: #5a6268 !important;
+}
+
+.dark-mode-footer {
+    background-color: #495057 !important;
+    border-color: #6c757d !important;
+}
+
+.dark-mode .modal-content {
+    background-color: #343a40 !important;
+    border-color: #495057 !important;
+}
+
+.dark-mode .modal-header {
+    background-color: #495057 !important;
+    border-color: #6c757d !important;
+}
+
+.dark-mode .modal-body {
+    background-color: #343a40 !important;
+    color: #f8f9fa !important;
+}
+
+.dark-mode .modal-footer {
+    background-color: #495057 !important;
+    border-color: #6c757d !important;
+}
+
+/* Estilos específicos para comentarios en dark mode */
+.dark-mode-comment-item {
+    border-bottom-color: #6c757d !important;
+}
+
+.dark-mode-comment-item:hover {
+    background-color: rgba(255,255,255,0.05) !important;
+}
+
+.dark-mode-no-comments {
+    background-color: rgba(255,255,255,0.02) !important;
+    border-radius: 8px;
+}
+
+.dark-mode .new-comment-form {
+    background-color: rgba(255,255,255,0.02) !important;
+    padding: 1rem;
+    border-radius: 8px;
+    border: 1px solid #6c757d !important;
+}
+
+.dark-mode .rating-input {
+    background-color: rgba(255,255,255,0.05) !important;
+    padding: 0.5rem;
+    border-radius: 6px;
+}
+
+.dark-mode .star-label {
+    color: #ffc107 !important;
+}
+
+.dark-mode .star-label:hover {
+    color: #ffdb4d !important;
+}
+
+.dark-mode .comments-list {
+    background-color: rgba(255,255,255,0.02) !important;
+    border-radius: 8px;
+    padding: 1rem;
+}
+
+@media (max-width: 768px) {
+    .sticky-top {
+        position: relative !important;
+        top: 0 !important;
+    }
+    
+    .rating-input {
+        justify-content: center;
+    }
+}
+</style>
+
+<script>
+function openImageModal(imageSrc, title) {
+    document.getElementById('modalImage').src = imageSrc;
+    document.getElementById('imageModalTitle').textContent = title || 'Imagen de la Cancha';
+    const modal = new bootstrap.Modal(document.getElementById('imageModal'));
+    modal.show();
+}
+
+function showMap() {
+    const modal = new bootstrap.Modal(document.getElementById('mapModal'));
+    modal.show();
+    
+    // Aquí puedes integrar Google Maps o cualquier otro servicio de mapas
+    setTimeout(() => {
+        // Simulación de carga de mapa
+        const mapDiv = document.getElementById('map');
+        mapDiv.innerHTML = `
+            <div class="text-center py-5">
+                <i class="fas fa-map fa-3x text-muted mb-3"></i>
+                <p class="text-muted">Mapa cargando...</p>
+                <p class="small text-muted">Coordenadas: {{ cancha.Latitud }}, {{ cancha.Longitud }}</p>
+            </div>
+        `;
+    }, 500);
+}
+
+function openInfoModal() {
+    const modal = new bootstrap.Modal(document.getElementById('infoModal'));
+    modal.show();
+}
+
+function showAllImages() {
+    // Implementar vista de todas las imágenes
+    alert('Función para mostrar todas las imágenes en desarrollo');
+}
+
+// Funcionalidad para el sistema de calificación
+document.addEventListener('DOMContentLoaded', function() {
+    // Sistema de calificación interactivo
+    const starLabels = document.querySelectorAll('.star-label');
+    const ratingInputs = document.querySelectorAll('input[name="calificacion"]');
+    
+    starLabels.forEach((label, index) => {
+        label.addEventListener('mouseenter', () => {
+            // Resetear todas las estrellas
+            starLabels.forEach((star, i) => {
+                star.querySelector('i').className = i <= index ? 'fas fa-star' : 'far fa-star';
+            });
+        });
+        
+        label.addEventListener('click', () => {
+            // Marcar la estrella seleccionada
+            ratingInputs[index].checked = true;
+        });
+    });
+    
+    // Restaurar estado cuando se hace hover fuera del contenedor
+    document.querySelector('.rating-input').addEventListener('mouseleave', () => {
+        const checkedInput = document.querySelector('input[name="calificacion"]:checked');
+        if (checkedInput) {
+            const value = parseInt(checkedInput.value);
+            starLabels.forEach((label, index) => {
+                label.querySelector('i').className = index < value ? 'fas fa-star' : 'far fa-star';
+            });
+        }
+    });
+    
+    // Inicializar estrellas con valor por defecto (5)
+    starLabels.forEach((label, index) => {
+        label.querySelector('i').className = index < 5 ? 'fas fa-star' : 'far fa-star';
+    });
+});
+</script>
+{% endblock %}

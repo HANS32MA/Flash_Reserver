@@ -1,0 +1,107 @@
+{% extends "base.html" %}
+
+{% block title %}Gestión de Tipos de Cancha{% endblock %}
+
+{% block content %}
+<div class="container-fluid">
+    <div class="row">
+        <div class="col-12">
+            <div class="d-flex justify-content-between align-items-center mb-4">
+                <div class="d-flex align-items-center gap-3">
+                                <a href="{{ url_for('admin.dashboard') }}" class="btn admin-back-btn">
+                <i class="fas fa-arrow-left me-2"></i>Regresar al Dashboard
+            </a>
+                    <h1 class="h3 mb-0">
+                        <i class="fas fa-layer-group me-2"></i>Gestión de Tipos de Cancha
+                    </h1>
+                </div>
+                <a href="{{ url_for('admin.nuevo_tipo_cancha') }}" class="btn btn-primary">
+                    <i class="fas fa-plus me-2"></i>Nuevo Tipo
+                </a>
+            </div>
+            {% with messages = get_flashed_messages(with_categories=true) %}
+                {% if messages %}
+                    {% for category, message in messages %}
+                        <div class="alert alert-{{ 'danger' if category == 'error' else category }} alert-dismissible fade show" role="alert">
+                            {{ message }}
+                            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+                        </div>
+                    {% endfor %}
+                {% endif %}
+            {% endwith %}
+            <div class="card shadow-sm">
+                <div class="card-body">
+                    {% if tipos %}
+                        <div class="row">
+                            {% for tipo in tipos %}
+                            <div class="col-md-6 col-lg-4 mb-4">
+                                <div class="card h-100 border-0 shadow-sm">
+                                    <div class="card-body">
+                                        <div class="d-flex justify-content-between align-items-start mb-3">
+                                            <div>
+                                                <h5 class="card-title mb-1">{{ tipo.Nombre }}</h5>
+                                                <p class="text-muted small mb-0">
+                                                    ID: {{ tipo.Id }}
+                                                </p>
+                                            </div>
+                                            <div class="dropdown">
+                                                <button class="btn btn-sm btn-outline-secondary dropdown-toggle" 
+                                                        type="button" 
+                                                        data-bs-toggle="dropdown">
+                                                    <i class="fas fa-ellipsis-v"></i>
+                                                </button>
+                                                <ul class="dropdown-menu">
+                                                    <li>
+                                                        <a class="dropdown-item" href="{{ url_for('admin.editar_tipo_cancha', tipo_id=tipo.Id) }}">
+                                                            <i class="fas fa-edit me-2"></i>Editar
+                                                        </a>
+                                                    </li>
+                                                    <li>
+                                                        <form method="POST" action="{{ url_for('admin.eliminar_tipo_cancha', tipo_id=tipo.Id) }}" 
+                                                              style="display: inline;" 
+                                                              onsubmit="return confirm('¿Estás seguro de que quieres eliminar el tipo de cancha \'{{ tipo.Nombre }}\'?\\n\\nEsta acción no se puede deshacer.');">
+                                                            <button type="submit" class="dropdown-item text-danger" style="border: none; background: none; width: 100%; text-align: left;">
+                                                                <i class="fas fa-trash me-2"></i>Eliminar
+                                                            </button>
+                                                        </form>
+                                                    </li>
+                                                </ul>
+                                            </div>
+                                        </div>
+                                        <p class="card-text text-muted">
+                                            {% if tipo.Descripcion %}
+                                                {{ tipo.Descripcion }}
+                                            {% else %}
+                                                <em>Sin descripción</em>
+                                            {% endif %}
+                                        </p>
+                                        <div class="d-flex justify-content-between align-items-center">
+                                            <span class="badge bg-success">
+                                                <i class="fas fa-futbol me-1"></i>
+                                                {{ tipo.canchas|length if tipo.canchas else 0 }} cancha(s)
+                                            </span>
+                                            <small class="text-muted">
+                                                Creado: {{ tipo.FechaCreacion.strftime('%d/%m/%Y') if tipo.FechaCreacion else 'N/A' }}
+                                            </small>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            {% endfor %}
+                        </div>
+                    {% else %}
+                        <div class="text-center py-5">
+                            <i class="fas fa-layer-group fa-3x text-muted mb-3"></i>
+                            <h5 class="text-muted">No hay tipos de cancha registrados</h5>
+                            <p class="text-muted">Comienza agregando el primer tipo de superficie al sistema.</p>
+                            <a href="{{ url_for('admin.nuevo_tipo_cancha') }}" class="btn btn-primary">
+                                <i class="fas fa-plus me-2"></i>Agregar Tipo
+                            </a>
+                        </div>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %} 

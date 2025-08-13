@@ -1,0 +1,916 @@
+/* Sistema de Alertas Personalizadas */
+
+/* Contenedor principal de alertas */
+.alert-container {
+    position: fixed;
+    top: 20px;
+    right: 20px;
+    z-index: 9999;
+    max-width: 400px;
+    width: 100%;
+}
+
+/* Estilos base para todas las alertas */
+.custom-alert {
+    position: relative;
+    margin-bottom: 10px;
+    padding: 16px 20px;
+    border-radius: 12px;
+    box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15);
+    border: none;
+    font-weight: 500;
+    font-size: 14px;
+    line-height: 1.5;
+    transform: translateX(100%);
+    opacity: 0;
+    transition: all 0.4s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+    backdrop-filter: blur(10px);
+    border-left: 4px solid;
+}
+
+/* Estados de las alertas */
+.custom-alert.show {
+    transform: translateX(0);
+    opacity: 1;
+}
+
+.custom-alert.hide {
+    transform: translateX(100%);
+    opacity: 0;
+}
+
+/* Tipos de alertas */
+.custom-alert.success {
+    background: linear-gradient(135deg, #d4edda 0%, #c3e6cb 100%);
+    color: #155724;
+    border-left-color: #28a745;
+}
+
+.custom-alert.error {
+    background: linear-gradient(135deg, #f8d7da 0%, #f5c6cb 100%);
+    color: #721c24;
+    border-left-color: #dc3545;
+}
+
+.custom-alert.warning {
+    background: linear-gradient(135deg, #fff3cd 0%, #ffeaa7 100%);
+    color: #856404;
+    border-left-color: #ffc107;
+}
+
+.custom-alert.info {
+    background: linear-gradient(135deg, #d1ecf1 0%, #bee5eb 100%);
+    color: #0c5460;
+    border-left-color: #17a2b8;
+}
+
+.custom-alert.primary {
+    background: linear-gradient(135deg, #cce7ff 0%, #b3d9ff 100%);
+    color: #004085;
+    border-left-color: #007bff;
+}
+
+/* Iconos de las alertas */
+.custom-alert .alert-icon {
+    display: inline-block;
+    margin-right: 12px;
+    font-size: 18px;
+    vertical-align: middle;
+}
+
+.custom-alert.success .alert-icon {
+    color: #28a745;
+}
+
+.custom-alert.error .alert-icon {
+    color: #dc3545;
+}
+
+.custom-alert.warning .alert-icon {
+    color: #ffc107;
+}
+
+.custom-alert.info .alert-icon {
+    color: #17a2b8;
+}
+
+.custom-alert.primary .alert-icon {
+    color: #007bff;
+}
+
+/* Contenido de la alerta */
+.custom-alert .alert-content {
+    display: inline-block;
+    vertical-align: middle;
+    flex: 1;
+}
+
+.custom-alert .alert-title {
+    font-weight: 600;
+    margin-bottom: 4px;
+    font-size: 15px;
+}
+
+.custom-alert .alert-message {
+    font-size: 13px;
+    opacity: 0.9;
+}
+
+/* Botón de cerrar */
+.custom-alert .alert-close {
+    position: absolute;
+    top: 12px;
+    right: 12px;
+    background: none;
+    border: none;
+    color: inherit;
+    opacity: 0.7;
+    cursor: pointer;
+    padding: 4px;
+    border-radius: 50%;
+    transition: all 0.2s ease;
+    font-size: 16px;
+    line-height: 1;
+}
+
+.custom-alert .alert-close:hover {
+    opacity: 1;
+    background: rgba(0, 0, 0, 0.1);
+    transform: scale(1.1);
+}
+
+/* Animaciones */
+@keyframes slideInRight {
+    from {
+        transform: translateX(100%);
+        opacity: 0;
+    }
+    to {
+        transform: translateX(0);
+        opacity: 1;
+    }
+}
+
+@keyframes slideOutRight {
+    from {
+        transform: translateX(0);
+        opacity: 1;
+    }
+    to {
+        transform: translateX(100%);
+        opacity: 0;
+    }
+}
+
+@keyframes bounceIn {
+    0% {
+        transform: scale(0.3);
+        opacity: 0;
+    }
+    50% {
+        transform: scale(1.05);
+    }
+    70% {
+        transform: scale(0.9);
+    }
+    100% {
+        transform: scale(1);
+        opacity: 1;
+    }
+}
+
+/* Alertas con animación de entrada */
+.custom-alert.animate-in {
+    animation: slideInRight 0.5s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+}
+
+/* Alertas con animación de salida */
+.custom-alert.animate-out {
+    animation: slideOutRight 0.3s ease-in-out;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+    .alert-container {
+        top: 10px;
+        right: 10px;
+        left: 10px;
+        max-width: none;
+    }
+    
+    .custom-alert {
+        padding: 14px 16px;
+        font-size: 13px;
+    }
+    
+    .custom-alert .alert-icon {
+        font-size: 16px;
+        margin-right: 10px;
+    }
+}
+
+/* Alertas para formularios */
+.form-alert {
+    margin-bottom: 20px;
+    padding: 12px 16px;
+    border-radius: 8px;
+    border: 1px solid;
+    font-size: 14px;
+    font-weight: 500;
+}
+
+.form-alert.success {
+    background: linear-gradient(135deg, #d4edda 0%, #c3e6cb 100%);
+    color: #155724;
+    border-color: #c3e6cb;
+}
+
+.form-alert.error {
+    background: linear-gradient(135deg, #f8d7da 0%, #f5c6cb 100%);
+    color: #721c24;
+    border-color: #f5c6cb;
+}
+
+.form-alert.warning {
+    background: linear-gradient(135deg, #fff3cd 0%, #ffeaa7 100%);
+    color: #856404;
+    border-color: #ffeaa7;
+}
+
+.form-alert.info {
+    background: linear-gradient(135deg, #d1ecf1 0%, #bee5eb 100%);
+    color: #0c5460;
+    border-color: #bee5eb;
+}
+
+/* Alertas inline para validaciones */
+.inline-alert {
+    display: block;
+    margin-top: 5px;
+    font-size: 12px;
+    font-weight: 500;
+}
+
+.inline-alert.error {
+    color: #dc3545;
+}
+
+.inline-alert.success {
+    color: #28a745;
+}
+
+.inline-alert.warning {
+    color: #ffc107;
+}
+
+.inline-alert.info {
+    color: #17a2b8;
+}
+
+/* Alertas de confirmación */
+.confirm-alert {
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    background: white;
+    border-radius: 16px;
+    box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+    padding: 30px;
+    max-width: 400px;
+    width: 90%;
+    z-index: 10000;
+    text-align: center;
+    border: none;
+}
+
+.confirm-alert .confirm-icon {
+    font-size: 48px;
+    margin-bottom: 20px;
+    color: #dc3545;
+}
+
+.confirm-alert .confirm-title {
+    font-size: 20px;
+    font-weight: 600;
+    margin-bottom: 15px;
+    color: #333;
+}
+
+.confirm-alert .confirm-message {
+    font-size: 14px;
+    color: #666;
+    margin-bottom: 25px;
+    line-height: 1.5;
+}
+
+.confirm-alert .confirm-buttons {
+    display: flex;
+    gap: 10px;
+    justify-content: center;
+}
+
+.confirm-alert .btn {
+    padding: 10px 20px;
+    border-radius: 8px;
+    font-weight: 500;
+    border: none;
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+
+.confirm-alert .btn-cancel {
+    background: #6c757d;
+    color: white;
+}
+
+.confirm-alert .btn-confirm {
+    background: #dc3545;
+    color: white;
+}
+
+.confirm-alert .btn:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+}
+
+/* Overlay para confirmaciones */
+.confirm-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.5);
+    z-index: 9999;
+    backdrop-filter: blur(5px);
+}
+
+/* ===== TEMA OSCURO PARA ALERTAS ===== */
+.dark-mode .custom-alert {
+    backdrop-filter: blur(15px);
+    box-shadow: 0 8px 25px rgba(0, 0, 0, 0.4);
+}
+
+.dark-mode .custom-alert.success {
+    background: linear-gradient(135deg, #1e4d2b 0%, #2d5a3a 100%);
+    color: #d4edda;
+    border-left-color: #28a745;
+}
+
+.dark-mode .custom-alert.error {
+    background: linear-gradient(135deg, #4d1e1e 0%, #5a2d2d 100%);
+    color: #f8d7da;
+    border-left-color: #dc3545;
+}
+
+.dark-mode .custom-alert.warning {
+    background: linear-gradient(135deg, #4d3e1e 0%, #5a4d2d 100%);
+    color: #fff3cd;
+    border-left-color: #ffc107;
+}
+
+.dark-mode .custom-alert.info {
+    background: linear-gradient(135deg, #1e4d4d 0%, #2d5a5a 100%);
+    color: #d1ecf1;
+    border-left-color: #17a2b8;
+}
+
+.dark-mode .custom-alert.primary {
+    background: linear-gradient(135deg, #1e3a4d 0%, #2d475a 100%);
+    color: #cce7ff;
+    border-left-color: #007bff;
+}
+
+/* Iconos en tema oscuro */
+.dark-mode .custom-alert.success .alert-icon {
+    color: #4caf50;
+}
+
+.dark-mode .custom-alert.error .alert-icon {
+    color: #f44336;
+}
+
+.dark-mode .custom-alert.warning .alert-icon {
+    color: #ff9800;
+}
+
+.dark-mode .custom-alert.info .alert-icon {
+    color: #2196f3;
+}
+
+.dark-mode .custom-alert.primary .alert-icon {
+    color: #3f51b5;
+}
+
+/* Confirm alerts en tema oscuro */
+.dark-mode .confirm-alert {
+    background: #2d3748;
+    color: #e2e8f0;
+    border: 1px solid #4a5568;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
+}
+
+.dark-mode .confirm-alert .confirm-icon {
+    color: #4c51bf;
+}
+
+.dark-mode .confirm-alert .confirm-title {
+    color: #ffffff;
+}
+
+.dark-mode .confirm-alert .confirm-message {
+    color: #a0aec0;
+}
+
+.dark-mode .confirm-alert .btn {
+    background: #4a5568;
+    color: #e2e8f0;
+    border: 1px solid #718096;
+}
+
+.dark-mode .confirm-alert .btn:hover {
+    background: #718096;
+    color: #ffffff;
+}
+
+.dark-mode .confirm-alert .btn-cancel {
+    background: #4a5568;
+    color: #e2e8f0;
+}
+
+.dark-mode .confirm-alert .btn-cancel:hover {
+    background: #718096;
+    color: #ffffff;
+}
+
+.dark-mode .confirm-alert .btn-confirm {
+    background: linear-gradient(135deg, #4c51bf 0%, #553c9a 100%);
+    color: #ffffff;
+}
+
+.dark-mode .confirm-alert .btn-confirm:hover {
+    background: linear-gradient(135deg, #434190 0%, #553c9a 100%);
+    transform: translateY(-1px);
+    box-shadow: 0 4px 12px rgba(76, 81, 191, 0.4);
+}
+
+/* Overlay en tema oscuro */
+.dark-mode .confirm-overlay {
+    background: rgba(0, 0, 0, 0.7);
+    backdrop-filter: blur(10px);
+}
+
+/* Form alerts en tema oscuro */
+.dark-mode .form-alert {
+    background: #2d3748;
+    color: #e2e8f0;
+    border: 1px solid #4a5568;
+}
+
+.dark-mode .form-alert.success {
+    background: #1e4d2b;
+    color: #d4edda;
+    border-left-color: #28a745;
+}
+
+.dark-mode .form-alert.error {
+    background: #4d1e1e;
+    color: #f8d7da;
+    border-left-color: #dc3545;
+}
+
+.dark-mode .form-alert.warning {
+    background: #4d3e1e;
+    color: #fff3cd;
+    border-left-color: #ffc107;
+}
+
+.dark-mode .form-alert.info {
+    background: #1e4d4d;
+    color: #d1ecf1;
+    border-left-color: #17a2b8;
+}
+
+/* Inline alerts en tema oscuro */
+.dark-mode .inline-alert {
+    background: #2d3748;
+    color: #e2e8f0;
+    border: 1px solid #4a5568;
+}
+
+.dark-mode .inline-alert.error {
+    background: #4d1e1e;
+    color: #f8d7da;
+    border-left-color: #dc3545;
+}
+
+.dark-mode .inline-alert.success {
+    background: #1e4d2b;
+    color: #d4edda;
+    border-left-color: #28a745;
+}
+
+.dark-mode .inline-alert.warning {
+    background: #4d3e1e;
+    color: #fff3cd;
+    border-left-color: #ffc107;
+}
+
+.dark-mode .inline-alert.info {
+    background: #1e4d4d;
+    color: #d1ecf1;
+    border-left-color: #17a2b8;
+}
+
+/* ===== TEMA OSCURO PARA SWEETALERT2 ===== */
+.dark-mode .swal2-popup {
+    background: #2d3748 !important;
+    color: #e2e8f0 !important;
+    border: 1px solid #4a5568 !important;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5) !important;
+}
+
+.dark-mode .swal2-title {
+    color: #ffffff !important;
+}
+
+.dark-mode .swal2-content {
+    color: #a0aec0 !important;
+}
+
+.dark-mode .swal2-icon {
+    border-color: #4a5568 !important;
+}
+
+.dark-mode .swal2-icon.swal2-question {
+    border-color: #4c51bf !important;
+    color: #4c51bf !important;
+}
+
+.dark-mode .swal2-icon.swal2-warning {
+    border-color: #ff9800 !important;
+    color: #ff9800 !important;
+}
+
+.dark-mode .swal2-icon.swal2-success {
+    border-color: #4caf50 !important;
+    color: #4caf50 !important;
+}
+
+.dark-mode .swal2-icon.swal2-error {
+    border-color: #f44336 !important;
+    color: #f44336 !important;
+}
+
+.dark-mode .swal2-confirm {
+    background: linear-gradient(135deg, #4c51bf 0%, #553c9a 100%) !important;
+    color: #ffffff !important;
+    border: none !important;
+    box-shadow: 0 4px 12px rgba(76, 81, 191, 0.3) !important;
+}
+
+.dark-mode .swal2-confirm:hover {
+    background: linear-gradient(135deg, #434190 0%, #553c9a 100%) !important;
+    transform: translateY(-1px) !important;
+    box-shadow: 0 6px 16px rgba(76, 81, 191, 0.4) !important;
+}
+
+.dark-mode .swal2-cancel {
+    background: #4a5568 !important;
+    color: #e2e8f0 !important;
+    border: 1px solid #718096 !important;
+}
+
+.dark-mode .swal2-cancel:hover {
+    background: #718096 !important;
+    color: #ffffff !important;
+}
+
+.dark-mode .swal2-actions {
+    gap: 10px !important;
+}
+
+.dark-mode .swal2-backdrop-show {
+    background: rgba(0, 0, 0, 0.7) !important;
+    backdrop-filter: blur(10px) !important;
+}
+
+/* Overlay de SweetAlert2 en tema oscuro */
+.dark-mode .swal2-backdrop {
+    background: rgba(0, 0, 0, 0.7) !important;
+    backdrop-filter: blur(10px) !important;
+}
+
+/* Animaciones para SweetAlert2 en tema oscuro */
+.dark-mode .swal2-show {
+    animation: swal2-show 0.3s ease-out !important;
+}
+
+.dark-mode .swal2-hide {
+    animation: swal2-hide 0.3s ease-in !important;
+}
+
+@keyframes swal2-show {
+    0% {
+        transform: scale(0.7);
+        opacity: 0;
+    }
+    100% {
+        transform: scale(1);
+        opacity: 1;
+    }
+}
+
+@keyframes swal2-hide {
+    0% {
+        transform: scale(1);
+        opacity: 1;
+    }
+    100% {
+        transform: scale(0.7);
+        opacity: 0;
+    }
+}
+
+/* ===== TEMA CLARO CON DIFUMINACIÓN ===== */
+/* Alertas personalizadas en tema claro con blur */
+.custom-alert {
+    backdrop-filter: blur(15px);
+    box-shadow: 0 8px 25px rgba(0, 0, 0, 0.1);
+    border: 1px solid rgba(255, 255, 255, 0.2);
+}
+
+.custom-alert.success {
+    background: linear-gradient(135deg, rgba(212, 237, 218, 0.9) 0%, rgba(195, 230, 203, 0.9) 100%);
+    backdrop-filter: blur(20px);
+    border: 1px solid rgba(40, 167, 69, 0.3);
+}
+
+.custom-alert.error {
+    background: linear-gradient(135deg, rgba(248, 215, 218, 0.9) 0%, rgba(245, 198, 203, 0.9) 100%);
+    backdrop-filter: blur(20px);
+    border: 1px solid rgba(220, 53, 69, 0.3);
+}
+
+.custom-alert.warning {
+    background: linear-gradient(135deg, rgba(255, 243, 205, 0.9) 0%, rgba(255, 234, 167, 0.9) 100%);
+    backdrop-filter: blur(20px);
+    border: 1px solid rgba(255, 193, 7, 0.3);
+}
+
+.custom-alert.info {
+    background: linear-gradient(135deg, rgba(209, 236, 241, 0.9) 0%, rgba(190, 229, 235, 0.9) 100%);
+    backdrop-filter: blur(20px);
+    border: 1px solid rgba(23, 162, 184, 0.3);
+}
+
+.custom-alert.primary {
+    background: linear-gradient(135deg, rgba(204, 231, 255, 0.9) 0%, rgba(179, 217, 255, 0.9) 100%);
+    backdrop-filter: blur(20px);
+    border: 1px solid rgba(0, 123, 255, 0.3);
+}
+
+/* Confirm alerts en tema claro con blur */
+.confirm-alert {
+    background: rgba(255, 255, 255, 0.95);
+    backdrop-filter: blur(25px);
+    border: 1px solid rgba(255, 255, 255, 0.3);
+    box-shadow: 0 20px 60px rgba(0, 0, 0, 0.15);
+}
+
+.confirm-alert .confirm-icon {
+    color: #4c51bf;
+    text-shadow: 0 2px 4px rgba(76, 81, 191, 0.3);
+}
+
+.confirm-alert .confirm-title {
+    color: #2d3748;
+    text-shadow: 0 1px 2px rgba(45, 55, 72, 0.1);
+}
+
+.confirm-alert .confirm-message {
+    color: #4a5568;
+}
+
+.confirm-alert .btn {
+    backdrop-filter: blur(10px);
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+}
+
+.confirm-alert .btn-cancel {
+    background: rgba(108, 117, 125, 0.9);
+    color: white;
+    backdrop-filter: blur(10px);
+}
+
+.confirm-alert .btn-cancel:hover {
+    background: rgba(108, 117, 125, 1);
+    transform: translateY(-1px);
+    box-shadow: 0 6px 16px rgba(108, 117, 125, 0.3);
+}
+
+.confirm-alert .btn-confirm {
+    background: linear-gradient(135deg, rgba(220, 53, 69, 0.9) 0%, rgba(220, 53, 69, 1) 100%);
+    color: white;
+    backdrop-filter: blur(10px);
+}
+
+.confirm-alert .btn-confirm:hover {
+    background: linear-gradient(135deg, rgba(220, 53, 69, 1) 0%, rgba(200, 35, 51, 1) 100%);
+    transform: translateY(-1px);
+    box-shadow: 0 6px 16px rgba(220, 53, 69, 0.4);
+}
+
+/* Overlay en tema claro con blur */
+.confirm-overlay {
+    background: rgba(0, 0, 0, 0.3);
+    backdrop-filter: blur(15px);
+}
+
+/* Form alerts en tema claro con blur */
+.form-alert {
+    backdrop-filter: blur(15px);
+    border: 1px solid rgba(255, 255, 255, 0.2);
+}
+
+.form-alert.success {
+    background: linear-gradient(135deg, rgba(212, 237, 218, 0.9) 0%, rgba(195, 230, 203, 0.9) 100%);
+    backdrop-filter: blur(20px);
+    border: 1px solid rgba(40, 167, 69, 0.3);
+}
+
+.form-alert.error {
+    background: linear-gradient(135deg, rgba(248, 215, 218, 0.9) 0%, rgba(245, 198, 203, 0.9) 100%);
+    backdrop-filter: blur(20px);
+    border: 1px solid rgba(220, 53, 69, 0.3);
+}
+
+.form-alert.warning {
+    background: linear-gradient(135deg, rgba(255, 243, 205, 0.9) 0%, rgba(255, 234, 167, 0.9) 100%);
+    backdrop-filter: blur(20px);
+    border: 1px solid rgba(255, 193, 7, 0.3);
+}
+
+.form-alert.info {
+    background: linear-gradient(135deg, rgba(209, 236, 241, 0.9) 0%, rgba(190, 229, 235, 0.9) 100%);
+    backdrop-filter: blur(20px);
+    border: 1px solid rgba(23, 162, 184, 0.3);
+}
+
+/* Inline alerts en tema claro con blur */
+.inline-alert {
+    backdrop-filter: blur(10px);
+    background: rgba(255, 255, 255, 0.1);
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    border-radius: 6px;
+    padding: 8px 12px;
+}
+
+.inline-alert.error {
+    background: linear-gradient(135deg, rgba(248, 215, 218, 0.9) 0%, rgba(245, 198, 203, 0.9) 100%);
+    backdrop-filter: blur(15px);
+    border: 1px solid rgba(220, 53, 69, 0.3);
+}
+
+.inline-alert.success {
+    background: linear-gradient(135deg, rgba(212, 237, 218, 0.9) 0%, rgba(195, 230, 203, 0.9) 100%);
+    backdrop-filter: blur(15px);
+    border: 1px solid rgba(40, 167, 69, 0.3);
+}
+
+.inline-alert.warning {
+    background: linear-gradient(135deg, rgba(255, 243, 205, 0.9) 0%, rgba(255, 234, 167, 0.9) 100%);
+    backdrop-filter: blur(15px);
+    border: 1px solid rgba(255, 193, 7, 0.3);
+}
+
+.inline-alert.info {
+    background: linear-gradient(135deg, rgba(209, 236, 241, 0.9) 0%, rgba(190, 229, 235, 0.9) 100%);
+    backdrop-filter: blur(15px);
+    border: 1px solid rgba(23, 162, 184, 0.3);
+}
+
+/* SweetAlert2 en tema claro con blur */
+.swal2-popup {
+    background: rgba(255, 255, 255, 0.95) !important;
+    backdrop-filter: blur(25px) !important;
+    border: 1px solid rgba(255, 255, 255, 0.3) !important;
+    box-shadow: 0 20px 60px rgba(0, 0, 0, 0.15) !important;
+}
+
+.swal2-title {
+    color: #2d3748 !important;
+    text-shadow: 0 1px 2px rgba(45, 55, 72, 0.1) !important;
+}
+
+.swal2-content {
+    color: #4a5568 !important;
+}
+
+.swal2-icon {
+    border-color: rgba(255, 255, 255, 0.3) !important;
+    backdrop-filter: blur(10px) !important;
+}
+
+.swal2-icon.swal2-question {
+    border-color: rgba(76, 81, 191, 0.3) !important;
+    color: #4c51bf !important;
+    text-shadow: 0 2px 4px rgba(76, 81, 191, 0.3) !important;
+}
+
+.swal2-icon.swal2-warning {
+    border-color: rgba(255, 152, 0, 0.3) !important;
+    color: #ff9800 !important;
+    text-shadow: 0 2px 4px rgba(255, 152, 0, 0.3) !important;
+}
+
+.swal2-icon.swal2-success {
+    border-color: rgba(76, 175, 80, 0.3) !important;
+    color: #4caf50 !important;
+    text-shadow: 0 2px 4px rgba(76, 175, 80, 0.3) !important;
+}
+
+.swal2-icon.swal2-error {
+    border-color: rgba(244, 67, 54, 0.3) !important;
+    color: #f44336 !important;
+    text-shadow: 0 2px 4px rgba(244, 67, 54, 0.3) !important;
+}
+
+.swal2-confirm {
+    background: linear-gradient(135deg, rgba(76, 81, 191, 0.9) 0%, rgba(85, 60, 154, 0.9) 100%) !important;
+    color: #ffffff !important;
+    border: none !important;
+    backdrop-filter: blur(10px) !important;
+    box-shadow: 0 4px 12px rgba(76, 81, 191, 0.3) !important;
+}
+
+.swal2-confirm:hover {
+    background: linear-gradient(135deg, rgba(67, 65, 144, 0.9) 0%, rgba(85, 60, 154, 0.9) 100%) !important;
+    transform: translateY(-1px) !important;
+    box-shadow: 0 6px 16px rgba(76, 81, 191, 0.4) !important;
+}
+
+.swal2-cancel {
+    background: rgba(108, 117, 125, 0.9) !important;
+    color: #ffffff !important;
+    border: 1px solid rgba(255, 255, 255, 0.2) !important;
+    backdrop-filter: blur(10px) !important;
+}
+
+.swal2-cancel:hover {
+    background: rgba(108, 117, 125, 1) !important;
+    transform: translateY(-1px) !important;
+    box-shadow: 0 6px 16px rgba(108, 117, 125, 0.3) !important;
+}
+
+.swal2-actions {
+    gap: 10px !important;
+}
+
+.swal2-backdrop-show {
+    background: rgba(0, 0, 0, 0.3) !important;
+    backdrop-filter: blur(15px) !important;
+}
+
+/* Overlay de SweetAlert2 en tema claro con blur */
+.swal2-backdrop {
+    background: rgba(0, 0, 0, 0.3) !important;
+    backdrop-filter: blur(15px) !important;
+}
+
+/* Animaciones para SweetAlert2 en tema claro */
+.swal2-show {
+    animation: swal2-show-blur 0.3s ease-out !important;
+}
+
+.swal2-hide {
+    animation: swal2-hide-blur 0.3s ease-in !important;
+}
+
+@keyframes swal2-show-blur {
+    0% {
+        transform: scale(0.7);
+        opacity: 0;
+        filter: blur(10px);
+    }
+    100% {
+        transform: scale(1);
+        opacity: 1;
+        filter: blur(0px);
+    }
+}
+
+@keyframes swal2-hide-blur {
+    0% {
+        transform: scale(1);
+        opacity: 1;
+        filter: blur(0px);
+    }
+    100% {
+        transform: scale(0.7);
+        opacity: 0;
+        filter: blur(10px);
+    }
+} 

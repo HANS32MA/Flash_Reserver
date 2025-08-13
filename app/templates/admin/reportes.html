@@ -1,0 +1,692 @@
+{% extends "base.html" %}
+
+{% block title %}Reportes de Reservas{% endblock %}
+
+{% block content %}
+<!-- Contenedor principal -->
+<div class="container-fluid">
+    <div class="row mb-4">
+        <div class="col">
+            <h2 class="mb-0"><i class="fas fa-chart-bar me-2"></i>Reportes de Reservas</h2>
+        </div>
+    </div>
+
+    <!-- Mensajes flash -->
+    {% with messages = get_flashed_messages(with_categories=true) %}
+        {% if messages %}
+            {% for category, message in messages %}
+                <div class="alert alert-{{ category }} alert-dismissible fade show" role="alert">
+                    {{ message }}
+                    <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+                </div>
+            {% endfor %}
+        {% endif %}
+    {% endwith %}
+    <div class="d-flex justify-content-between align-items-center mb-4">
+                <div class="d-flex align-items-center gap-3">
+                                <a href="{{ url_for('admin.dashboard') }}" class="btn admin-back-btn">
+                <i class="fas fa-arrow-left me-2"></i>Regresar
+            </a>
+                </div>
+                
+                <a href="{{ url_for('admin.nueva_categoria') }}" class="btn btn-primary">
+                    <i class="fas fa-plus me-2"></i>Nueva Categoría
+                </a>
+            </div>
+
+    <!-- Filtros por fecha -->
+    <div class="card mb-4">
+        <div class="card-header">
+            <h5 class="mb-0"><i class="fas fa-filter me-2"></i>Filtros de Reportes</h5>
+        </div>
+        <div class="card-body">
+            <div class="row g-3">
+                <!-- Filtros rápidos -->
+                <div class="col-md-3">
+                    <label class="form-label">Filtro Rápido</label>
+                    <select id="filtro-rapido" class="form-select" onchange="aplicarFiltroRapido()">
+                        <option value="">Seleccionar período</option>
+                        <option value="hoy">Hoy</option>
+                        <option value="ayer">Ayer</option>
+                        <option value="semana">Esta semana</option>
+                        <option value="mes">Este mes</option>
+                        <option value="trimestre">Este trimestre</option>
+                        <option value="año">Este año</option>
+                        <option value="personalizado">Personalizado</option>
+                    </select>
+                </div>
+                
+                <!-- Filtros por fecha específica -->
+                <div class="col-md-2">
+                    <label for="filtro-dia" class="form-label">Día específico</label>
+                    <input type="date" id="filtro-dia" class="form-control" onchange="aplicarFiltroDia()">
+                </div>
+                
+                <div class="col-md-2">
+                    <label for="filtro-mes" class="form-label">Mes específico</label>
+                    <input type="month" id="filtro-mes" class="form-control" onchange="aplicarFiltroMes()">
+                </div>
+                
+                <div class="col-md-2">
+                    <label for="filtro-año" class="form-label">Año específico</label>
+                    <select id="filtro-año" class="form-select" onchange="aplicarFiltroAño()">
+                        <option value="">Seleccionar año</option>
+                        <option value="2025">2025</option>
+                        <option value="2024">2024</option>
+                        <option value="2023">2023</option>
+                    </select>
+                </div>
+                
+                <!-- Filtros personalizados -->
+                <div class="col-md-3">
+                    <label for="fecha-inicio" class="form-label">Rango personalizado</label>
+                    <div class="d-flex gap-2">
+                        <input type="date" id="fecha-inicio" class="form-control" placeholder="Inicio">
+                        <input type="date" id="fecha-fin" class="form-control" placeholder="Fin">
+                    </div>
+                </div>
+            </div>
+            
+            <div class="row mt-3">
+                <div class="col-12">
+                    <div class="d-flex justify-content-between align-items-center">
+                        <div class="d-flex gap-2">
+                            <button class="btn btn-primary" onclick="cargarReportes()">
+                                <i class="fas fa-search me-1"></i>Filtrar
+                            </button>
+                            <button class="btn btn-secondary" onclick="limpiarFiltros()">
+                                <i class="fas fa-eraser me-1"></i>Limpiar
+                            </button>
+                        </div>
+                        <div class="d-flex gap-2">
+                            <button class="btn btn-danger" onclick="exportarPDF()">
+                                <i class="fas fa-file-pdf me-1"></i>Exportar PDF
+                            </button>
+                            <button class="btn btn-success" onclick="exportarExcel()">
+                                <i class="fas fa-file-excel me-1"></i>Exportar Excel
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Resumen -->
+    <div class="row mb-4">
+        <div class="col-md-3">
+            <div class="card text-center shadow-sm">
+                <div class="card-body">
+                    <h5 class="card-title">Usuarios</h5>
+                    <h3 id="totalUsuarios">0</h3>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="card text-center shadow-sm">
+                <div class="card-body">
+                    <h5 class="card-title">Canchas</h5>
+                    <h3 id="totalCanchas">0</h3>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="card text-center shadow-sm">
+                <div class="card-body">
+                    <h5 class="card-title">Reservas</h5>
+                    <h3 id="totalReservas">0</h3>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="card text-center shadow-sm">
+                <div class="card-body">
+                    <h5 class="card-title">Reservas Hoy</h5>
+                    <h3 id="reservasHoy">0</h3>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Gráficos -->
+    <div class="row mb-4">
+        <div class="col-md-6 mb-4">
+            <div class="card shadow-sm">
+                <div class="card-header">
+                    <h5 class="mb-0"><i class="fas fa-chart-line me-2"></i> Reservas por Mes</h5>
+                </div>
+                <div class="card-body">
+                    <canvas id="graficoMeses" height="200"></canvas>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-6 mb-4">
+            <div class="card shadow-sm">
+                <div class="card-header">
+                    <h5 class="mb-0"><i class="fas fa-dollar-sign me-2"></i> Ingresos por Mes</h5>
+                </div>
+                <div class="card-body">
+                    <canvas id="graficoIngresos" height="200"></canvas>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Ocupación por Cancha -->
+    <div class="row mb-4">
+        <div class="col-md-6 mb-4">
+            <div class="card shadow-sm">
+                <div class="card-header">
+                    <h5 class="mb-0"><i class="fas fa-chart-pie me-2"></i> Ocupación por Cancha (%)</h5>
+                </div>
+                <div class="card-body">
+                    <canvas id="graficoOcupacion" height="200"></canvas>
+                </div>
+            </div>
+        </div>
+
+        <!-- Gráfico de calor -->
+        <div class="col-md-6 mb-4">
+            <div class="card shadow-sm">
+                <div class="card-header">
+                    <h5 class="mb-0"><i class="fas fa-fire-alt me-2"></i> Horas de Mayor Ocupación</h5>
+                </div>
+                <div class="card-body">
+                    <canvas id="graficoHeatmap" height="200"></canvas>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+/* Estilos para los filtros de reportes */
+.card-header {
+    background-color: #f8f9fa;
+    border-bottom: 1px solid #dee2e6;
+}
+
+.form-label {
+    font-weight: 600;
+    color: #495057;
+}
+
+.form-select, .form-control {
+    border-radius: 0.375rem;
+    border: 1px solid #ced4da;
+}
+
+.form-select:focus, .form-control:focus {
+    border-color: #86b7fe;
+    box-shadow: 0 0 0 0.25rem rgba(13, 110, 253, 0.25);
+}
+
+.btn {
+    border-radius: 0.375rem;
+    font-weight: 500;
+}
+
+.btn-primary {
+    background-color: #0d6efd;
+    border-color: #0d6efd;
+}
+
+.btn-success {
+    background-color: #198754;
+    border-color: #198754;
+}
+
+.btn-info {
+    background-color: #0dcaf0;
+    border-color: #0dcaf0;
+}
+
+/* Loading overlay */
+#loading-overlay {
+    backdrop-filter: blur(2px);
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+    .d-flex.gap-2 {
+        flex-direction: column;
+    }
+    
+    .d-flex.gap-2 .btn {
+        margin-bottom: 0.5rem;
+    }
+}
+</style>
+
+<!-- Chart.js y plugin de heatmap -->
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/chartjs-chart-matrix@1.1.0/dist/chartjs-chart-matrix.min.js"></script>
+<script>
+// Variables globales para mantener referencias a los gráficos
+let chartMeses = null;
+let chartIngresos = null;
+let chartOcupacion = null;
+let chartHeatmap = null;
+
+function cargarReportes() {
+    // Obtener todos los filtros
+    const filtroRapido = document.getElementById('filtro-rapido').value;
+    const filtroDia = document.getElementById('filtro-dia').value;
+    const filtroMes = document.getElementById('filtro-mes').value;
+    const filtroAño = document.getElementById('filtro-año').value;
+    const fechaInicio = document.getElementById('fecha-inicio').value;
+    const fechaFin = document.getElementById('fecha-fin').value;
+
+    // Construir URL con parámetros
+    let url = "{{ url_for('admin.api_estadisticas') }}";
+    const params = new URLSearchParams();
+    
+    if (filtroRapido && filtroRapido !== 'personalizado') {
+        params.append('filtro_rapido', filtroRapido);
+    }
+    if (filtroDia) {
+        params.append('filtro_dia', filtroDia);
+    }
+    if (filtroMes) {
+        params.append('filtro_mes', filtroMes);
+    }
+    if (filtroAño) {
+        params.append('filtro_año', filtroAño);
+    }
+    if (fechaInicio && fechaFin) {
+        params.append('inicio', fechaInicio);
+        params.append('fin', fechaFin);
+    }
+    
+    if (params.toString()) {
+        url += '?' + params.toString();
+    }
+
+    // Mostrar loading
+    mostrarLoading();
+
+    fetch(url)
+        .then(response => response.json())
+        .then(data => {
+            // Actualizar totales
+            document.getElementById('totalUsuarios').textContent = data.total_usuarios;
+            document.getElementById('totalCanchas').textContent = data.total_canchas;
+            document.getElementById('totalReservas').textContent = data.total_reservas;
+            document.getElementById('reservasHoy').textContent = data.reservas_hoy;
+
+            // Actualizar título con filtro aplicado
+            actualizarTituloFiltro();
+
+            // Destruir gráficos existentes antes de crear nuevos
+            if (chartMeses) {
+                chartMeses.destroy();
+                chartMeses = null;
+            }
+            if (chartIngresos) {
+                chartIngresos.destroy();
+                chartIngresos = null;
+            }
+            if (chartOcupacion) {
+                chartOcupacion.destroy();
+                chartOcupacion = null;
+            }
+            if (chartHeatmap) {
+                chartHeatmap.destroy();
+                chartHeatmap = null;
+            }
+
+            // ---- Gráfico Reservas por Mes ----
+            chartMeses = new Chart(document.getElementById('graficoMeses'), {
+                type: 'line',
+                data: {
+                    labels: data.meses,
+                    datasets: [{
+                        label: 'Reservas',
+                        data: data.reservas_por_mes,
+                        borderColor: 'rgba(75, 192, 192, 1)',
+                        backgroundColor: 'rgba(75, 192, 192, 0.2)',
+                        fill: true,
+                        tension: 0.3
+                    }]
+                },
+                options: { responsive: true, plugins: { legend: { display: false } } }
+            });
+
+            // ---- Gráfico Ingresos por Mes ----
+            chartIngresos = new Chart(document.getElementById('graficoIngresos'), {
+                type: 'bar',
+                data: {
+                    labels: data.meses,
+                    datasets: [{
+                        label: 'Ingresos (COP)',
+                        data: data.ingresos_por_mes,
+                        backgroundColor: 'rgba(255, 159, 64, 0.6)',
+                        borderColor: 'rgba(255, 159, 64, 1)',
+                        borderWidth: 1
+                    }]
+                },
+                options: { responsive: true, scales: { y: { beginAtZero: true } } }
+            });
+
+            // ---- Gráfico Ocupación ----
+            chartOcupacion = new Chart(document.getElementById('graficoOcupacion'), {
+                type: 'bar',
+                data: {
+                    labels: data.ocupacion_labels,
+                    datasets: [{
+                        label: 'Ocupación (%)',
+                        data: data.ocupacion_values,
+                        backgroundColor: 'rgba(54, 162, 235, 0.6)',
+                        borderColor: 'rgba(54, 162, 235, 1)',
+                        borderWidth: 1
+                    }]
+                },
+                options: { responsive: true, scales: { y: { beginAtZero: true, max: 100 } } }
+            });
+
+            // ---- Heatmap ----
+            const heatmapData = data.heatmap || [];
+            const days = ['Lun','Mar','Mié','Jue','Vie','Sáb','Dom'];
+            const hours = Array.from({length: 24}, (_, i) => i + ":00");
+
+            chartHeatmap = new Chart(document.getElementById('graficoHeatmap'), {
+                type: 'matrix',
+                data: {
+                    datasets: [{
+                        label: 'Ocupación',
+                        data: heatmapData,
+                        backgroundColor(ctx) {
+                            const value = ctx.dataset.data[ctx.dataIndex].v;
+                            return value > 10 ? '#d73027' : value > 5 ? '#fc8d59' : '#fee090';
+                        },
+                        width: ({chart}) => (chart.chartArea || {}).width / 24 - 2,
+                        height: ({chart}) => (chart.chartArea || {}).height / 7 - 2
+                    }]
+                },
+                options: {
+                    scales: {
+                        x: { type: 'category', labels: hours, position: 'top' },
+                        y: { type: 'category', labels: days, reverse: true }
+                    },
+                    plugins: { tooltip: { callbacks: { label: ctx => ctx.raw.v + ' reservas' } } }
+                }
+            });
+
+            // Ocultar loading
+            ocultarLoading();
+        })
+        .catch(err => {
+            console.error("Error cargando estadísticas:", err);
+            ocultarLoading();
+            mostrarError("Error al cargar los reportes. Intenta nuevamente.");
+        });
+}
+
+// Funciones para filtros rápidos
+function aplicarFiltroRapido() {
+    const filtro = document.getElementById('filtro-rapido').value;
+    const hoy = new Date();
+    
+    // Limpiar otros filtros
+    limpiarOtrosFiltros();
+    
+    switch(filtro) {
+        case 'hoy':
+            document.getElementById('filtro-dia').value = hoy.toISOString().split('T')[0];
+            break;
+        case 'ayer':
+            const ayer = new Date(hoy);
+            ayer.setDate(hoy.getDate() - 1);
+            document.getElementById('filtro-dia').value = ayer.toISOString().split('T')[0];
+            break;
+        case 'semana':
+            const inicioSemana = new Date(hoy);
+            inicioSemana.setDate(hoy.getDate() - hoy.getDay());
+            const finSemana = new Date(inicioSemana);
+            finSemana.setDate(inicioSemana.getDate() + 6);
+            document.getElementById('fecha-inicio').value = inicioSemana.toISOString().split('T')[0];
+            document.getElementById('fecha-fin').value = finSemana.toISOString().split('T')[0];
+            break;
+        case 'mes':
+            const inicioMes = new Date(hoy.getFullYear(), hoy.getMonth(), 1);
+            const finMes = new Date(hoy.getFullYear(), hoy.getMonth() + 1, 0);
+            document.getElementById('fecha-inicio').value = inicioMes.toISOString().split('T')[0];
+            document.getElementById('fecha-fin').value = finMes.toISOString().split('T')[0];
+            break;
+        case 'trimestre':
+            const trimestre = Math.floor(hoy.getMonth() / 3);
+            const inicioTrimestre = new Date(hoy.getFullYear(), trimestre * 3, 1);
+            const finTrimestre = new Date(hoy.getFullYear(), (trimestre + 1) * 3, 0);
+            document.getElementById('fecha-inicio').value = inicioTrimestre.toISOString().split('T')[0];
+            document.getElementById('fecha-fin').value = finTrimestre.toISOString().split('T')[0];
+            break;
+        case 'año':
+            const inicioAño = new Date(hoy.getFullYear(), 0, 1);
+            const finAño = new Date(hoy.getFullYear(), 11, 31);
+            document.getElementById('fecha-inicio').value = inicioAño.toISOString().split('T')[0];
+            document.getElementById('fecha-fin').value = finAño.toISOString().split('T')[0];
+            break;
+    }
+    
+    if (filtro) {
+        cargarReportes();
+    }
+}
+
+function aplicarFiltroDia() {
+    const dia = document.getElementById('filtro-dia').value;
+    if (dia) {
+        limpiarOtrosFiltros();
+        document.getElementById('filtro-rapido').value = 'personalizado';
+        cargarReportes();
+    }
+}
+
+function aplicarFiltroMes() {
+    const mes = document.getElementById('filtro-mes').value;
+    if (mes) {
+        limpiarOtrosFiltros();
+        document.getElementById('filtro-rapido').value = 'personalizado';
+        cargarReportes();
+    }
+}
+
+function aplicarFiltroAño() {
+    const año = document.getElementById('filtro-año').value;
+    if (año) {
+        limpiarOtrosFiltros();
+        document.getElementById('filtro-rapido').value = 'personalizado';
+        cargarReportes();
+    }
+}
+
+function limpiarOtrosFiltros() {
+    document.getElementById('filtro-dia').value = '';
+    document.getElementById('filtro-mes').value = '';
+    document.getElementById('filtro-año').value = '';
+    document.getElementById('fecha-inicio').value = '';
+    document.getElementById('fecha-fin').value = '';
+}
+
+function limpiarFiltros() {
+    document.getElementById('filtro-rapido').value = '';
+    limpiarOtrosFiltros();
+    cargarReportes();
+}
+
+function exportarPDF() {
+    // Obtener todos los filtros actuales
+    const filtroRapido = document.getElementById('filtro-rapido').value;
+    const filtroDia = document.getElementById('filtro-dia').value;
+    const filtroMes = document.getElementById('filtro-mes').value;
+    const filtroAño = document.getElementById('filtro-año').value;
+    const fechaInicio = document.getElementById('fecha-inicio').value;
+    const fechaFin = document.getElementById('fecha-fin').value;
+
+    let url = "{{ url_for('admin.exportar_reportes_pdf') }}";
+    const params = new URLSearchParams();
+    
+    if (filtroRapido && filtroRapido !== 'personalizado') {
+        params.append('filtro_rapido', filtroRapido);
+    }
+    if (filtroDia) {
+        params.append('filtro_dia', filtroDia);
+    }
+    if (filtroMes) {
+        params.append('filtro_mes', filtroMes);
+    }
+    if (filtroAño) {
+        params.append('filtro_año', filtroAño);
+    }
+    if (fechaInicio && fechaFin) {
+        params.append('inicio', fechaInicio);
+        params.append('fin', fechaFin);
+    }
+    
+    if (params.toString()) {
+        url += '?' + params.toString();
+    }
+    
+    window.open(url, '_blank');
+}
+
+function exportarExcel() {
+    // Obtener todos los filtros actuales
+    const filtroRapido = document.getElementById('filtro-rapido').value;
+    const filtroDia = document.getElementById('filtro-dia').value;
+    const filtroMes = document.getElementById('filtro-mes').value;
+    const filtroAño = document.getElementById('filtro-año').value;
+    const fechaInicio = document.getElementById('fecha-inicio').value;
+    const fechaFin = document.getElementById('fecha-fin').value;
+
+    let url = "{{ url_for('admin.exportar_reportes_excel') }}";
+    const params = new URLSearchParams();
+    
+    if (filtroRapido && filtroRapido !== 'personalizado') {
+        params.append('filtro_rapido', filtroRapido);
+    }
+    if (filtroDia) {
+        params.append('filtro_dia', filtroDia);
+    }
+    if (filtroMes) {
+        params.append('filtro_mes', filtroMes);
+    }
+    if (filtroAño) {
+        params.append('filtro_año', filtroAño);
+    }
+    if (fechaInicio && fechaFin) {
+        params.append('inicio', fechaInicio);
+        params.append('fin', fechaFin);
+    }
+    
+    if (params.toString()) {
+        url += '?' + params.toString();
+    }
+    
+    window.open(url, '_blank');
+}
+
+function mostrarLoading() {
+    // Crear overlay de loading si no existe
+    if (!document.getElementById('loading-overlay')) {
+        const overlay = document.createElement('div');
+        overlay.id = 'loading-overlay';
+        overlay.style.cssText = `
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0,0,0,0.5);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            z-index: 9999;
+        `;
+        overlay.innerHTML = `
+            <div class="text-center text-white">
+                <i class="fas fa-spinner fa-spin fa-3x mb-3"></i>
+                <h5>Cargando reportes...</h5>
+            </div>
+        `;
+        document.body.appendChild(overlay);
+    }
+}
+
+function ocultarLoading() {
+    const overlay = document.getElementById('loading-overlay');
+    if (overlay) {
+        overlay.remove();
+    }
+}
+
+function mostrarError(mensaje) {
+    // Crear alerta de error
+    const alerta = document.createElement('div');
+    alerta.className = 'alert alert-danger alert-dismissible fade show position-fixed';
+    alerta.style.cssText = 'top: 20px; right: 20px; z-index: 10000; min-width: 300px;';
+    alerta.innerHTML = `
+        <i class="fas fa-exclamation-triangle me-2"></i>
+        ${mensaje}
+        <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+    `;
+    document.body.appendChild(alerta);
+    
+    // Auto-remover después de 5 segundos
+    setTimeout(() => {
+        if (alerta.parentNode) {
+            alerta.remove();
+        }
+    }, 5000);
+}
+
+function actualizarTituloFiltro() {
+    const filtroRapido = document.getElementById('filtro-rapido').value;
+    const filtroDia = document.getElementById('filtro-dia').value;
+    const filtroMes = document.getElementById('filtro-mes').value;
+    const filtroAño = document.getElementById('filtro-año').value;
+    
+    let titulo = 'Reportes';
+    if (filtroRapido && filtroRapido !== 'personalizado') {
+        const filtros = {
+            'hoy': 'Hoy',
+            'ayer': 'Ayer',
+            'semana': 'Esta semana',
+            'mes': 'Este mes',
+            'trimestre': 'Este trimestre',
+            'año': 'Este año'
+        };
+        titulo += ` - ${filtros[filtroRapido]}`;
+    } else if (filtroDia) {
+        const fecha = new Date(filtroDia);
+        titulo += ` - ${fecha.toLocaleDateString('es-CO')}`;
+    } else if (filtroMes) {
+        const fecha = new Date(filtroMes + '-01');
+        titulo += ` - ${fecha.toLocaleDateString('es-CO', {month: 'long', year: 'numeric'})}`;
+    } else if (filtroAño) {
+        titulo += ` - Año ${filtroAño}`;
+    }
+    
+    document.querySelector('h2').innerHTML = `<i class="fas fa-chart-bar me-2"></i> ${titulo}`;
+}
+
+document.addEventListener("DOMContentLoaded", cargarReportes);
+
+// Función para limpiar gráficos al salir de la página
+window.addEventListener('beforeunload', function() {
+    if (chartMeses) {
+        chartMeses.destroy();
+    }
+    if (chartIngresos) {
+        chartIngresos.destroy();
+    }
+    if (chartOcupacion) {
+        chartOcupacion.destroy();
+    }
+    if (chartHeatmap) {
+        chartHeatmap.destroy();
+    }
+});
+</script>
+{% endblock %}

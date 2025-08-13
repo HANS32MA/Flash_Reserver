@@ -1,0 +1,118 @@
+{% extends "base.html" %}
+
+{% block title %}Nueva Categoría{% endblock %}
+
+{% block content %}
+<div class="container-fluid">
+    <div class="row justify-content-center">
+        <div class="col-md-8 col-lg-6">
+            <div class="card shadow-sm">
+                <div class="card-header bg-primary text-white">
+                    <h4 class="mb-0">
+                        <i class="fas fa-tag me-2"></i>Crear Nueva Categoría
+                    </h4>
+                </div>
+                <div class="card-body">
+                    {% with messages = get_flashed_messages(with_categories=true) %}
+                        {% if messages %}
+                            {% for category, message in messages %}
+                                <div class="alert alert-{{ 'danger' if category == 'error' else category }} alert-dismissible fade show" role="alert">
+                                    {{ message }}
+                                    <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+                                </div>
+                            {% endfor %}
+                        {% endif %}
+                    {% endwith %}
+
+                    <form method="POST" class="needs-validation" novalidate>
+                        <div class="mb-4">
+                            <label for="nombre" class="form-label">
+                                <i class="fas fa-tag me-1"></i>Nombre de la Categoría *
+                            </label>
+                            <input type="text" 
+                                   class="form-control" 
+                                   id="nombre" 
+                                   name="nombre" 
+                                   required 
+                                   placeholder="Ej: Fútbol Sala, Baloncesto, Tenis">
+                            <div class="invalid-feedback">
+                                Por favor ingrese el nombre de la categoría.
+                            </div>
+                        </div>
+
+                        <div class="mb-4">
+                            <label for="descripcion" class="form-label">
+                                <i class="fas fa-align-left me-1"></i>Descripción
+                            </label>
+                            <textarea class="form-control" 
+                                      id="descripcion" 
+                                      name="descripcion" 
+                                      rows="4" 
+                                      placeholder="Descripción opcional de la categoría..."></textarea>
+                            <div class="form-text">
+                                Proporcione una descripción detallada para ayudar a identificar el tipo de deporte o actividad.
+                            </div>
+                        </div>
+
+                        <div class="alert alert-info">
+                            <h6 class="alert-heading">
+                                <i class="fas fa-info-circle me-2"></i>Información sobre Categorías
+                            </h6>
+                            <p class="mb-2">Las categorías ayudan a organizar las canchas por tipo de deporte o actividad:</p>
+                            <ul class="mb-0 small">
+                                <li><strong>Fútbol Sala:</strong> Para canchas de fútbol 5 o fútbol sala</li>
+                                <li><strong>Baloncesto:</strong> Para canchas de baloncesto</li>
+                                <li><strong>Tenis:</strong> Para canchas de tenis</li>
+                                <li><strong>Voleibol:</strong> Para canchas de voleibol</li>
+                                <li><strong>Otros:</strong> Para otros deportes o actividades</li>
+                            </ul>
+                        </div>
+
+                        <div class="d-grid gap-2 d-md-flex justify-content-md-end">
+                            <a href="{{ url_for('admin.categorias') }}" class="btn admin-back-btn me-md-2">
+                                <i class="fas fa-arrow-left me-1"></i>Cancelar
+                            </a>
+                            <button type="submit" class="btn btn-primary">
+                                <i class="fas fa-save me-1"></i>Crear Categoría
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script>
+// Validación del formulario
+(function() {
+    'use strict';
+    window.addEventListener('load', function() {
+        var forms = document.getElementsByClassName('needs-validation');
+        var validation = Array.prototype.filter.call(forms, function(form) {
+            form.addEventListener('submit', function(event) {
+                if (form.checkValidity() === false) {
+                    event.preventDefault();
+                    event.stopPropagation();
+                }
+                form.classList.add('was-validated');
+            }, false);
+        });
+    }, false);
+})();
+
+// Validación en tiempo real del nombre
+document.getElementById('nombre').addEventListener('input', function() {
+    const nombre = this.value.trim();
+    if (nombre.length < 2) {
+        this.setCustomValidity('El nombre debe tener al menos 2 caracteres');
+    } else if (nombre.length > 50) {
+        this.setCustomValidity('El nombre no puede exceder 50 caracteres');
+    } else {
+        this.setCustomValidity('');
+    }
+});
+</script>
+{% endblock %} 

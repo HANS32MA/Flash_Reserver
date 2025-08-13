@@ -1,0 +1,344 @@
+{% extends "base.html" %}
+{% block title %}Panel de Administrador{% endblock %}
+
+{% block content %}
+<div class="container-fluid">
+    <div class="row">
+        <!-- Barra lateral -->
+        <div class="col-md-2">
+            <!-- Perfil admin -->
+            <div class="card mb-4">
+                <div class="card-body text-center">
+                    <img src="{{ url_for('static', filename=current_user.FotoPerfil if current_user.FotoPerfil else 'img/default-user.png') }}"
+                         class="rounded-circle mb-3" width="80" height="80" style="object-fit: cover;">
+                    <h5>{{ current_user.Nombre }}</h5>
+                    <p class="text-muted">Administrador</p>
+                </div>
+            </div>
+
+            <!-- Menú -->
+            <div class="card mb-4">
+                <div class="card-header"><h5>Menú Principal</h5></div>
+                <div class="card-body">
+                    <ul class="nav flex-column">
+                        <li class="nav-item"><a class="nav-link active" href="{{ url_for('admin.dashboard') }}"><i class="fas fa-tachometer-alt me-2"></i> Dashboard</a></li>
+                        <li class="nav-item"><a class="nav-link" href="{{ url_for('admin.usuarios') }}"><i class="fas fa-users me-2"></i> Usuarios</a></li>
+                        <li class="nav-item"><a class="nav-link" href="{{ url_for('admin.canchas') }}"><i class="fas fa-futbol me-2"></i> Canchas</a></li>
+                        <li class="nav-item"><a class="nav-link" href="{{ url_for('admin.reservas') }}"><i class="fas fa-calendar-alt me-2"></i> Reservas</a></li>
+                        <li class="nav-item"><a class="nav-link" href="{{ url_for('admin.categorias') }}"><i class="fas fa-tags me-2"></i> Categorías</a></li>
+                        <li class="nav-item"><a class="nav-link" href="{{ url_for('admin.reportes') }}"><i class="fas fa-chart-bar me-2"></i> Reportes</a></li>
+                        <li class="nav-item"><a class="nav-link" href="{{ url_for('admin.admin_gestionar_posts') }}"><i class="fas fa-comments me-2"></i> Gestión Foro</a></li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+
+        <!-- Contenido principal -->
+        <div class="col-md-10">
+            <div class="d-flex justify-content-between align-items-center mb-4">
+                <h2>Dashboard Administrativo</h2>
+                <div class="d-flex gap-2 dashboard-actions">
+                    <a href="{{ url_for('admin.nueva_cancha') }}" class="btn btn-primary btn-sm" title="Nueva Cancha">
+                        <i class="fas fa-plus me-1"></i>Nueva Cancha
+                    </a>
+                    <a href="{{ url_for('admin.nuevo_usuario') }}" class="btn btn-success btn-sm" title="Nuevo Usuario">
+                        <i class="fas fa-user-plus me-1"></i>Nuevo Usuario
+                    </a>
+                    <a href="{{ url_for('admin.reportes') }}" class="btn btn-warning btn-sm" title="Generar Reporte">
+                        <i class="fas fa-file-export me-1"></i>Reporte
+                    </a>
+                    <a href="{{ url_for('admin.admin_gestionar_posts') }}" class="btn btn-info btn-sm" title="Gestionar Foro">
+                        <i class="fas fa-comments me-1"></i>Foro
+                    </a>
+                    <a href="{{ url_for('admin.ayuda') }}" class="btn btn-outline-secondary btn-sm" title="Ayuda">
+                        <i class="fas fa-question-circle me-1"></i>Ayuda
+                    </a>
+                </div>
+            </div>
+
+            <!-- Tarjetas resumen -->
+            <div class="row mb-4">
+                <div class="col-md-3"><div class="card"><div class="card-body text-center">
+                    <h5 class="card-title">Usuarios</h5><h3 id="total-usuarios">{{ total_usuarios }}</h3>
+                </div></div></div>
+                <div class="col-md-3"><div class="card"><div class="card-body text-center">
+                    <h5 class="card-title">Canchas</h5><h3 id="total-canchas">{{ total_canchas }}</h3>
+                </div></div></div>
+                <div class="col-md-3"><div class="card"><div class="card-body text-center">
+                    <h5 class="card-title">Reservas Hoy</h5><h3 id="reservas-hoy-count">{{ reservas_hoy }}</h3>
+                </div></div></div>
+                <div class="col-md-3"><div class="card"><div class="card-body text-center">
+                    <h5 class="card-title">Ingresos</h5><h3 id="ingresos-totales">{{ format_currency(ingresos_totales) }}</h3>
+                </div></div></div>
+            </div>
+
+            <!-- Tarjetas del Foro -->
+            <div class="row mb-4">
+                <div class="col-md-12">
+                    <div class="card">
+                        <div class="card-header bg-info text-white">
+                            <h5 class="mb-0"><i class="fas fa-comments me-2"></i>Resumen del Foro</h5>
+                        </div>
+                        <div class="card-body">
+                            <div class="row text-center">
+                                <div class="col-md-3">
+                                    <div class="border-end">
+                                        <h4 class="text-primary" id="total-posts-foro">{{ total_posts_foro }}</h4>
+                                        <small class="text-muted">Total Posts</small>
+                                        <div class="mt-1">
+                                            <small class="text-muted" id="posts-status">Actualizado</small>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-md-3">
+                                    <div class="border-end">
+                                        <h4 class="text-success" id="total-comentarios-foro">{{ total_comentarios_foro }}</h4>
+                                        <small class="text-muted">Total Comentarios</small>
+                                        <div class="mt-1">
+                                            <small class="text-muted" id="comentarios-status">Actualizado</small>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-md-3">
+                                    <div class="border-end">
+                                        <h4 class="text-info" id="total-likes-foro">{{ total_likes_foro }}</h4>
+                                        <small class="text-muted">Total Likes</small>
+                                        <div class="mt-1">
+                                            <small class="text-muted" id="likes-status">Actualizado</small>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-md-3">
+                                    <h4 class="text-warning" id="posts-pendientes-foro">{{ posts_pendientes_foro }}</h4>
+                                    <small class="text-muted">Posts Pendientes</small>
+                                    <div class="mt-1">
+                                        <small class="text-muted" id="pendientes-status">Actualizado</small>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="text-center mt-3">
+                                <a href="{{ url_for('admin.admin_gestionar_posts') }}" class="btn btn-info me-2">
+                                    <i class="fas fa-cog me-2"></i>Gestionar Posts
+                                </a>
+                                <a href="{{ url_for('admin.admin_estadisticas_foro') }}" class="btn btn-outline-info">
+                                    <i class="fas fa-chart-bar me-2"></i>Ver Estadísticas
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="row">
+                <!-- Últimas Reservas -->
+                <div class="col-md-6">
+                    <div class="card">
+                        <div class="card-header"><h5>Últimas Reservas</h5></div>
+                        <div class="card-body table-responsive">
+                            <table class="table"><thead><tr><th>ID</th><th>Usuario</th><th>Cancha</th><th>Fecha</th><th>Estado</th></tr></thead>
+                                <tbody id="ultimas-reservas-body">
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Canchas populares -->
+                <div class="col-md-6">
+                    <div class="card">
+                        <div class="card-header"><h5>Canchas Más Populares</h5></div>
+                        <div class="card-body table-responsive">
+                            <table class="table"><thead><tr><th>Cancha</th><th>Reservas</th><th>Ingresos</th><th>Ocupación</th></tr></thead>
+                                <tbody id="canchas-populares-body">
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Actividad Reciente -->
+            <div class="row mt-4">
+                <div class="col-md-12">
+                    <div class="card">
+                        <div class="card-header"><h5>Actividad Reciente</h5></div>
+                        <div class="card-body">
+                            <ul class="list-group" id="actividad-reciente-list"></ul>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+function actualizarDashboard() {
+    fetch("{{ url_for('admin.api_estadisticas') }}")
+        .then(res => {
+            if (!res.ok) {
+                throw new Error(`HTTP error! status: ${res.status}`);
+            }
+            return res.json();
+        })
+        .then(data => {
+            // Actualizar totales
+            document.getElementById('total-usuarios').textContent = data.total_usuarios || 0;
+            document.getElementById('total-canchas').textContent = data.total_canchas || 0;
+            document.getElementById('reservas-hoy-count').textContent = data.reservas_hoy || 0;
+            document.getElementById('ingresos-totales').textContent = "COP " + (data.ingresos_totales || 0).toLocaleString('es-CO');
+
+            // Últimas reservas
+            const reservasBody = document.getElementById('ultimas-reservas-body');
+            reservasBody.innerHTML = '';
+            if (data.ultimas_reservas && data.ultimas_reservas.length > 0) {
+                data.ultimas_reservas.forEach(r => {
+                    let badge = r.estado === 'Confirmada' ? 'success' : (r.estado === 'Cancelada' ? 'danger' : 'warning');
+                    reservasBody.innerHTML += `<tr>
+                        <td>${r.id || ''}</td><td>${r.usuario || ''}</td><td>${r.cancha || ''}</td><td>${r.fecha || ''}</td>
+                        <td><span class="badge bg-${badge}">${r.estado || ''}</span></td>
+                    </tr>`;
+                });
+            } else {
+                reservasBody.innerHTML = '<tr><td colspan="5" class="text-center text-muted">No hay reservas recientes</td></tr>';
+            }
+
+            // Canchas populares
+            const canchasBody = document.getElementById('canchas-populares-body');
+            canchasBody.innerHTML = '';
+            if (data.canchas_populares && data.canchas_populares.length > 0) {
+                data.canchas_populares.forEach(c => {
+                    canchasBody.innerHTML += `<tr>
+                        <td>${c.nombre || ''}</td><td>${c.total_reservas || 0}</td>
+                        <td>COP ${(c.ingresos || 0).toLocaleString('es-CO')}</td>
+                        <td>
+                            <div class="progress"><div class="progress-bar" style="width:${c.ocupacion || 0}%"></div></div>
+                            <small>${c.ocupacion || 0}%</small>
+                        </td>
+                    </tr>`;
+                });
+            } else {
+                canchasBody.innerHTML = '<tr><td colspan="4" class="text-center text-muted">No hay datos de canchas</td></tr>';
+            }
+
+            // Actividad reciente
+            const actividadList = document.getElementById('actividad-reciente-list');
+            actividadList.innerHTML = '';
+            if (data.actividades && data.actividades.length > 0) {
+                data.actividades.forEach(a => {
+                    actividadList.innerHTML += `<li class="list-group-item d-flex justify-content-between">
+                        <div><strong>${a.usuario || ''}</strong> - ${a.accion || ''}</div>
+                        <div class="text-muted">${a.fecha || ''}</div>
+                    </li>`;
+                });
+            } else {
+                actividadList.innerHTML = '<li class="list-group-item text-center text-muted">No hay actividad reciente</li>';
+            }
+        })
+        .catch(err => {
+            console.error("Error actualizando dashboard:", err);
+            // En caso de error, mostrar mensaje de error en las tablas
+            document.getElementById('ultimas-reservas-body').innerHTML = '<tr><td colspan="5" class="text-center text-danger">Error cargando datos</td></tr>';
+            document.getElementById('canchas-populares-body').innerHTML = '<tr><td colspan="4" class="text-center text-danger">Error cargando datos</td></tr>';
+            document.getElementById('actividad-reciente-list').innerHTML = '<li class="list-group-item text-center text-danger">Error cargando datos</li>';
+        });
+}
+
+// Función para cargar estadísticas del foro
+function cargarEstadisticasForo() {
+    // Mostrar estado de "cargando"
+    document.getElementById('posts-status').textContent = 'Cargando...';
+    document.getElementById('posts-status').className = 'mt-1 text-info';
+    document.getElementById('comentarios-status').textContent = 'Cargando...';
+    document.getElementById('comentarios-status').className = 'mt-1 text-info';
+    document.getElementById('likes-status').textContent = 'Cargando...';
+    document.getElementById('likes-status').className = 'mt-1 text-info';
+    document.getElementById('pendientes-status').textContent = 'Cargando...';
+    document.getElementById('pendientes-status').className = 'mt-1 text-info';
+    
+    fetch("{{ url_for('admin.admin_estadisticas_foro') }}?format=json", {
+        headers: {
+            'X-Requested-With': 'XMLHttpRequest'
+        }
+    })
+        .then(res => {
+            if (!res.ok) {
+                throw new Error(`HTTP error! status: ${res.status}`);
+            }
+            return res.json();
+        })
+        .then(data => {
+            // Solo actualizar si hay cambios en los datos
+            const currentPosts = document.getElementById('total-posts-foro').textContent;
+            const currentComentarios = document.getElementById('total-comentarios-foro').textContent;
+            const currentLikes = document.getElementById('total-likes-foro').textContent;
+            const currentPendientes = document.getElementById('posts-pendientes-foro').textContent;
+            
+            // Actualizar solo si los valores son diferentes
+            if (currentPosts != data.total_posts) {
+                document.getElementById('total-posts-foro').textContent = data.total_posts || 0;
+            }
+            if (currentComentarios != data.total_comentarios) {
+                document.getElementById('total-comentarios-foro').textContent = data.total_comentarios || 0;
+            }
+            if (currentLikes != data.total_likes) {
+                document.getElementById('total-likes-foro').textContent = data.total_likes || 0;
+            }
+            
+            // Calcular posts pendientes (ocultos + eliminados)
+            const postsPendientes = (data.posts_ocultos || 0) + (data.posts_eliminados || 0);
+            if (currentPendientes != postsPendientes) {
+                document.getElementById('posts-pendientes-foro').textContent = postsPendientes;
+            }
+            
+            // Actualizar estado a "actualizado"
+            const now = new Date().toLocaleTimeString('es-CO', { hour: '2-digit', minute: '2-digit' });
+            document.getElementById('posts-status').textContent = `Actualizado ${now}`;
+            document.getElementById('posts-status').className = 'mt-1 text-success';
+            document.getElementById('comentarios-status').textContent = `Actualizado ${now}`;
+            document.getElementById('comentarios-status').className = 'mt-1 text-success';
+            document.getElementById('likes-status').textContent = `Actualizado ${now}`;
+            document.getElementById('likes-status').className = 'mt-1 text-success';
+            document.getElementById('pendientes-status').textContent = `Actualizado ${now}`;
+            document.getElementById('pendientes-status').className = 'mt-1 text-success';
+        })
+        .catch(err => {
+            console.error("Error cargando estadísticas del foro:", err);
+            // En caso de error, mostrar estado de error
+            document.getElementById('posts-status').textContent = 'Error';
+            document.getElementById('posts-status').className = 'mt-1 text-danger';
+            document.getElementById('comentarios-status').textContent = 'Error';
+            document.getElementById('comentarios-status').className = 'mt-1 text-danger';
+            document.getElementById('likes-status').textContent = 'Error';
+            document.getElementById('likes-status').className = 'mt-1 text-danger';
+            document.getElementById('pendientes-status').textContent = 'Error';
+            document.getElementById('pendientes-status').className = 'mt-1 text-danger';
+        });
+}
+
+// Función para debug del usuario
+function debugUsuario() {
+    fetch("{{ url_for('admin.debug_usuario_foro') }}")
+        .then(res => {
+            if (!res.ok) {
+                throw new Error(`HTTP error! status: ${res.status}`);
+            }
+            return res.json();
+        })
+        .then(data => {
+            console.log('Información del usuario:', data);
+            alert(`Debug Usuario:\nID: ${data.id}\nNombre: ${data.nombre}\nEmail: ${data.email}\nRol ID: ${data.rol_id}\nRol Nombre: ${data.rol_nombre}\nEstado: ${data.estado}\nEs Admin: ${data.es_admin}`);
+        })
+        .catch(err => {
+            console.error("Error en debug:", err);
+            alert('Error al obtener información del usuario');
+        });
+}
+
+// Auto-refresh cada 15s
+actualizarDashboard();
+cargarEstadisticasForo();
+setInterval(actualizarDashboard, 15000);
+setInterval(cargarEstadisticasForo, 30000); // Actualizar foro cada 30s
+</script>
+{% endblock %}

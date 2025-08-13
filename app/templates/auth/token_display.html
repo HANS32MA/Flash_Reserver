@@ -1,0 +1,212 @@
+{% extends "base.html" %}
+
+{% block title %}Token de Recuperación - Flash Reserver{% endblock %}
+
+{% block extra_head %}
+
+{% endblock %}
+
+{% block content %}
+<div class="auth-page">
+    <div class="login-container">
+        <div class="auth-card">
+            <div class="card-header text-center py-4">
+                <h3 class="mb-0"><i class="fas fa-key"></i> Token de Recuperación</h3>
+                <div class="login-title-border"></div>
+            </div>
+            <div class="card-body p-4">
+                    <div class="alert alert-info">
+                        <i class="fas fa-info-circle me-2"></i>
+                        <strong>Importante:</strong> Este token es válido por 1 hora. Guárdalo en un lugar seguro.
+                    </div>
+
+                    <div class="form-group mb-4">
+                        <label for="token" class="form-label">
+                            <i class="fas fa-shield-alt me-2"></i>
+                            Token de Seguridad:
+                        </label>
+                        <div class="input-group">
+                            <input type="text" 
+                                   class="form-control font-monospace" 
+                                   id="token" 
+                                   value="{{ token }}" 
+                                   readonly>
+                            <button class="btn btn-outline-primary" 
+                                    type="button" 
+                                    onclick="copyToken()">
+                                <i class="fas fa-copy me-2"></i>
+                                Copiar y Guardar
+                            </button>
+                            <button class="btn btn-outline-danger" 
+                                    type="button" 
+                                    onclick="clearSavedToken()">
+                                <i class="fas fa-trash me-2"></i>
+                                Limpiar
+                            </button>
+                        </div>
+                    </div>
+
+                    <div class="form-group mb-4">
+                        <label for="resetUrl" class="form-label">
+                            <i class="fas fa-link me-2"></i>
+                            Enlace de Restablecimiento:
+                        </label>
+                        <div class="input-group">
+                            <input type="text" 
+                                   class="form-control font-monospace" 
+                                   id="resetUrl" 
+                                   value="{{ reset_url }}" 
+                                   readonly>
+                            <button class="btn btn-outline-success" 
+                                    type="button" 
+                                    onclick="copyUrl()">
+                                <i class="fas fa-copy me-2"></i>
+                                Copiar URL
+                            </button>
+                        </div>
+                    </div>
+
+                    <div class="d-grid gap-2">
+                        <a href="{{ reset_url }}" 
+                           class="login-btn">
+                            <i class="fas fa-unlock me-2"></i>
+                            RESTABLECER CONTRASEÑA
+                        </a>
+                        <a href="{{ url_for('auth.login') }}" 
+                           class="btn btn-outline-secondary">
+                            <i class="fas fa-arrow-left me-2"></i>
+                            Volver al Login
+                        </a>
+                    </div>
+
+                    <hr class="my-4">
+
+                    <div class="alert alert-warning">
+                        <h6 class="alert-heading">
+                            <i class="fas fa-exclamation-triangle me-2"></i>
+                            Instrucciones de Seguridad:
+                        </h6>
+                        <ul class="mb-0">
+                            <li>No compartas este token con nadie</li>
+                            <li>El token expira en 1 hora</li>
+                            <li>Usa este enlace solo en dispositivos seguros</li>
+                            <li>Después de cambiar la contraseña, este token se invalidará</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+function copyToken() {
+    const tokenInput = document.getElementById('token');
+    tokenInput.select();
+    tokenInput.setSelectionRange(0, 99999);
+    navigator.clipboard.writeText(tokenInput.value);
+    
+    // Guardar token en localStorage por seguridad
+    localStorage.setItem('reset_token', tokenInput.value);
+    localStorage.setItem('reset_token_email', '{{ email }}');
+    localStorage.setItem('reset_token_time', new Date().toISOString());
+    
+    // Mostrar feedback
+    const button = event.target.closest('button');
+    const originalText = button.innerHTML;
+    button.innerHTML = '<i class="fas fa-check me-2"></i>Copiado y Guardado';
+    button.classList.remove('btn-outline-primary');
+    button.classList.add('btn-success');
+    
+    setTimeout(() => {
+        button.innerHTML = originalText;
+        button.classList.remove('btn-success');
+        button.classList.add('btn-outline-primary');
+    }, 2000);
+}
+
+function copyUrl() {
+    const urlInput = document.getElementById('resetUrl');
+    urlInput.select();
+    urlInput.setSelectionRange(0, 99999);
+    navigator.clipboard.writeText(urlInput.value);
+    
+    // Mostrar feedback
+    const button = event.target.closest('button');
+    const originalText = button.innerHTML;
+    button.innerHTML = '<i class="fas fa-check me-2"></i>Copiado';
+    button.classList.remove('btn-outline-success');
+    button.classList.add('btn-success');
+    
+    setTimeout(() => {
+        button.innerHTML = originalText;
+        button.classList.remove('btn-success');
+        button.classList.add('btn-outline-success');
+    }, 2000);
+}
+
+// Función para recuperar token guardado
+function loadSavedToken() {
+    const savedToken = localStorage.getItem('reset_token');
+    const savedEmail = localStorage.getItem('reset_token_email');
+    const savedTime = localStorage.getItem('reset_token_time');
+    
+    if (savedToken && savedEmail === '{{ email }}') {
+        // Verificar si el token no ha expirado (1 hora)
+        const tokenTime = new Date(savedTime);
+        const now = new Date();
+        const hoursDiff = (now - tokenTime) / (1000 * 60 * 60);
+        
+        if (hoursDiff < 1) {
+            document.getElementById('token').value = savedToken;
+            showAlert('Token recuperado del almacenamiento local', 'info');
+        } else {
+            // Token expirado, limpiar localStorage
+            localStorage.removeItem('reset_token');
+            localStorage.removeItem('reset_token_email');
+            localStorage.removeItem('reset_token_time');
+        }
+    }
+}
+
+function clearSavedToken() {
+    if (confirm('¿Estás seguro de que quieres limpiar el token guardado?')) {
+        localStorage.removeItem('reset_token');
+        localStorage.removeItem('reset_token_email');
+        localStorage.removeItem('reset_token_time');
+        showAlert('Token guardado eliminado.', 'warning');
+    }
+}
+
+function showAlert(message, type) {
+    const alertDiv = document.createElement('div');
+    alertDiv.className = `alert alert-${type} alert-dismissible fade show`;
+    alertDiv.innerHTML = `
+        ${message}
+        <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+    `;
+    
+    const cardBody = document.querySelector('.card-body');
+    cardBody.insertBefore(alertDiv, cardBody.firstChild);
+    
+    // Auto-dismiss after 5 seconds
+    setTimeout(() => {
+        if (alertDiv.parentNode) {
+            alertDiv.remove();
+        }
+    }, 5000);
+}
+
+// Auto-copiar token al cargar la página (opcional)
+document.addEventListener('DOMContentLoaded', function() {
+    // Cargar token guardado si existe
+    loadSavedToken();
+    
+    // Mostrar notificación de que el token está listo
+    const tokenInput = document.getElementById('token');
+    if (tokenInput.value) {
+        console.log('Token listo para usar:', tokenInput.value);
+    }
+});
+</script>
+{% endblock %}

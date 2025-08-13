@@ -1,0 +1,535 @@
+{% extends "base.html" %}
+
+{% block title %}Foro - Flash Reserver{% endblock %}
+
+{% block content %}
+<div class="container-fluid my-5">
+    <div class="row">
+        <!-- Sidebar con filtros -->
+        <div class="col-md-3">
+            <div class="card shadow-sm mb-4">
+                <div class="card-header bg-primary text-white">
+                    <h5 class="mb-0"><i class="fas fa-filter me-2"></i>Filtros</h5>
+                </div>
+                <div class="card-body">
+                    <form method="GET" action="{{ url_for('foro.index') }}">
+                        <div class="mb-3">
+                            <label for="categoria" class="form-label">
+                                <i class="fas fa-tags me-1"></i>Categoría
+                            </label>
+                            <select class="form-select" id="categoria" name="categoria">
+                                <option value="">Todas las categorías</option>
+                                {% for categoria in categorias %}
+                                <option value="{{ categoria }}" 
+                                        {% if categoria_filter == categoria %}selected{% endif %}>
+                                    {{ categoria }}
+                                </option>
+                                {% endfor %}
+                            </select>
+                        </div>
+                        <div class="mb-3">
+                            <label for="orden" class="form-label">
+                                <i class="fas fa-sort me-1"></i>Ordenar por
+                            </label>
+                            <select class="form-select" id="orden" name="orden">
+                                <option value="reciente" {% if orden == 'reciente' %}selected{% endif %}>
+                                    Más recientes
+                                </option>
+                                <option value="popular" {% if orden == 'popular' %}selected{% endif %}>
+                                    Más populares
+                                </option>
+                                <option value="antiguo" {% if orden == 'antiguo' %}selected{% endif %}>
+                                    Más antiguos
+                                </option>
+                            </select>
+                        </div>
+                        <button type="submit" class="btn btn-primary w-100">
+                            <i class="fas fa-search me-2"></i>Filtrar
+                        </button>
+                    </form>
+                </div>
+            </div>
+
+            <!-- Botón crear post -->
+            <div class="card shadow-sm">
+                <div class="card-body text-center">
+                    <a href="{{ url_for('foro.nuevo_post') }}" class="btn btn-success w-100">
+                        <i class="fas fa-plus me-2"></i>Crear Post
+                    </a>
+                </div>
+            </div>
+        </div>
+
+        <!-- Lista de posts -->
+        <div class="col-md-6">
+            <div class="d-flex justify-content-between align-items-center mb-4">
+                <h2><i class="fas fa-comments me-2"></i>Foro de la Comunidad</h2>
+                <div class="d-flex align-items-center">
+                    <div class="text-muted me-3">
+                        <small>{{ posts|length }} post{{ 's' if posts|length != 1 else '' }}</small>
+                    </div>
+                    {% if current_user.rol.Nombre == 'admin' %}
+                    <div class="dropdown me-2">
+                        <button class="btn btn-warning btn-sm dropdown-toggle" type="button" 
+                                data-bs-toggle="dropdown" aria-expanded="false">
+                            <i class="fas fa-cog me-1"></i>Gestión Foro
+                        </button>
+                        <ul class="dropdown-menu">
+                            <li>
+                                <a href="{{ url_for('admin.admin_gestionar_posts') }}" class="dropdown-item">
+                                    <i class="fas fa-list me-2"></i>Gestionar Posts
+                                </a>
+                            </li>
+                            <li>
+                                <a href="{{ url_for('admin.admin_estadisticas_foro') }}" class="dropdown-item">
+                                    <i class="fas fa-chart-bar me-2"></i>Estadísticas
+                                </a>
+                            </li>
+                        </ul>
+                    </div>
+                    {% endif %}
+                </div>
+            </div>
+
+            {% if posts %}
+                {% for post in posts %}
+                <div class="card shadow-sm mb-4 post-card" data-post-id="{{ post.Id }}">
+                    <div class="card-body">
+                        <div class="d-flex align-items-start">
+                            <!-- Avatar del usuario -->
+                            <div class="me-3">
+                                {% if post.usuario.FotoPerfil %}
+                                    <img src="{{ url_for('static', filename=post.usuario.FotoPerfil) }}"
+                                         alt="Avatar" class="rounded-circle"
+                                         width="48" height="48" style="object-fit: cover;">
+                                {% else %}
+                                    <img src="{{ url_for('static', filename='images/default-user.png') }}"
+                                         alt="Avatar por defecto" class="rounded-circle"
+                                         width="48" height="48" style="object-fit: cover;">
+                                {% endif %}
+                            </div>
+
+                            <!-- Contenido del post -->
+                            <div class="flex-grow-1">
+                                <div class="d-flex justify-content-between align-items-start mb-2">
+                                    <div>
+                                        <h5 class="mb-1">
+                                            <a href="{{ url_for('foro.ver_post', post_id=post.Id) }}" 
+                                               class="text-decoration-none">{{ post.Titulo }}</a>
+                                        </h5>
+                                        <div class="text-muted small">
+                                            <i class="fas fa-user me-1"></i>{{ post.usuario.Nombre }}
+                                            <i class="fas fa-clock me-2 ms-2"></i>{{ post.FechaCreacion.strftime('%d/%m/%Y %H:%M') }}
+                                            <span class="badge bg-secondary ms-2">{{ post.Categoria }}</span>
+                                        </div>
+                                    </div>
+                                    {% if post.UsuarioId == current_user.Id or current_user.rol.Nombre == 'admin' %}
+                                    <div class="dropdown">
+                                        <button class="btn btn-sm btn-outline-secondary" type="button" 
+                                                data-bs-toggle="dropdown">
+                                            <i class="fas fa-ellipsis-v"></i>
+                                        </button>
+                                        <ul class="dropdown-menu">
+                                            <li>
+                                                <button type="button" class="dropdown-item text-danger"
+                                                         onclick="eliminarPost({{ post.Id }}, '{{ post.Titulo }}')">
+                                                     <i class="fas fa-trash me-2"></i>Eliminar
+                                                 </button>
+                                                 <button type="button" class="dropdown-item text-warning"
+                                                         onclick="modificarPost({{ post.Id }})">
+                                                     <i class="fas fa-edit me-2"></i>Modificar
+                                                 </button>
+                                            </li>
+                                        </ul>
+                                    </div>
+                                    {% endif %}
+                                </div>
+
+                                <!-- Contenido del post -->
+                                <p class="mb-3">{{ post.Contenido[:200] }}{% if post.Contenido|length > 200 %}...{% endif %}</p>
+
+                                <!-- Multimedia del post -->
+                                {% if post.tiene_multimedia %}
+                            <div class="mb-4 multimedia-container">
+                                {% if post.Imagen %}
+                                <div class="text-center mb-3 position-relative">
+                                    <span class="multimedia-badge imagen">
+                                        <i class="fas fa-image me-1"></i>Imagen
+                                    </span>
+                                    <img src="{{ url_for('servir_multimedia_foro', filename=post.Imagen.replace('uploads/foro/', '')) }}" 
+                                         class="foro-imagen" alt="Imagen del post"
+                                         style="max-height: 500px; object-fit: cover;"
+                                         onclick="ampliarImagen(this.src, '{{ post.Titulo }}')"
+                                         title="Haz clic para ampliar">
+                                    <div class="multimedia-actions">
+                                        <button class="btn btn-sm btn-outline-light" onclick="ampliarImagen('{{ url_for('servir_multimedia_foro', filename=post.Imagen.replace('uploads/foro/', '')) }}', '{{ post.Titulo }}')">
+                                            <i class="fas fa-expand"></i>
+                                        </button>
+                                    </div>
+                                </div>
+                                {% endif %}
+                                    
+                                    {% if post.Video %}
+                                    <div class="text-center position-relative">
+                                        <span class="multimedia-badge video">
+                                            <i class="fas fa-video me-1"></i>Video
+                                        </span>
+                                        <video class="foro-video" controls 
+                                               style="max-height: 300px; max-width: 100%;"
+                                               preload="metadata">
+                                            <source src="{{ url_for('servir_multimedia_foro', filename=post.Video.replace('uploads/foro/', '')) }}" type="video/mp4">
+                                            <source src="{{ url_for('servir_multimedia_foro', filename=post.Video.replace('uploads/foro/', '')) }}" type="video/webm">
+                                            <source src="{{ url_for('servir_multimedia_foro', filename=post.Video.replace('uploads/foro/', '')) }}" type="video/ogg">
+                                            Tu navegador no soporta el elemento video.
+                                        </video>
+                                    </div>
+                                    {% endif %}
+                                </div>
+                                {% endif %}
+
+                                <!-- Acciones del post -->
+                                <div class="d-flex justify-content-between align-items-center">
+                                    <div class="d-flex align-items-center">
+                                        <button class="btn btn-sm btn-outline-primary me-2 like-btn" 
+                                                data-post-id="{{ post.Id }}"
+                                                data-liked="{{ 'true' if post.is_liked_by(current_user.Id) else 'false' }}">
+                                            <i class="fas fa-heart me-1 {% if post.is_liked_by(current_user.Id) %}text-danger{% endif %}"></i>
+                                            <span class="like-count">{{ post.total_likes }}</span>
+                                        </button>
+                                        <a href="{{ url_for('foro.ver_post', post_id=post.Id) }}" 
+                                           class="btn btn-sm btn-outline-secondary me-2">
+                                            <i class="fas fa-comment me-1"></i>{{ post.total_comentarios }}
+                                        </a>
+                                    </div>
+                                    <a href="{{ url_for('foro.ver_post', post_id=post.Id) }}" 
+                                       class="btn btn-sm btn-primary">
+                                        Ver más
+                                    </a>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                {% endfor %}
+            {% else %}
+                <div class="card shadow-sm">
+                    <div class="card-body text-center py-5">
+                        <i class="fas fa-comments fa-3x text-muted mb-3"></i>
+                        <h5 class="text-muted">No hay posts aún</h5>
+                        <p class="text-muted">¡Sé el primero en crear un post!</p>
+                        <a href="{{ url_for('foro.nuevo_post') }}" class="btn btn-primary">
+                            <i class="fas fa-plus me-2"></i>Crear Post
+                        </a>
+                    </div>
+                </div>
+            {% endif %}
+        </div>
+
+        <!-- Sidebar de comentarios recientes -->
+        <div class="col-md-3">
+            <div class="card shadow-sm mb-4">
+                <div class="card-header bg-info text-white">
+                    <h5 class="mb-0"><i class="fas fa-comments me-2"></i>Comentarios Recientes</h5>
+                </div>
+                <div class="card-body p-0">
+                    <div id="comentarios-recientes" class="comentarios-recientes-container">
+                        <!-- Los comentarios se cargarán dinámicamente -->
+                    </div>
+                </div>
+            </div>
+
+            <!-- Formulario rápido para comentar -->
+            <div class="card shadow-sm">
+                <div class="card-header bg-success text-white">
+                    <h5 class="mb-0"><i class="fas fa-plus me-2"></i>Comentar Rápido</h5>
+                </div>
+                <div class="card-body">
+                    <form id="form-comentario-rapido">
+                        <div class="mb-3">
+                            <label for="post-select" class="form-label">Seleccionar Post</label>
+                            <select class="form-select" id="post-select" required>
+                                <option value="">Elige un post...</option>
+                                {% for post in posts %}
+                                <option value="{{ post.Id }}">{{ post.Titulo[:30] }}...</option>
+                                {% endfor %}
+                            </select>
+                        </div>
+                        <div class="mb-3">
+                            <label for="comentario-rapido" class="form-label">Tu comentario</label>
+                            <textarea class="form-control" id="comentario-rapido" rows="3" 
+                                      placeholder="Escribe tu comentario..." required></textarea>
+                        </div>
+                        <button type="submit" class="btn btn-success w-100">
+                            <i class="fas fa-paper-plane me-2"></i>Comentar
+                        </button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Modal para ampliar imágenes -->
+<div class="modal fade" id="imagenModal" tabindex="-1" aria-labelledby="imagenModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg modal-dialog-centered">
+        <div class="modal-content bg-dark text-white">
+            <div class="modal-header border-secondary">
+                <h5 class="modal-title" id="imagenModalTitle">Imagen del Post</h5>
+                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body text-center p-0">
+                <img id="imagenModalImg" src="" class="img-fluid" alt="Imagen ampliada" style="max-height: 80vh;">
+            </div>
+            <div class="modal-footer border-secondary">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cerrar</button>
+                <a id="descargarImagen" href="" download class="btn btn-primary">
+                    <i class="fas fa-download me-2"></i>Descargar
+                </a>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Estilos personalizados para la barra de scroll de comentarios recientes -->
+<style>
+.comentarios-recientes-container {
+    max-height: 400px;
+    overflow-y: auto;
+    scroll-behavior: smooth;
+}
+
+.comentario-item {
+    transition: background-color 0.2s ease;
+}
+
+.comentario-item:hover {
+    background-color: #f8f9fa;
+}
+
+.comentario-item:last-child {
+    border-bottom: none !important;
+}
+
+/* Estilos personalizados para la barra de scroll */
+.comentarios-recientes-container::-webkit-scrollbar {
+    width: 6px;
+}
+
+.comentarios-recientes-container::-webkit-scrollbar-track {
+    background: #f1f1f1;
+    border-radius: 10px;
+}
+
+.comentarios-recientes-container::-webkit-scrollbar-thumb {
+    background: #c1c1c1;
+    border-radius: 10px;
+    transition: background 0.3s ease;
+}
+
+.comentarios-recientes-container::-webkit-scrollbar-thumb:hover {
+    background: #a8a8a8;
+}
+
+.comentarios-recientes-container::-webkit-scrollbar-corner {
+    background: #f1f1f1;
+}
+
+/* Estilos para Firefox */
+.comentarios-recientes-container {
+    scrollbar-width: thin;
+    scrollbar-color: #c1c1c1 #f1f1f1;
+}
+
+/* Estilo para el indicador de comentarios adicionales */
+.comentarios-recientes-container .bg-light {
+    background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%) !important;
+    border-radius: 0 0 8px 8px;
+    margin-top: 0;
+}
+</style>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    // Funcionalidad de likes
+    const likeButtons = document.querySelectorAll('.like-btn');
+    
+    likeButtons.forEach(button => {
+        button.addEventListener('click', function() {
+            const postId = this.getAttribute('data-post-id');
+            const isLiked = this.getAttribute('data-liked') === 'true';
+            
+            fetch(`/foro/post/${postId}/like`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                }
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    // Actualizar contador de likes
+                    const likeCount = this.querySelector('.like-count');
+                    likeCount.textContent = data.total_likes;
+                    
+                    // Actualizar icono
+                    const icon = this.querySelector('.fas');
+                    if (data.is_liked) {
+                        icon.classList.add('text-danger');
+                        this.setAttribute('data-liked', 'true');
+                    } else {
+                        icon.classList.remove('text-danger');
+                        this.setAttribute('data-liked', 'false');
+                    }
+                }
+            })
+            .catch(error => {
+                console.error('Error:', error);
+            });
+        });
+    });
+    
+    // Función para modificar posts
+    window.modificarPost = function(postId) {
+        window.location.href = `/foro/post/${postId}/editar`;
+    };
+    
+    // Función para eliminar posts
+    window.eliminarPost = function(postId, postTitulo) {
+        showConfirmDelete(postTitulo, function() {
+            const form = document.createElement('form');
+            form.method = 'POST';
+            form.action = '/foro/post/' + postId + '/eliminar';
+            document.body.appendChild(form);
+            form.submit();
+        });
+    };
+
+    // Función para ampliar imágenes
+    window.ampliarImagen = function(src, titulo) {
+        const modal = new bootstrap.Modal(document.getElementById('imagenModal'));
+        const modalImg = document.getElementById('imagenModalImg');
+        const modalTitle = document.getElementById('imagenModalTitle');
+        const descargarBtn = document.getElementById('descargarImagen');
+
+        modalImg.src = src;
+        modalTitle.textContent = titulo;
+        descargarBtn.href = src;
+        
+        // Configurar nombre de descarga
+        const nombreArchivo = src.split('/').pop();
+        descargarBtn.download = nombreArchivo;
+        
+        modal.show();
+    };
+
+    // Cargar comentarios recientes
+    function cargarComentariosRecientes() {
+        fetch('/foro/comentarios-recientes')
+            .then(response => response.json())
+            .then(data => {
+                const container = document.getElementById('comentarios-recientes');
+                if (data.comentarios && data.comentarios.length > 0) {
+                    // Limitar a solo los primeros 6 comentarios
+                    const comentariosLimitados = data.comentarios.slice(0, 6);
+                    
+                    container.innerHTML = comentariosLimitados.map(comentario => `
+                        <div class="comentario-item p-3 border-bottom">
+                            <div class="d-flex align-items-start">
+                                <img src="/static/${comentario.usuario.foto}" alt="Avatar" 
+                                     class="rounded-circle me-2" width="32" height="32" style="object-fit: cover;">
+                                <div class="flex-grow-1">
+                                    <div class="small">
+                                        <strong>${comentario.usuario.nombre}</strong>
+                                        <span class="text-muted ms-1">en</span>
+                                        <a href="/foro/post/${comentario.post_id}" class="text-decoration-none">
+                                            ${comentario.post_titulo}
+                                        </a>
+                                    </div>
+                                    <div class="small text-muted">${comentario.contenido}</div>
+                                    <div class="small text-muted">${comentario.fecha}</div>
+                                </div>
+                            </div>
+                        </div>
+                    `).join('');
+                    
+                    // Agregar indicador si hay más comentarios
+                    if (data.comentarios.length > 6) {
+                        container.innerHTML += `
+                            <div class="text-center py-2 bg-light">
+                                <small class="text-muted">
+                                    <i class="fas fa-info-circle me-1"></i>
+                                    Mostrando los 6 comentarios más recientes
+                                </small>
+                            </div>
+                        `;
+                    }
+                } else {
+                    container.innerHTML = '<div class="p-3"><p class="text-muted small mb-0">No hay comentarios recientes</p></div>';
+                }
+            })
+            .catch(error => {
+                console.error('Error cargando comentarios:', error);
+            });
+    }
+
+    // Formulario de comentario rápido
+    const formComentarioRapido = document.getElementById('form-comentario-rapido');
+    if (formComentarioRapido) {
+        formComentarioRapido.addEventListener('submit', function(e) {
+            e.preventDefault();
+            
+            const postId = document.getElementById('post-select').value;
+            const contenido = document.getElementById('comentario-rapido').value.trim();
+            
+            if (!postId || !contenido) {
+                showWarning('Campos Requeridos', 'Por favor selecciona un post y escribe un comentario.');
+                return;
+            }
+            
+            fetch(`/foro/post/${postId}/comentar-ajax`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({ contenido: contenido })
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    showSuccess('Comentario Agregado', 'Tu comentario ha sido publicado exitosamente.');
+                    document.getElementById('comentario-rapido').value = '';
+                    document.getElementById('post-select').value = '';
+                    
+                    // Recargar comentarios recientes
+                    cargarComentariosRecientes();
+                    
+                    // Actualizar contador de comentarios en el post
+                    const postElement = document.querySelector(`[data-post-id="${postId}"]`);
+                    if (postElement) {
+                        const comentariosLink = postElement.querySelector('a[href*="/foro/post/"]');
+                        if (comentariosLink) {
+                            const icon = comentariosLink.querySelector('.fas');
+                            const text = comentariosLink.textContent.trim();
+                            const count = parseInt(text.match(/\d+/)[0]) + 1;
+                            comentariosLink.innerHTML = `<i class="fas fa-comment me-1"></i>${count}`;
+                        }
+                    }
+                } else {
+                    showError('Error', data.error || 'Error al agregar comentario');
+                }
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                showError('Error', 'Error al agregar comentario');
+            });
+        });
+    }
+
+    // Cargar comentarios recientes al cargar la página
+    cargarComentariosRecientes();
+    
+    // Recargar comentarios cada 30 segundos
+    setInterval(cargarComentariosRecientes, 30000);
+});
+</script>
+{% endblock %} 

@@ -1,0 +1,188 @@
+{% extends "base.html" %}
+
+{% block title %}Flash Reserver{% endblock %}
+
+{% block content %}
+<!-- Carrusel de imágenes -->
+<div id="heroCarousel" class="carousel slide mt-5" data-bs-ride="carousel">
+    <div class="carousel-indicators">
+        <button type="button" data-bs-target="#heroCarousel" data-bs-slide-to="0" class="active"></button>
+        <button type="button" data-bs-target="#heroCarousel" data-bs-slide-to="1"></button>
+        <button type="button" data-bs-target="#heroCarousel" data-bs-slide-to="2"></button>
+    </div>
+    <div class="carousel-inner">
+        <div class="carousel-item active">
+            <div class="carousel-caption d-flex flex-column justify-content-center h-100">
+                <h1 class="display-4">Flash Reserver</h1>
+                <p class="lead">¡Reserva tu cancha favorita y disfruta del deporte!</p>
+                {% if not current_user.is_authenticated %}
+                <div class="mt-4 d-flex flex-column flex-sm-row justify-content-center">
+                    <a href="{{ url_for('auth.register') }}" class="btn btn-primary btn-lg me-sm-3 mb-2 mb-sm-0">
+                        <i class="fas fa-user-plus me-2"></i>Registrarse
+                    </a>
+                    <a href="{{ url_for('auth.login') }}" class="btn btn-outline-light btn-lg">
+                        <i class="fas fa-sign-in-alt me-2"></i>Iniciar Sesión
+                    </a>
+                </div>
+                {% else %}
+                <div class="mt-4 d-flex flex-column flex-sm-row justify-content-center">
+                    {% if current_user.rol.Nombre == 'Cliente' %}
+                    <a href="{{ url_for('client.ver_canchas') }}" class="btn btn-primary btn-lg me-sm-3 mb-2 mb-sm-0">
+                        <i class="fas fa-futbol me-2"></i> Ver Canchas
+                    </a>
+                    <a href="{{ url_for('client.mis_reservas') }}" class="btn btn-outline-light btn-lg">
+                        <i class="fas fa-calendar-check me-2"></i> Mis Reservas
+                    </a>
+                    {% else %}
+                    <a href="{{ url_for('admin.dashboard') }}" class="btn btn-primary btn-lg">
+                        <i class="fas fa-tachometer-alt me-2"></i> Dashboard
+                    </a>
+                    {% endif %}
+                </div>
+                {% endif %}
+            </div>
+            <div class="carousel-overlay"></div>
+            <img src="{{ url_for('static', filename='images/cancha1.jpg') }}" class="d-block w-100" alt="Cancha de fútbol">
+        </div>
+        <div class="carousel-item">
+            <div class="carousel-caption d-flex flex-column justify-content-center h-100">
+                <h1 class="display-4">Variedad de Deportes</h1>
+                <p class="lead">Disponemos de canchas profesionales para fútbol, tenis, pádel y más.</p>
+            </div>
+            <div class="carousel-overlay"></div>
+            <img src="{{ url_for('static', filename='images/cancha2.jpg') }}" class="d-block w-100" alt="Cancha de tenis">
+        </div>
+        <div class="carousel-item">
+            <div class="carousel-caption d-flex flex-column justify-content-center h-100">
+                <h1 class="display-4">Reserva Fácil</h1>
+                <p class="lead">Sistema de reservas rápido y sencillo para tu comodidad.</p>
+            </div>
+            <div class="carousel-overlay"></div>
+            <img src="{{ url_for('static', filename='images/cancha3.jpg') }}" class="d-block w-100" alt="Cancha de pádel">
+        </div>
+    </div>
+    <button class="carousel-control-prev" type="button" data-bs-target="#heroCarousel" data-bs-slide="prev">
+        <span class="carousel-control-prev-icon"></span>
+        <span class="visually-hidden">Anterior</span>
+    </button>
+    <button class="carousel-control-next" type="button" data-bs-target="#heroCarousel" data-bs-slide="next">
+        <span class="carousel-control-next-icon"></span>
+        <span class="visually-hidden">Siguiente</span>
+    </button>
+</div>
+
+<div class="info-section-modern">
+    <div class="container-fluid">
+        <!-- Sección: ¡Reserva tu cancha en minutos! -->
+        <div class="row align-items-center mb-5">
+            <div class="col-12 col-lg-6">
+                <div class="info-content">
+                    <h2 class="info-title">
+                        ¡Reserva tu cancha en minutos!
+                    </h2>
+                    <div class="steps-container">
+                        <div class="step-item d-flex flex-column flex-md-row align-items-center text-center text-md-start">
+                            <div class="step-number">1</div>
+                            <div class="step-content">
+                                <h5>Explora nuestras canchas disponibles y elige tu deporte favorito.</h5>
+                                <i class="fas fa-futbol step-icon"></i>
+                            </div>
+                        </div>
+                        <div class="step-item d-flex flex-column flex-md-row align-items-center text-center text-md-start">
+                            <div class="step-number">2</div>
+                            <div class="step-content">
+                                <h5>Selecciona la fecha y horario que mejor se ajuste a tu agenda.</h5>
+                                <i class="fas fa-calendar-alt step-icon"></i>
+                            </div>
+                        </div>
+                        <div class="step-item d-flex flex-column flex-md-row align-items-center text-center text-md-start">
+                            <div class="step-number">3</div>
+                            <div class="step-content">
+                                <h5>Confirma tu reserva y disfruta de tu deporte favorito.</h5>
+                                <i class="fas fa-check-circle step-icon"></i>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-12 col-lg-6">
+                <div class="info-image">
+                    <img src="{{ url_for('static', filename='images/cancha2.jpg') }}" 
+                         alt="Proceso de reserva" 
+                         class="img-fluid rounded shadow-lg">
+                </div>
+            </div>
+        </div>
+
+        <!-- Sección: Variedad de deportes -->
+        <div class="row align-items-center mb-5">
+            <div class="col-12 col-lg-6">
+                <div class="info-image">
+                    <img src="{{ url_for('static', filename='images/cancha3.jpg') }}" 
+                         alt="Variedad de deportes" 
+                         class="img-fluid rounded shadow-lg">
+                </div>
+            </div>
+            <div class="col-12 col-lg-6">
+                <div class="info-content">
+                    <h2 class="info-title">
+                        Disfruta de múltiples deportes en un solo lugar
+                    </h2>
+                    <p class="info-text">
+                        En Flash Reserver encontrarás canchas para todos tus deportes favoritos: 
+                        fútbol, tenis, pádel, básquetbol y más. Cada cancha está diseñada para 
+                        ofrecerte la mejor experiencia deportiva.
+                    </p>
+                    <p class="info-text">
+                        Nuestras instalaciones cuentan con equipamiento profesional, 
+                        mantenimiento regular y horarios flexibles para que puedas 
+                        practicar tu deporte cuando quieras.
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Sección: ¡Únete a nuestra comunidad deportiva! -->
+        <div class="row justify-content-center text-center">
+            <div class="col-12 col-lg-10 col-xl-8">
+                <div class="cta-section">
+                    <h2 class="cta-title">
+                        ¡Únete a nuestra <span class="text-success">comunidad deportiva</span>!
+                    </h2>
+                    <p class="cta-text">
+                        Miles de deportistas ya confían en Flash Reserver para sus reservas. 
+                        ¿Qué esperas para ser parte de nuestra comunidad?
+                    </p>
+                    <a href="https://wa.me/+573001234567" target="_blank" class="btn btn-success btn-lg whatsapp-btn">
+                        <img src="https://upload.wikimedia.org/wikipedia/commons/6/6b/WhatsApp.svg" alt="WhatsApp" class="whatsapp-icon me-2">Contactar por WhatsApp
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Script para animaciones -->
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    // Animación de entrada para las cards
+    const cards = document.querySelectorAll('.feature-card, .cancha-card, .stats-card');
+    
+    const observer = new IntersectionObserver((entries) => {
+        entries.forEach(entry => {
+            if (entry.isIntersecting) {
+                entry.target.style.opacity = '1';
+                entry.target.style.transform = 'translateY(0)';
+            }
+        });
+    });
+    
+    cards.forEach(card => {
+        card.style.opacity = '0';
+        card.style.transform = 'translateY(20px)';
+        card.style.transition = 'all 0.6s ease';
+        observer.observe(card);
+    });
+});
+</script>
+{% endblock %}

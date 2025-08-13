@@ -1,0 +1,280 @@
+{% extends "base.html" %}
+
+{% block title %}Mis Reservas{% endblock %}
+
+{% block content %}
+<div class="container-fluid">
+    <!-- Filtros con título integrado -->
+    <div class="card shadow-sm mb-4 filter-section filtro-estetico">
+        <div class="card-header bg-white border-0 pb-0">
+            <div class="row align-items-center">
+                <div class="col-md-12 text-center">
+                    <h2 class="mb-0 text-dark">
+                        <i class="fas fa-calendar-check me-2 text-primary"></i>
+                        Mis Reservas
+                    </h2>
+                    <p class="text-muted mb-0 mt-1">Gestiona y revisa todas tus reservas de canchas</p>
+                    <h6 class="mb-0 text-muted mt-2">
+                        <i class="fas fa-filter me-1"></i>Filtros de Búsqueda
+                    </h6>
+                </div>
+            </div>
+        </div>
+        <div class="card-body pt-3">
+            <form method="GET" action="{{ url_for('client.mis_reservas') }}" id="filtrosForm">
+                <div class="row g-3 align-items-end">
+                    <div class="col-md-4">
+                        <label for="nombre" class="form-label fw-semibold">
+                            <i class="fas fa-futbol me-1"></i>Nombre de Cancha
+                        </label>
+                        <input type="text" class="form-control filtro-input" id="nombre" name="nombre" 
+                               value="{{ nombre_filter }}" placeholder="Buscar por nombre...">
+                    </div>
+                    <div class="col-md-3">
+                        <label for="tipo" class="form-label fw-semibold">
+                            <i class="fas fa-layer-group me-1"></i>Tipo de Cancha
+                        </label>
+                        <select class="form-select filtro-input" id="tipo" name="tipo">
+                            <option value="">Todos</option>
+                            {% for tipo in tipos_cancha %}
+                                <option value="{{ tipo.Id }}" {% if tipo_filter|int == tipo.Id %}selected{% endif %}>{{ tipo.Nombre }}</option>
+                            {% endfor %}
+                        </select>
+                    </div>
+                    <div class="col-md-3">
+                        <label for="categoria" class="form-label fw-semibold">
+                            <i class="fas fa-tags me-1"></i>Categoría
+                        </label>
+                        <select class="form-select filtro-input" id="categoria" name="categoria">
+                            <option value="">Todas</option>
+                            {% for categoria in categorias %}
+                                <option value="{{ categoria.Id }}" {% if categoria_filter|int == categoria.Id %}selected{% endif %}>{{ categoria.Nombre }}</option>
+                            {% endfor %}
+                        </select>
+                    </div>
+                    <div class="col-md-2 d-flex gap-2">
+                        <button type="submit" class="btn btn-success w-100">
+                            <i class="fas fa-search"></i>
+                        </button>
+                        <a href="{{ url_for('client.mis_reservas') }}" class="btn btn-outline-secondary w-100">
+                            <i class="fas fa-times"></i>
+                        </a>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Resultados -->
+    <div class="row mb-3">
+        <div class="col-12">
+            <div class="results-header">
+                <div class="d-flex justify-content-between align-items-center">
+                    <h5 class="mb-0">
+                        <i class="fas fa-list me-2"></i>Resultados ({{ reservas|length }} reserva{{ 's' if reservas|length != 1 else '' }})
+                    </h5>
+                    {% if nombre_filter or categoria_filter or tipo_filter %}
+                    <div class="filter-badges">
+                        {% if nombre_filter %}<span class="badge">Nombre: {{ nombre_filter }}</span>{% endif %}
+                        {% if categoria_filter %}
+                            {% for categoria in categorias %}
+                                {% if categoria.Id == categoria_filter|int %}
+                                    <span class="badge">Categoría: {{ categoria.Nombre }}</span>
+                                {% endif %}
+                            {% endfor %}
+                        {% endif %}
+                        {% if tipo_filter %}
+                            {% for tipo in tipos_cancha %}
+                                {% if tipo.Id == tipo_filter|int %}
+                                    <span class="badge">Tipo: {{ tipo.Nombre }}</span>
+                                {% endif %}
+                            {% endfor %}
+                        {% endif %}
+                    </div>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    </div>
+
+    {% if reservas %}
+    <div class="row">
+        {% for reserva in reservas %}
+        <div class="col-lg-3 col-md-4 col-sm-6 mb-3">
+            <div class="card h-100 shadow-sm">
+                <!-- Imagen de la cancha -->
+                <div class="card-img-top-container" style="height: 120px; overflow: hidden; position: relative;">
+                    {% if reserva.cancha.Imagen %}
+                        <img src="{{ url_for('static', filename=reserva.cancha.Imagen) }}" 
+                             class="card-img-top" 
+                             alt="{{ reserva.cancha.Nombre }}"
+                             style="width: 100%; height: 100%; object-fit: cover;"
+                             onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';">
+                        <div class="d-flex align-items-center justify-content-center bg-light" style="height: 100%; display: none;">
+                            <i class="fas fa-futbol text-muted" style="font-size: 2rem;"></i>
+                        </div>
+                    {% elif reserva.cancha.imagen and reserva.cancha.imagen|length > 0 %}
+                        <img src="{{ url_for('static', filename=reserva.cancha.imagen[0].Ruta) }}" 
+                             class="card-img-top" 
+                             alt="{{ reserva.cancha.Nombre }}"
+                             style="width: 100%; height: 100%; object-fit: cover;"
+                             onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';">
+                        <div class="d-flex align-items-center justify-content-center bg-light" style="height: 100%; display: none;">
+                            <i class="fas fa-futbol text-muted" style="font-size: 2rem;"></i>
+                        </div>
+                    {% else %}
+                        <div class="d-flex align-items-center justify-content-center bg-light" style="height: 100%;">
+                            <i class="fas fa-futbol text-muted" style="font-size: 2rem;"></i>
+                        </div>
+                    {% endif %}
+                    <!-- Badge de estado superpuesto -->
+                    <div class="position-absolute top-0 end-0 m-1">
+                        <span class="badge bg-{{ 'success' if reserva.Estado == 'Confirmada' else 'danger' if reserva.Estado == 'Cancelada' else 'info' }} fs-7">
+                            {{ reserva.Estado }}
+                        </span>
+                    </div>
+                </div>
+                
+                <div class="card-header bg-transparent border-0">
+                    <h5 class="mb-0 text-primary">{{ reserva.cancha.Nombre }}</h5>
+                </div>
+                
+                <div class="card-body p-2">
+                    <div class="row">
+                        <div class="col-12">
+                            <p class="mb-1"><strong><i class="fas fa-calendar-alt text-primary me-1"></i>Fecha:</strong> {{ reserva.Fecha.strftime('%d/%m/%Y') }}</p>
+                            <p class="mb-1"><strong><i class="fas fa-clock text-warning me-1"></i>Horario:</strong> {{ reserva.HoraInicio.strftime('%H:%M') }} - {{ reserva.HoraFin.strftime('%H:%M') }}</p>
+                            <p class="mb-1"><strong><i class="fas fa-hourglass-half text-info me-1"></i>Duración:</strong> {{ "%.1f"|format(reserva.duracion_horas) }} horas</p>
+                            <p class="mb-1"><strong><i class="fas fa-tag text-success me-1"></i>Categoría:</strong> {{ reserva.cancha.categoria.Nombre }}</p>
+                            <p class="mb-1"><strong><i class="fas fa-layer-group text-secondary me-1"></i>Tipo:</strong> {{ reserva.cancha.tipo_cancha.Nombre }}</p>
+                            <p class="mb-1"><strong><i class="fas fa-dollar-sign text-success me-1"></i>Precio:</strong> ${{ "%.2f"|format(reserva.precio_total) }}</p>
+                        </div>
+                    </div>
+                    
+                    <div class="mt-2 d-flex gap-1 flex-wrap">
+                        {% if reserva.Estado == 'Confirmada' and reserva.Fecha > today %}
+                        <button type="button" 
+                                class="btn btn-danger btn-xs cancelar-reserva-btn" 
+                                data-reserva-id="{{ reserva.Id }}" 
+                                data-cancha-nombre="{{ reserva.cancha.Nombre }}">
+                            <i class="fas fa-times me-1"></i>Cancelar
+                        </button>
+                        {% endif %}
+                        
+                        <a href="{{ url_for('client.ver_cancha', cancha_id=reserva.cancha.Id) }}" 
+                           class="btn btn-info btn-xs">
+                            <i class="fas fa-eye me-1"></i>Ver
+                        </a>
+                    </div>
+
+                    {% if reserva.Observaciones %}
+                    <div class="mt-2">
+                        <strong><i class="fas fa-sticky-note text-info me-1"></i>Obs:</strong>
+                        <small class="text-muted">{{ reserva.Observaciones }}</small>
+                    </div>
+                    {% endif %}
+                </div>
+                <div class="card-footer text-muted bg-transparent p-2">
+                    <small><i class="fas fa-calendar-plus me-1"></i>Creada: {{ reserva.FechaCreacion.strftime('%d/%m/%Y') }}</small>
+                </div>
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+    {% else %}
+    <div class="row">
+        <div class="col-12">
+            <div class="alert alert-info text-center">
+                <div class="mb-3">
+                    <i class="fas fa-calendar-times" style="font-size: 4rem; color: #17a2b8;"></i>
+                </div>
+                <h5>No tienes reservas</h5>
+                <p class="text-muted">¿Quieres hacer tu primera reserva?</p>
+                <a href="{{ url_for('client.ver_canchas') }}" class="btn btn-primary">
+                    <i class="fas fa-futbol me-2"></i>Ver Canchas Disponibles
+                </a>
+            </div>
+        </div>
+    </div>
+    {% endif %}
+</div>
+
+<!-- Formulario oculto para cancelar reserva -->
+<form id="cancelarReservaForm" method="POST" style="display: none;">
+</form>
+{% endblock %}
+
+{% block scripts %}
+<script>
+// Función para confirmar cancelación con alertas personalizadas
+function confirmarCancelacion(reservaId, nombreCancha) {
+    if (typeof showConfirm === 'function') {
+        showConfirm(
+            'Confirmar Cancelación',
+            '¿Estás seguro de que quieres cancelar tu reserva en "' + nombreCancha + '"? Esta acción no se puede deshacer.',
+            function() {
+                            // Crear formulario dinámicamente
+            const form = document.getElementById('cancelarReservaForm');
+            form.action = '/client/cancelar-reserva/' + reservaId;
+                
+                // Mostrar alerta de procesamiento
+                if (typeof showInfo === 'function') {
+                    showInfo('Procesando', 'Cancelando tu reserva...');
+                }
+                
+                // Enviar formulario
+                form.submit();
+            },
+            function() {
+                // Usuario canceló
+                if (typeof showInfo === 'function') {
+                    showInfo('Operación Cancelada', 'La cancelación ha sido cancelada.');
+                }
+            }
+        );
+    } else {
+        // Fallback si el sistema de alertas no está disponible
+        if (confirm('¿Estás seguro de que quieres cancelar tu reserva en "' + nombreCancha + '"? Esta acción no se puede deshacer.')) {
+            const form = document.getElementById('cancelarReservaForm');
+            form.action = '/cancelar-reserva/' + reservaId;
+            form.submit();
+        }
+    }
+}
+
+// Función para mostrar alertas de éxito/error desde Flask flash messages
+document.addEventListener('DOMContentLoaded', function() {
+    // Configurar event listeners para botones de cancelar
+    document.querySelectorAll('.cancelar-reserva-btn').forEach(button => {
+        button.addEventListener('click', function() {
+            const reservaId = this.getAttribute('data-reserva-id');
+            const nombreCancha = this.getAttribute('data-cancha-nombre');
+            confirmarCancelacion(reservaId, nombreCancha);
+        });
+    });
+    // Mostrar flash messages existentes con el sistema personalizado
+    if (typeof customAlerts !== 'undefined' && typeof customAlerts.show === 'function') {
+        const flashMessages = document.querySelectorAll('.alert');
+        flashMessages.forEach(alert => {
+            const type = alert.classList.contains('alert-success') ? 'success' :
+                        alert.classList.contains('alert-danger') ? 'error' :
+                        alert.classList.contains('alert-warning') ? 'warning' :
+                        alert.classList.contains('alert-info') ? 'info' : 'primary';
+            
+            const title = type === 'success' ? 'Éxito' :
+                         type === 'error' ? 'Error' :
+                         type === 'warning' ? 'Advertencia' :
+                         type === 'info' ? 'Información' : 'Mensaje';
+            
+            const message = alert.textContent.trim();
+            
+            // Mostrar con el sistema personalizado
+            customAlerts.show(type, title, message, 5000);
+            
+            // Ocultar la alerta original
+            alert.style.display = 'none';
+        });
+    }
+});
+</script>
+{% endblock %} 

@@ -1,0 +1,268 @@
+{% extends "base.html" %}
+
+{% block title %}Centro de Ayuda - Panel Administrativo{% endblock %}
+
+{% block content %}
+<div class="container-fluid">
+    <div class="row">
+        <div class="col-12">
+            <h1 class="text-center mb-4">
+                <i class="fas fa-headset text-primary"></i> Centro de Ayuda - Panel Administrativo
+            </h1>
+            <p class="text-center text-muted mb-5">
+                Recursos y ayuda para administradores del sistema Flash Reserver
+            </p>
+        </div>
+    </div>
+
+    <!-- Sección de Manual de Administrador -->
+    <div class="row mb-5">
+        <div class="col-md-8 mx-auto">
+            <div class="card border-0 shadow-sm">
+                <div class="card-header bg-primary text-white">
+                    <h5 class="mb-0">
+                        <i class="fas fa-file-pdf me-2"></i>Manual de Administrador
+                    </h5>
+                </div>
+                <div class="card-body text-center p-4">
+                    <div class="mb-3">
+                        <i class="fas fa-file-pdf text-danger" style="font-size: 4rem;"></i>
+                    </div>
+                    <h4 class="card-title mb-3">Documentación Completa</h4>
+                    <p class="card-text text-muted mb-4">
+                        Descarga el manual completo que incluye todas las funciones del panel administrativo, 
+                        procedimientos paso a paso, y mejores prácticas para la gestión del sistema.
+                    </p>
+                    <a href="{{ url_for('admin.manual_admin_pdf') }}" class="btn btn-danger btn-lg text-dark fw-bold">
+                        <i class="fas fa-download me-2"></i>Descargar Manual PDF
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Sección de Funciones Principales -->
+    <div class="row mb-5">
+        <div class="col-12">
+            <h3 class="text-center mb-4">
+                <i class="fas fa-cogs text-primary"></i> Funciones Principales del Sistema
+            </h3>
+        </div>
+        
+        <div class="col-md-4 mb-4">
+            <div class="card h-100 border-0 shadow-sm">
+                <div class="card-body text-center p-4">
+                    <div class="mb-3">
+                        <i class="fas fa-users text-info" style="font-size: 3rem;"></i>
+                    </div>
+                    <h5 class="card-title">Gestión de Usuarios</h5>
+                    <p class="card-text text-muted">
+                        Crear, editar y gestionar cuentas de usuarios. Controlar roles y permisos del sistema.
+                    </p>
+                    <a href="{{ url_for('admin.usuarios') }}" class="btn btn-outline-info">
+                        <i class="fas fa-arrow-right me-1"></i>Ir a Usuarios
+                    </a>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-4 mb-4">
+            <div class="card h-100 border-0 shadow-sm">
+                <div class="card-body text-center p-4">
+                    <div class="mb-3">
+                        <i class="fas fa-futbol text-success" style="font-size: 3rem;"></i>
+                    </div>
+                    <h5 class="card-title">Gestión de Canchas</h5>
+                    <p class="card-text text-muted">
+                        Administrar canchas deportivas, configurar precios, horarios y estados de mantenimiento.
+                    </p>
+                    <a href="{{ url_for('admin.canchas') }}" class="btn btn-outline-success">
+                        <i class="fas fa-arrow-right me-1"></i>Ir a Canchas
+                    </a>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-4 mb-4">
+            <div class="card h-100 border-0 shadow-sm">
+                <div class="card-body text-center p-4">
+                    <div class="mb-3">
+                        <i class="fas fa-calendar-check text-warning" style="font-size: 3rem;"></i>
+                    </div>
+                    <h5 class="card-title">Gestión de Reservas</h5>
+                    <p class="card-text text-muted">
+                        Supervisar todas las reservas del sistema, confirmar o cancelar según sea necesario.
+                    </p>
+                    <a href="{{ url_for('admin.reservas') }}" class="btn btn-outline-warning">
+                        <i class="fas fa-arrow-right me-1"></i>Ir a Reservas
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Sección de Reportes y Estadísticas -->
+    <div class="row mb-5">
+        <div class="col-12">
+            <h3 class="text-center mb-4">
+                <i class="fas fa-chart-bar text-primary"></i> Reportes y Estadísticas
+            </h3>
+        </div>
+        
+        <div class="col-md-6 mb-4">
+            <div class="card h-100 border-0 shadow-sm">
+                <div class="card-body text-center p-4">
+                    <div class="mb-3">
+                        <i class="fas fa-file-excel text-success" style="font-size: 3rem;"></i>
+                    </div>
+                    <h5 class="card-title">Reportes en Excel</h5>
+                    <p class="card-text text-muted">
+                        Generar reportes detallados de usuarios, reservas y estadísticas en formato Excel.
+                    </p>
+                    <a href="{{ url_for('admin.reportes') }}" class="btn btn-outline-success">
+                        <i class="fas fa-arrow-right me-1"></i>Generar Reportes
+                    </a>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-6 mb-4">
+            <div class="card h-100 border-0 shadow-sm">
+                <div class="card-body text-center p-4">
+                    <div class="mb-3">
+                        <i class="fas fa-chart-line text-info" style="font-size: 3rem;"></i>
+                    </div>
+                    <h5 class="card-title">Dashboard y Métricas</h5>
+                    <p class="card-text text-muted">
+                        Visualizar estadísticas en tiempo real del sistema y métricas de rendimiento.
+                    </p>
+                    <a href="{{ url_for('admin.dashboard') }}" class="btn btn-outline-info">
+                        <i class="fas fa-arrow-right me-1"></i>Ver Dashboard
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Sección de Soporte Técnico -->
+    <div class="row mb-5">
+        <div class="col-12">
+            <h3 class="text-center mb-4">
+                <i class="fas fa-life-ring text-primary"></i> Soporte Técnico
+            </h3>
+        </div>
+        
+        <div class="col-md-6 mb-4">
+            <div class="card h-100 border-0 shadow-sm">
+                <div class="card-body text-center p-4">
+                    <div class="mb-3">
+                        <i class="fab fa-whatsapp text-success" style="font-size: 3rem;"></i>
+                    </div>
+                    <h5 class="card-title">Contacto Directo</h5>
+                    <p class="card-text text-muted">
+                        Comunícate directamente con el equipo de soporte técnico por WhatsApp.
+                    </p>
+                    <a href="https://wa.me/+573001234567?text=Hola, necesito soporte técnico para el panel administrativo de Flash Reserver" 
+                       target="_blank" class="btn btn-success">
+                        <img src="https://upload.wikimedia.org/wikipedia/commons/6/6b/WhatsApp.svg" alt="WhatsApp" class="whatsapp-icon me-2">Contactar por WhatsApp
+                    </a>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-6 mb-4">
+            <div class="card h-100 border-0 shadow-sm">
+                <div class="card-body text-center p-4">
+                    <div class="mb-3">
+                        <i class="fas fa-envelope text-primary" style="font-size: 3rem;"></i>
+                    </div>
+                    <h5 class="card-title">Soporte por Email</h5>
+                    <p class="card-text text-muted">
+                        Envía consultas técnicas detalladas al equipo de desarrollo.
+                    </p>
+                    <a href="mailto:soporte@flashreserver.com?subject=Soporte Técnico Panel Administrativo" 
+                       class="btn btn-primary">
+                        <i class="fas fa-envelope me-2"></i>Enviar Email
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Sección de Preguntas Frecuentes -->
+    <div class="row">
+        <div class="col-12">
+            <div class="card border-0 shadow-sm">
+                <div class="card-header bg-primary text-white">
+                    <h5 class="mb-0">
+                        <i class="fas fa-question-circle me-2"></i>Preguntas Frecuentes
+                    </h5>
+                </div>
+                <div class="card-body">
+                    <div class="accordion" id="faqAccordion">
+                        <!-- FAQ 1 -->
+                        <div class="accordion-item">
+                            <h2 class="accordion-header" id="faq1">
+                                <button class="accordion-button" type="button" data-bs-toggle="collapse" data-bs-target="#collapse1">
+                                    ¿Cómo puedo crear un nuevo usuario administrador?
+                                </button>
+                            </h2>
+                            <div id="collapse1" class="accordion-collapse collapse show" data-bs-parent="#faqAccordion">
+                                <div class="accordion-body">
+                                    Ve a la sección "Usuarios", haz clic en "Nuevo Usuario", completa los campos requeridos 
+                                    y asigna el rol "Administrador". Consulta el manual para más detalles.
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- FAQ 2 -->
+                        <div class="accordion-item">
+                            <h2 class="accordion-header" id="faq2">
+                                <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapse2">
+                                    ¿Cómo genero reportes de usuarios?
+                                </button>
+                            </h2>
+                            <div id="collapse2" class="accordion-collapse collapse" data-bs-parent="#faqAccordion">
+                                <div class="accordion-body">
+                                    Navega a "Reportes", selecciona "Usuarios", aplica los filtros deseados y haz clic en 
+                                    "Generar Reporte". Puedes descargarlo en formato Excel o PDF.
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- FAQ 3 -->
+                        <div class="accordion-item">
+                            <h2 class="accordion-header" id="faq3">
+                                <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapse3">
+                                    ¿Qué hago si una cancha necesita mantenimiento?
+                                </button>
+                            </h2>
+                            <div id="collapse3" class="accordion-collapse collapse" data-bs-parent="#faqAccordion">
+                                <div class="accordion-body">
+                                    Ve a "Canchas", selecciona la cancha, cambia su estado a "Mantenimiento" y programa 
+                                    la fecha de retorno al servicio. Las reservas existentes se cancelarán automáticamente.
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- FAQ 4 -->
+                        <div class="accordion-item">
+                            <h2 class="accordion-header" id="faq4">
+                                <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapse4">
+                                    ¿Cómo moderar contenido del foro?
+                                </button>
+                            </h2>
+                            <div id="collapse4" class="accordion-collapse collapse" data-bs-parent="#faqAccordion">
+                                <div class="accordion-body">
+                                    Accede a "Foro" desde el menú lateral. Puedes ocultar posts inapropiados, eliminar 
+                                    comentarios problemáticos y gestionar usuarios que violen las reglas.
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

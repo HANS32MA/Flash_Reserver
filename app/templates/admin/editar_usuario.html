@@ -1,0 +1,219 @@
+{% extends "base.html" %}
+
+{% block title %}Editar Usuario{% endblock %}
+
+{% block content %}
+<div class="container-fluid">
+    <div class="row justify-content-center">
+        <div class="col-md-8 col-lg-6">
+            <div class="card shadow-sm">
+                <div class="card-header bg-warning text-dark">
+                    <h4 class="mb-0">
+                        <i class="fas fa-user-edit me-2"></i>Editar Usuario
+                    </h4>
+                </div>
+                <div class="card-body">
+                    {% with messages = get_flashed_messages(with_categories=true) %}
+                        {% if messages %}
+                            {% for category, message in messages %}
+                                <div class="alert alert-{{ 'danger' if category == 'error' else category }} alert-dismissible fade show" role="alert">
+                                    {{ message }}
+                                    <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+                                </div>
+                            {% endfor %}
+                        {% endif %}
+                    {% endwith %}
+
+                    <form method="POST" class="needs-validation" novalidate>
+                        <div class="row">
+                            <div class="col-12 mb-3">
+                                <label for="nombre_completo" class="form-label">
+                                    <i class="fas fa-user me-1"></i>Nombre Completo *
+                                </label>
+                                <input type="text" 
+                                       class="form-control" 
+                                       id="nombre_completo" 
+                                       name="nombre_completo" 
+                                       value="{{ usuario.Nombre }}"
+                                       required 
+                                       placeholder="Ingrese el nombre completo">
+                                <div class="invalid-feedback">
+                                    Por favor ingrese el nombre completo.
+                                </div>
+                            </div>
+
+                            <div class="col-12 mb-3">
+                                <label for="email" class="form-label">
+                                    <i class="fas fa-envelope me-1"></i>Email *
+                                </label>
+                                <input type="email" 
+                                       class="form-control" 
+                                       id="email" 
+                                       name="email" 
+                                       value="{{ usuario.Email }}"
+                                       required 
+                                       placeholder="usuario@ejemplo.com">
+                                <div class="invalid-feedback">
+                                    Por favor ingrese un email válido.
+                                </div>
+                            </div>
+
+                            <div class="col-12 mb-3">
+                                <label for="telefono" class="form-label">
+                                    <i class="fas fa-phone me-1"></i>Teléfono
+                                </label>
+                                <input type="tel" 
+                                       class="form-control" 
+                                       id="telefono" 
+                                       name="telefono" 
+                                       value="{{ usuario.Telefono or '' }}"
+                                       placeholder="+1234567890">
+                                <div class="form-text">Opcional</div>
+                            </div>
+
+                            <div class="col-md-6 mb-3">
+                                <label for="password" class="form-label">
+                                    <i class="fas fa-lock me-1"></i>Nueva Contraseña
+                                </label>
+                                <div class="input-group">
+                                    <input type="password" 
+                                           class="form-control" 
+                                           id="password" 
+                                           name="password" 
+                                           placeholder="Dejar en blanco para mantener la actual">
+                                    <button class="btn btn-outline-secondary" 
+                                            type="button" 
+                                            onclick="togglePassword('password')">
+                                        <i class="fas fa-eye" id="password-icon"></i>
+                                    </button>
+                                </div>
+                                <div class="form-text">Dejar en blanco para mantener la contraseña actual</div>
+                            </div>
+
+                            <div class="col-md-6 mb-3">
+                                <label for="confirm_password" class="form-label">
+                                    <i class="fas fa-lock me-1"></i>Confirmar Nueva Contraseña
+                                </label>
+                                <div class="input-group">
+                                    <input type="password" 
+                                           class="form-control" 
+                                           id="confirm_password" 
+                                           name="confirm_password" 
+                                           placeholder="Repita la nueva contraseña">
+                                    <button class="btn btn-outline-secondary" 
+                                            type="button" 
+                                            onclick="togglePassword('confirm_password')">
+                                        <i class="fas fa-eye" id="confirm_password-icon"></i>
+                                    </button>
+                                </div>
+                                <div class="invalid-feedback" id="password-match-error">
+                                    Las contraseñas no coinciden.
+                                </div>
+                            </div>
+
+                            <!-- SELECT DE ROLES CORREGIDO -->
+                            <div class="col-12 mb-4">
+                                <label for="rol" class="form-label">
+                                    <i class="fas fa-user-tag me-1"></i>Rol *
+                                </label>
+                                <select class="form-select" id="rol" name="rol" required>
+                                    <option value="">Seleccione un rol</option>
+                                    {% for rol in roles %}
+                                        <option value="{{ rol.Id }}" {{ 'selected' if usuario.RolId == rol.Id else '' }}>
+                                            {{ rol.Nombre|title }}
+                                        </option>
+                                    {% endfor %}
+                                </select>
+                                <div class="invalid-feedback">
+                                    Por favor seleccione un rol.
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="d-grid gap-2 d-md-flex justify-content-md-end">
+                            <a href="{{ url_for('admin.usuarios') }}" class="btn btn-secondary me-md-2">
+                                <i class="fas fa-arrow-left me-1"></i>Cancelar
+                            </a>
+                            <button type="submit" class="btn btn-warning">
+                                <i class="fas fa-save me-1"></i>Actualizar Usuario
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script>
+// Validación del formulario
+(function() {
+    'use strict';
+    window.addEventListener('load', function() {
+        var forms = document.getElementsByClassName('needs-validation');
+        Array.prototype.forEach.call(forms, function(form) {
+            form.addEventListener('submit', function(event) {
+                if (form.checkValidity() === false) {
+                    event.preventDefault();
+                    event.stopPropagation();
+                }
+                
+                // Validar que las contraseñas coincidan (solo si se ingresó una nueva)
+                var password = document.getElementById('password');
+                var confirmPassword = document.getElementById('confirm_password');
+                
+                if (password.value || confirmPassword.value) {
+                    if (password.value !== confirmPassword.value) {
+                        event.preventDefault();
+                        confirmPassword.setCustomValidity('Las contraseñas no coinciden');
+                    } else {
+                        confirmPassword.setCustomValidity('');
+                    }
+                }
+                
+                form.classList.add('was-validated');
+            }, false);
+        });
+    }, false);
+})();
+
+// Función para mostrar/ocultar contraseña
+function togglePassword(fieldId) {
+    const field = document.getElementById(fieldId);
+    const icon = document.getElementById(fieldId + '-icon');
+    
+    if (field.type === 'password') {
+        field.type = 'text';
+        icon.classList.remove('fa-eye');
+        icon.classList.add('fa-eye-slash');
+    } else {
+        field.type = 'password';
+        icon.classList.remove('fa-eye-slash');
+        icon.classList.add('fa-eye');
+    }
+}
+
+// Validación en tiempo real de las contraseñas
+document.getElementById('confirm_password').addEventListener('input', function() {
+    const password = document.getElementById('password').value;
+    const confirmPassword = this.value;
+    
+    if (confirmPassword && password !== confirmPassword) {
+        this.setCustomValidity('Las contraseñas no coinciden');
+    } else {
+        this.setCustomValidity('');
+    }
+});
+
+document.getElementById('password').addEventListener('input', function() {
+    const confirmPassword = document.getElementById('confirm_password');
+    if (confirmPassword.value && this.value !== confirmPassword.value) {
+        confirmPassword.setCustomValidity('Las contraseñas no coinciden');
+    } else {
+        confirmPassword.setCustomValidity('');
+    }
+});
+</script>
+{% endblock %}

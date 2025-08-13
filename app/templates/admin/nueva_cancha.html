@@ -1,0 +1,173 @@
+{% extends "base.html" %}
+
+{% block title %}Nueva Cancha{% endblock %}
+
+{% block content %}
+<div class="container-fluid">
+    <div class="row">
+        <div class="col-md-8 mx-auto">
+            <div class="card shadow-sm">
+                <div class="card-header bg-primary text-white">
+                    <h3 class="mb-0"><i class="fas fa-plus"></i> Nueva Cancha</h3>
+                </div>
+                <div class="card-body">
+                    <form method="POST" enctype="multipart/form-data">
+                        <div class="row">
+                            <div class="col-md-6">
+                                <div class="mb-3">
+                                    <label for="nombre" class="form-label">Nombre de la Cancha *</label>
+                                    <input type="text" class="form-control" id="nombre" name="nombre" 
+                                           placeholder="Ej: Cancha 1 - Fútbol 11" required>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="mb-3">
+                                    <label for="precio_hora" class="form-label">Precio por Hora (COP)*</label>
+                                    <div class="input-group">
+                                        <span class="input-group-text">COP</span>
+                                        <input type="number" class="form-control" id="precio_hora" name="precio_hora" 
+                                               step="1" min="0" placeholder="50000" required>
+                                    </div>
+                                    <small class="form-text text-muted">Ingresa el precio en pesos colombianos</small>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="row">
+                            <div class="col-md-6">
+                                <div class="mb-3">
+                                    <label for="categoria" class="form-label">Categoría *</label>
+                                    <select class="form-select" id="categoria" name="categoria" required>
+                                        <option value="">Selecciona una categoría</option>
+                                        {% for categoria in categorias %}
+                                        <option value="{{ categoria.Id }}">{{ categoria.Nombre }}</option>
+                                        {% endfor %}
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="mb-3">
+                                    <label for="tipo_cancha" class="form-label">Tipo de Superficie *</label>
+                                    <select class="form-select" id="tipo_cancha" name="tipo_cancha" required>
+                                        <option value="">Selecciona un tipo</option>
+                                        {% for tipo in tipos %}
+                                        <option value="{{ tipo.Id }}">{{ tipo.Nombre }}</option>
+                                        {% endfor %}
+                                    </select>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="mb-3">
+                            <label for="imagen" class="form-label">Imagen de la Cancha</label>
+                            <input type="file" class="form-control" name="imagen" id="imagen" accept="image/*">
+                        </div>
+
+                        <div class="mb-3">
+                            <label for="descripcion" class="form-label">Descripción de la Cancha</label>
+                            <textarea class="form-control" id="descripcion" name="descripcion" rows="3"
+                                      placeholder="Ej: Cancha techada con césped sintético, incluye iluminación nocturna"></textarea>
+                        </div>
+
+                        <!-- Sección de Ubicación -->
+                        <div class="card mb-3 border-primary">
+                            <div class="card-header bg-primary text-white">
+                                <h5 class="mb-0"><i class="fas fa-map-marker-alt"></i> Ubicación de la Cancha</h5>
+                            </div>
+                            <div class="card-body">
+                                <div class="row">
+                                    <div class="col-md-6">
+                                        <div class="mb-3">
+                                            <label for="direccion" class="form-label">Dirección</label>
+                                            <div class="input-group">
+                                                <input type="text" class="form-control" id="direccion" name="direccion" 
+                                                       placeholder="Ej: Calle 15 #23-45" required>
+                                                <button type="button" class="btn btn-outline-primary" id="btn-buscar-direccion">
+                                                    <i class="fas fa-search"></i>
+                                                </button>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <div class="mb-3">
+                                            <label for="barrio" class="form-label">Barrio</label>
+                                            <input type="text" class="form-control" id="barrio" name="barrio" 
+                                                   placeholder="Ej: Centro Histórico">
+                                        </div>
+                                    </div>
+                                </div>
+                                
+                                <div class="row">
+                                    <div class="col-md-4">
+                                        <div class="mb-3">
+                                            <label for="ciudad" class="form-label">Ciudad</label>
+                                            <select class="form-select" id="ciudad" name="ciudad" required>
+                                                <option value="Valledupar">Valledupar</option>
+                                                <option value="Aguachica">Aguachica</option>
+                                                <option value="Bosconia">Bosconia</option>
+                                                <option value="Chimichagua">Chimichagua</option>
+                                                <option value="Chiriguaná">Chiriguaná</option>
+                                                <option value="Curumaní">Curumaní</option>
+                                                <option value="El Copey">El Copey</option>
+                                                <option value="El Paso">El Paso</option>
+                                                <option value="Gamarra">Gamarra</option>
+                                                <option value="González">González</option>
+                                                <option value="La Gloria">La Gloria</option>
+                                                <option value="La Jagua de Ibirico">La Jagua de Ibirico</option>
+                                                <option value="Manaure">Manaure</option>
+                                                <option value="Pailitas">Pailitas</option>
+                                                <option value="Pelaya">Pelaya</option>
+                                                <option value="Pueblo Bello">Pueblo Bello</option>
+                                                <option value="Río de Oro">Río de Oro</option>
+                                                <option value="San Alberto">San Alberto</option>
+                                                <option value="San Diego">San Diego</option>
+                                                <option value="San Martín">San Martín</option>
+                                                <option value="Tamalameque">Tamalameque</option>
+                                            </select>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-4">
+                                        <div class="mb-3">
+                                            <label for="latitud" class="form-label">Latitud</label>
+                                            <input type="number" class="form-control" id="latitud" name="latitud" 
+                                                   step="0.000001" placeholder="10.4631" readonly>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-4">
+                                        <div class="mb-3">
+                                            <label for="longitud" class="form-label">Longitud</label>
+                                            <input type="number" class="form-control" id="longitud" name="longitud" 
+                                                   step="0.000001" placeholder="-73.2532" readonly>
+                                        </div>
+                                    </div>
+                                </div>
+                                
+
+                            </div>
+                        </div>
+
+                        <div class="d-flex justify-content-between">
+                                                <a href="{{ url_for('admin.canchas') }}" class="btn admin-back-btn">
+                        <i class="fas fa-arrow-left"></i> Cancelar
+                    </a>
+                            <button type="submit" class="btn btn-primary">
+                                <i class="fas fa-save"></i> Crear Cancha
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+{% endblock %}
+
+{% block extra_js %}
+<script>
+// Código JavaScript básico para el formulario
+</script>
+
+
+{% endblock %}

@@ -1,0 +1,225 @@
+{% extends "base.html" %}
+
+{% block title %}Editar Post - Foro{% endblock %}
+
+{% block content %}
+<div class="container-fluid my-5">
+    <div class="row justify-content-center">
+        <div class="col-md-8">
+            <div class="card shadow-sm">
+                <div class="card-header bg-warning text-dark">
+                    <h5 class="mb-0"><i class="fas fa-edit me-2"></i>Editar Post</h5>
+                </div>
+                <div class="card-body">
+                    <form method="POST" enctype="multipart/form-data">
+                        <div class="mb-3">
+                            <label for="titulo" class="form-label">
+                                <i class="fas fa-heading me-1"></i>Título del Post
+                            </label>
+                            <input type="text" class="form-control" id="titulo" name="titulo" 
+                                   required maxlength="200" value="{{ post.Titulo }}" placeholder="Escribe un título atractivo...">
+                            <div class="form-text">Máximo 200 caracteres</div>
+                        </div>
+
+                        <div class="mb-3">
+                            <label for="categoria" class="form-label">
+                                <i class="fas fa-tags me-1"></i>Categoría
+                            </label>
+                            <select class="form-select" id="categoria" name="categoria" required>
+                                <option value="">Selecciona una categoría</option>
+                                {% for categoria in categorias %}
+                                <option value="{{ categoria }}" {% if post.Categoria == categoria %}selected{% endif %}>
+                                    {{ categoria }}
+                                </option>
+                                {% endfor %}
+                            </select>
+                        </div>
+
+                        <div class="mb-3">
+                            <label for="contenido" class="form-label">
+                                <i class="fas fa-align-left me-1"></i>Contenido
+                            </label>
+                            <textarea class="form-control" id="contenido" name="contenido" 
+                                      rows="8" required placeholder="Comparte tus pensamientos, experiencias, consejos...">{{ post.Contenido }}</textarea>
+                            <div class="form-text">Sé respetuoso y constructivo con la comunidad</div>
+                        </div>
+
+                        <!-- Media actual -->
+                        {% if post.tiene_multimedia %}
+                        <div class="mb-3">
+                            <label class="form-label">
+                                <i class="fas fa-media me-1"></i>Media Actual
+                            </label>
+                            <div class="row">
+                                {% if post.Imagen %}
+                                <div class="col-md-6 mb-2">
+                                    <div class="card border-primary vista-previa-card">
+                                        <div class="text-center p-2 position-relative">
+                                            <span class="multimedia-badge imagen">
+                                                <i class="fas fa-image me-1"></i>Imagen
+                                            </span>
+                                            <img src="{{ url_for('servir_multimedia_foro', filename=post.Imagen.replace('uploads/foro/', '')) }}" 
+                                                 class="foro-imagen" alt="Imagen actual" 
+                                                 style="max-height: 200px; object-fit: cover;"
+                                                 onclick="ampliarImagen(this.src, 'Imagen actual')"
+                                                 title="Haz clic para ampliar">
+                                        </div>
+                                        <div class="card-body text-center">
+                                            <small class="text-muted">Imagen actual</small>
+                                            <br>
+                                            <small class="text-info">{{ post.Imagen.split('/')[-1] }}</small>
+                                        </div>
+                                    </div>
+                                </div>
+                                {% endif %}
+                                {% if post.Video %}
+                                <div class="col-md-6 mb-2">
+                                    <div class="card border-success vista-previa-card">
+                                        <div class="text-center p-2 position-relative">
+                                            <span class="multimedia-badge video">
+                                                <i class="fas fa-video me-1"></i>Video
+                                            </span>
+                                            <video class="foro-video" controls style="max-height: 200px;">
+                                                <source src="{{ url_for('servir_multimedia_foro', filename=post.Video.replace('uploads/foro/', '')) }}" type="video/mp4">
+                                                Tu navegador no soporta el elemento video.
+                                            </video>
+                                        </div>
+                                        <div class="card-body text-center">
+                                            <small class="text-muted">Video actual</small>
+                                            <br>
+                                            <small class="text-info">{{ post.Video.split('/')[-1] }}</small>
+                                        </div>
+                                    </div>
+                                </div>
+                                {% endif %}
+                            </div>
+                        </div>
+                        {% endif %}
+
+                        <div class="mb-3">
+                            <label for="imagen" class="form-label">
+                                <i class="fas fa-image me-1"></i>Nueva Imagen (Opcional)
+                            </label>
+                            <input type="file" class="form-control" id="imagen" name="imagen" 
+                                   accept="image/*">
+                            <div class="form-text">Formatos: JPG, PNG, GIF. Máximo 5MB</div>
+                        </div>
+
+                        <div class="mb-3">
+                            <label for="video" class="form-label">
+                                <i class="fas fa-video me-1"></i>Nuevo Video (Opcional)
+                            </label>
+                            <input type="file" class="form-control" id="video" name="video" 
+                                   accept="video/*">
+                            <div class="form-text">Formatos: MP4, AVI, MOV. Máximo 50MB</div>
+                        </div>
+
+                        <div class="d-flex justify-content-between">
+                            <a href="{{ url_for('foro.ver_post', post_id=post.Id) }}" class="btn btn-outline-secondary">
+                                <i class="fas fa-arrow-left me-2"></i>Cancelar
+                            </a>
+                            <button type="submit" class="btn btn-warning">
+                                <i class="fas fa-save me-2"></i>Guardar Cambios
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Modal para ampliar imágenes -->
+<div class="modal fade" id="imagenModal" tabindex="-1" aria-labelledby="imagenModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg modal-dialog-centered">
+        <div class="modal-content bg-dark text-white">
+            <div class="modal-header border-secondary">
+                <h5 class="modal-title" id="imagenModalTitle">Imagen del Post</h5>
+                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body text-center p-0">
+                <img id="imagenModalImg" src="" class="img-fluid" alt="Imagen ampliada" style="max-height: 80vh;">
+            </div>
+            <div class="modal-footer border-secondary">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cerrar</button>
+                <a id="descargarImagen" href="" download class="btn btn-primary">
+                    <i class="fas fa-download me-2"></i>Descargar
+                </a>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    // Validación del formulario
+    const form = document.querySelector('form');
+    const titulo = document.getElementById('titulo');
+    const contenido = document.getElementById('contenido');
+    const imagen = document.getElementById('imagen');
+    const video = document.getElementById('video');
+    
+    // Validar tamaño de imagen
+    imagen.addEventListener('change', function() {
+        const file = this.files[0];
+        if (file) {
+            const maxSize = 5 * 1024 * 1024; // 5MB
+            if (file.size > maxSize) {
+                showError('Imagen Demasiado Grande', 'La imagen excede el tamaño máximo de 5MB. Por favor, selecciona una imagen más pequeña.');
+                this.value = '';
+            }
+        }
+    });
+    
+    // Validar tamaño de video
+    video.addEventListener('change', function() {
+        const file = this.files[0];
+        if (file) {
+            const maxSize = 50 * 1024 * 1024; // 50MB
+            if (file.size > maxSize) {
+                showError('Video Demasiado Grande', 'El video excede el tamaño máximo de 50MB. Por favor, selecciona un video más pequeño.');
+                this.value = '';
+            }
+        }
+    });
+    
+    // Validar longitud del título
+    titulo.addEventListener('input', function() {
+        const maxLength = 200;
+        const currentLength = this.value.length;
+        const remaining = maxLength - currentLength;
+        
+        if (remaining < 0) {
+            this.value = this.value.substring(0, maxLength);
+        }
+    });
+    
+    // Validar contenido mínimo
+    form.addEventListener('submit', function(e) {
+        if (contenido.value.trim().length < 10) {
+            e.preventDefault();
+            showWarning('Contenido Muy Corto', 'El contenido debe tener al menos 10 caracteres para ser publicado.');
+            contenido.focus();
+        }
+    });
+    
+    // Función para ampliar imágenes
+    window.ampliarImagen = function(src, titulo) {
+        const modal = new bootstrap.Modal(document.getElementById('imagenModal'));
+        const modalImg = document.getElementById('imagenModalImg');
+        const modalTitle = document.getElementById('imagenModalTitle');
+        const descargarBtn = document.getElementById('descargarImagen');
+
+        modalImg.src = src;
+        modalTitle.textContent = titulo;
+        descargarBtn.href = src;
+        
+        // Configurar nombre de descarga
+        const nombreArchivo = src.split('/').pop();
+        descargarBtn.download = nombreArchivo;
+        
+        modal.show();
+    };
+});
+</script>
+{% endblock %}

@@ -1,0 +1,365 @@
+{% extends "base.html" %}
+
+{% block title %}Gestión Usuarios{% endblock %}
+
+{% block head %}
+<!-- SweetAlert2 CSS -->
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.min.css">
+
+<style>
+/* Estilos para las fotos de perfil en la tabla */
+.avatar-sm {
+    flex-shrink: 0;
+}
+
+.user-profile-image {
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.user-profile-image:hover {
+    transform: scale(1.1);
+    box-shadow: 0 4px 8px rgba(0,0,0,0.2);
+}
+
+/* Mejorar la apariencia de la tabla */
+.table th {
+    background-color: #f8f9fa;
+    border-bottom: 2px solid #dee2e6;
+    font-weight: 600;
+    color: #495057;
+}
+
+.table td {
+    vertical-align: middle;
+    padding: 0.75rem;
+}
+
+/* Estilos para los badges */
+.badge {
+    font-size: 0.75rem;
+    padding: 0.5em 0.75em;
+}
+
+/* Responsive para móviles */
+@media (max-width: 768px) {
+    .avatar-sm img {
+        width: 32px !important;
+        height: 32px !important;
+    }
+    
+    .table-responsive {
+        font-size: 0.875rem;
+    }
+}
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="container-fluid">
+    <div class="row">
+        <div class="col-12">
+            <div class="d-flex justify-content-between align-items-center mb-4">
+                <div class="d-flex align-items-center gap-3">
+                    <a href="{{ url_for('admin.dashboard') }}" class="btn admin-back-btn">
+                        <i class="fas fa-arrow-left me-2"></i>Regresar
+                    </a>
+                    <h1 class="h3 mb-0">
+                       
+                    </h1>
+                </div>
+                
+                <a href="{{ url_for('admin.nuevo_usuario') }}" class="btn btn-primary">
+                    <i class="fas fa-plus me-2"></i>Nuevo Usuario
+                </a>
+            </div>
+            <!-- Filtros -->
+            <div class="card shadow-sm mb-4 filter-section filtro-estetico">
+                <div class="card-header bg-white border-0 pb-0">
+                    <h5 class="mb-0 text-dark">
+                        <i class="fas fa-filter me-2"></i>Filtros de Búsqueda
+                    </h5>
+                </div>
+                <div class="card-body pt-3">
+                    <form method="GET" action="{{ url_for('admin.usuarios') }}" id="filtrosForm">
+                        <div class="row g-3 align-items-end">
+                            <div class="col-md-4">
+                                <label for="nombre" class="form-label fw-semibold">
+                                    <i class="fas fa-user me-1"></i>Nombre Completo
+                                </label>
+                                <input type="text" class="form-control filtro-input" id="nombre" name="nombre" 
+                                       value="{{ nombre_filter }}" placeholder="Buscar por nombre...">
+                            </div>
+                            <div class="col-md-3">
+                                <label for="email" class="form-label fw-semibold">
+                                    <i class="fas fa-envelope me-1"></i>Correo Electrónico
+                                </label>
+                                <input type="email" class="form-control filtro-input" id="email" name="email" 
+                                       value="{{ email_filter }}" placeholder="Buscar por email...">
+                            </div>
+                            <div class="col-md-3">
+                                <label for="estado" class="form-label fw-semibold">
+                                    <i class="fas fa-toggle-on me-1"></i>Estado
+                                </label>
+                                <select class="form-select filtro-input" id="estado" name="estado">
+                                    <option value="">Todos</option>
+                                    <option value="activo" {% if estado_filter == 'activo' %}selected{% endif %}>Activo</option>
+                                    <option value="inactivo" {% if estado_filter == 'inactivo' %}selected{% endif %}>Inactivo</option>
+                                </select>
+                            </div>
+                            <div class="col-md-2 d-flex gap-2">
+                                <button type="submit" class="btn btn-success w-100">
+                                    <i class="fas fa-search"></i>
+                                </button>
+                                <a href="{{ url_for('admin.usuarios') }}" class="btn btn-outline-secondary w-100">
+                                    <i class="fas fa-times"></i>
+                                </a>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+            </div>
+            <!-- Resultados -->
+            <div class="row mb-3">
+                <div class="col-12">
+                    <div class="results-header">
+                        <div class="d-flex justify-content-between align-items-center">
+                            <h5 class="mb-0">
+                                <i class="fas fa-list me-2"></i>Resultados ({{ usuarios|length }} usuario{{ 's' if usuarios|length != 1 else '' }})
+                            </h5>
+                            {% if nombre_filter or email_filter or telefono_filter %}
+                            <div class="filter-badges">
+                                {% if nombre_filter %}<span class="badge">Nombre: {{ nombre_filter }}</span>{% endif %}
+                                {% if email_filter %}<span class="badge">Email: {{ email_filter }}</span>{% endif %}
+                                {% if telefono_filter %}<span class="badge">Teléfono: {{ telefono_filter }}</span>{% endif %}
+                            </div>
+                            {% endif %}
+                        </div>
+                    </div>
+                </div>
+            </div>
+            {% with messages = get_flashed_messages(with_categories=true) %}
+                {% if messages %}
+                    {% for category, message in messages %}
+                        <div class="alert alert-{{ 'danger' if category == 'error' else category }} alert-dismissible fade show" role="alert">
+                            {{ message }}
+                            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+                        </div>
+                    {% endfor %}
+                {% endif %}
+            {% endwith %}
+            <div class="card shadow-sm">
+                <div class="card-body">
+                    <div class="table-responsive">
+                        <div class="d-flex justify-content-end align-items-center mb-3 gap-2">
+                                <a href="{{ url_for('admin.exportar_usuarios_pdf') }}" class="btn btn-danger btn-sm">
+                                    <i class="fas fa-file-pdf"></i> PDF
+                                </a>
+                                <a href="{{ url_for('admin.exportar_usuarios_excel') }}" class="btn btn-success btn-sm">
+                                    <i class="fas fa-file-excel"></i> Excel
+                                </a>
+                            </div>
+                            <table class="table table-hover">
+                                <thead class="table-dark">
+                                    <tr>
+                                        <th>ID</th>
+                                        <th>Nombre Completo</th>
+                                        <th>Email</th>
+                                        <th>Teléfono</th>
+                                        <th>Rol</th>
+                                        <th>Estado</th>
+                                        <th>Acciones</th>
+                                    </tr>
+                                </thead>
+                            <tbody>
+                                {% for usuario in usuarios %}
+                                <tr>
+                                    <td>{{ usuario.Id }}</td>
+                                    <td>
+                                        <div class="d-flex align-items-center">
+                                            <div class="avatar-sm me-2">
+                                                {% if usuario.FotoPerfil %}
+                                                    <img src="{{ url_for('static', filename=usuario.FotoPerfil) }}"
+                                                        alt="Foto de perfil"
+                                                        class="rounded-circle user-profile-image"
+                                                        style="width: 40px; height: 40px; object-fit: cover; border: 2px solid #e9ecef;">
+                                                {% else %}
+                                                    <img src="{{ url_for('static', filename='images/default-user.png') }}"
+                                                        alt="Sin foto"
+                                                        class="rounded-circle user-profile-image"
+                                                        style="width: 40px; height: 40px; object-fit: cover; border: 2px solid #e9ecef;">
+                                                {% endif %}
+                                            </div>
+                                            <div>
+                                                <strong>{{ usuario.Nombre }}</strong>
+                                            </div>
+                                        </div>
+                                    </td>
+                                    <td>
+                                        <a href="mailto:{{ usuario.Email }}" class="text-decoration-none">
+                                            {{ usuario.Email }}
+                                        </a>
+                                    </td>
+                                    <td>
+                                        {% if usuario.Telefono %}
+                                            <a href="tel:{{ usuario.Telefono }}" class="text-decoration-none">
+                                                {{ usuario.Telefono }}
+                                            </a>
+                                        {% else %}
+                                            <span class="text-muted">No especificado</span>
+                                        {% endif %}
+                                    </td>
+                                    <td>
+                                        <span class="badge bg-{{ 'primary' if usuario.rol.Nombre == 'admin' else 'success' if usuario.rol.Nombre == 'empleado' else 'info' }} fs-6">
+                                            {{ usuario.rol.Nombre|title }}
+                                        </span>
+                                    </td>
+                                    <td>
+                                        <span class="badge bg-{{ 'success' if usuario.Estado else 'danger' }}">
+                                            <i class="fas fa-{{ 'check' if usuario.Estado else 'ban' }} me-1"></i>
+                                            {{ 'Activo' if usuario.Estado else 'Inactivo' }}
+                                        </span>
+                                    </td>
+                                    <td>
+                                        <div class="btn-group" role="group">
+                                            <a href="{{ url_for('admin.ver_usuario', usuario_id=usuario.Id) }}" 
+                                               class="btn btn-sm btn-outline-info" 
+                                               title="Ver detalles">
+                                                <i class="fas fa-eye"></i>
+                                            </a>
+                                            <a href="{{ url_for('admin.editar_usuario', usuario_id=usuario.Id) }}" 
+                                               class="btn btn-sm btn-outline-warning" 
+                                               title="Editar">
+                                                <i class="fas fa-edit"></i>
+                                            </a>
+                                            {% if usuario.Id != current_user.Id %}
+                                            <!-- Botón para cambiar estado -->
+                                            <button type="button" 
+                                                    class="btn btn-sm btn-outline-{{ 'success' if not usuario.Estado else 'warning' }}" 
+                                                    title="{{ 'Activar' if not usuario.Estado else 'Desactivar' }} usuario"
+                                                    onclick="confirmarCambioEstado({{ usuario.Id }}, '{{ usuario.Nombre }}', {{ usuario.Estado|lower }})">
+                                                <i class="fas fa-{{ 'check' if not usuario.Estado else 'ban' }}"></i>
+                                            </button>
+                                            <!-- Botón para eliminar -->
+                                            <button type="button" 
+                                                    class="btn btn-sm btn-outline-danger" 
+                                                    title="Eliminar usuario"
+                                                    onclick="confirmarEliminacion({{ usuario.Id }}, '{{ usuario.Nombre }}')">
+                                                <i class="fas fa-trash"></i>
+                                            </button>
+                                            {% endif %}
+                                        </div>
+                                    </td>
+                                </tr>   
+                                {% else %}
+                                <tr>
+                                    <td colspan="7" class="text-center py-4">
+                                        <div class="text-muted">
+                                            <i class="fas fa-users fa-3x mb-3"></i>
+                                            <p>No hay usuarios registrados</p>
+                                        </div>
+                                    </td>
+                                </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<!-- SweetAlert2 JS -->
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
+<script>
+// Función para confirmar cambio de estado con SweetAlert2
+// Definir como función global para evitar conflictos
+window.confirmarCambioEstado = function(usuarioId, nombre, estadoActual) {
+    console.log('Función llamada:', usuarioId, nombre, estadoActual);
+    
+    // Verificar si SweetAlert2 está disponible
+    if (typeof Swal === 'undefined') {
+        console.error('SweetAlert2 no está cargado');
+        alert('Error: SweetAlert2 no está disponible');
+        return;
+    }
+    
+    const accion = estadoActual ? 'desactivar' : 'activar';
+    console.log('Acción:', accion);
+    
+    Swal.fire({
+        title: `¿${accion.charAt(0).toUpperCase() + accion.slice(1)} usuario?`,
+        text: `¿Estás seguro de que quieres ${accion} al usuario "${nombre}"?`,
+        icon: estadoActual ? 'warning' : 'question',
+        showCancelButton: true,
+        confirmButtonColor: estadoActual ? '#ffc107' : '#28a745',
+        cancelButtonColor: '#6c757d',
+        confirmButtonText: `Sí, ${accion}`,
+        cancelButtonText: 'Cancelar'
+    }).then((result) => {
+        console.log('Resultado:', result);
+        if (result.isConfirmed) {
+            console.log('Confirmado, enviando formulario...');
+            // Crear y enviar formulario
+            const form = document.createElement('form');
+            form.method = 'POST';
+            form.action = `/admin/usuario/cambiar-estado/${usuarioId}`;
+            document.body.appendChild(form);
+            form.submit();
+        }
+    });
+};
+
+// Función para confirmar eliminación con SweetAlert2
+// Definir como función global para evitar conflictos
+window.confirmarEliminacion = function(usuarioId, nombre) {
+    console.log('Función eliminación llamada:', usuarioId, nombre);
+    
+    // Verificar si SweetAlert2 está disponible
+    if (typeof Swal === 'undefined') {
+        console.error('SweetAlert2 no está cargado');
+        alert('Error: SweetAlert2 no está disponible');
+        return;
+    }
+    
+    Swal.fire({
+        title: '¿Eliminar usuario?',
+        text: `¿Estás seguro de que quieres eliminar al usuario "${nombre}"?\n\nEsta acción no se puede deshacer.`,
+        icon: 'warning',
+        showCancelButton: true,
+        confirmButtonColor: '#dc3545',
+        cancelButtonColor: '#6c757d',
+        confirmButtonText: 'Sí, eliminar',
+        cancelButtonText: 'Cancelar'
+    }).then((result) => {
+        console.log('Resultado eliminación:', result);
+        if (result.isConfirmed) {
+            console.log('Confirmado eliminación, enviando formulario...');
+            // Crear y enviar formulario
+            const form = document.createElement('form');
+            form.method = 'POST';
+            form.action = `/admin/usuario/eliminar/${usuarioId}`;
+            document.body.appendChild(form);
+            form.submit();
+        }
+    });
+};
+
+// Funcionalidad para los filtros
+document.addEventListener('DOMContentLoaded', function() {
+    const inputs = document.querySelectorAll('#nombre, #email, #telefono');
+    inputs.forEach(input => {
+        let timeoutId;
+        input.addEventListener('input', function() {
+            clearTimeout(timeoutId);
+            timeoutId = setTimeout(() => {
+                document.getElementById('filtrosForm').submit();
+            }, 500);
+        });
+    });
+});
+</script>
+{% endblock %} 

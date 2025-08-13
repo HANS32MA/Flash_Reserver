@@ -1,0 +1,884 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Reporte General - Flash Reserver</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 20px;
+            color: #333;
+        }
+        .header {
+            text-align: center;
+            margin-bottom: 30px;
+            border-bottom: 2px solid #007bff;
+            padding-bottom: 20px;
+        }
+        .logo {
+            max-width: 150px;
+            max-height: 80px;
+        }
+        .title {
+            color: #007bff;
+            font-size: 24px;
+            margin: 10px 0;
+        }
+        .subtitle {
+            color: #666;
+            font-size: 14px;
+        }
+        .info-section {
+            margin-bottom: 20px;
+            padding: 15px;
+            background-color: #f8f9fa;
+            border-radius: 5px;
+        }
+        .info-item {
+            margin: 5px 0;
+        }
+        .stats-grid {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 30px;
+            flex-wrap: wrap;
+            gap: 15px;
+        }
+        .stat-card {
+            flex: 1;
+            min-width: 200px;
+            margin: 0;
+            padding: 15px;
+            background-color: #fff;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            text-align: center;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+        
+        /* Responsive para stats grid */
+        @media (max-width: 768px) {
+            .stats-grid {
+                flex-direction: column;
+                gap: 10px;
+            }
+            .stat-card {
+                min-width: auto;
+                margin: 0;
+            }
+        }
+        .stat-number {
+            font-size: 24px;
+            font-weight: bold;
+            color: #007bff;
+        }
+        .stat-label {
+            font-size: 14px;
+            color: #666;
+            margin-top: 5px;
+        }
+        .horizontal-layout {
+            display: flex;
+            justify-content: space-between;
+            margin: 20px 0;
+            gap: 20px;
+        }
+        
+        /* Responsive para layout horizontal */
+        @media (max-width: 768px) {
+            .horizontal-layout {
+                flex-direction: column;
+                gap: 15px;
+            }
+        }
+        .chart-section {
+            flex: 1;
+            background-color: #f8f9fa;
+            border-radius: 8px;
+            padding: 15px;
+            border: 1px solid #e9ecef;
+        }
+        .chart-title {
+            font-size: 16px;
+            font-weight: bold;
+            color: #007bff;
+            margin-bottom: 15px;
+            text-align: center;
+        }
+        .chart-container {
+            margin: 15px 0;
+        }
+        .chart-bar {
+            display: flex;
+            align-items: center;
+            margin: 8px 0;
+            height: 25px;
+        }
+        .chart-label {
+            width: 80px;
+            font-weight: bold;
+            font-size: 11px;
+        }
+        .chart-bar-container {
+            flex: 1;
+            height: 15px;
+            background-color: #e9ecef;
+            border-radius: 8px;
+            margin: 0 8px;
+            overflow: hidden;
+        }
+        .chart-bar-fill {
+            height: 100%;
+            border-radius: 8px;
+            transition: width 0.3s ease;
+        }
+        .chart-value {
+            width: 60px;
+            text-align: right;
+            font-weight: bold;
+            font-size: 11px;
+        }
+        .heatmap-container {
+            margin: 15px 0;
+            overflow-x: auto;
+        }
+        
+        /* Responsive para heatmap */
+        @media (max-width: 768px) {
+            .heatmap-container {
+                font-size: 8px;
+            }
+            .heatmap-table th, .heatmap-table td {
+                padding: 2px;
+                font-size: 7px;
+            }
+        }
+        .heatmap-table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 8px;
+        }
+        .heatmap-table th, .heatmap-table td {
+            border: 1px solid #ddd;
+            padding: 3px;
+            text-align: center;
+        }
+        .heatmap-table th {
+            background-color: #f8f9fa;
+            font-weight: bold;
+        }
+        .day-label {
+            background-color: #f8f9fa;
+            font-weight: bold;
+        }
+        .heatmap-cell {
+            min-width: 20px;
+        }
+        .heatmap-legend {
+            margin-top: 10px;
+            text-align: center;
+            font-size: 10px;
+        }
+        .legend-item {
+            display: inline-block;
+            margin: 0 5px;
+        }
+        .legend-color {
+            display: inline-block;
+            width: 15px;
+            height: 12px;
+            margin-right: 3px;
+            border: 1px solid #ddd;
+        }
+        .chart-stats {
+            display: flex;
+            justify-content: space-between;
+            font-size: 12px;
+            color: #666;
+        }
+        .data-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 15px;
+            font-size: 12px;
+        }
+        
+        /* Responsive para tablas */
+        @media (max-width: 768px) {
+            .data-table {
+                font-size: 10px;
+            }
+            .data-table th, .data-table td {
+                padding: 5px 3px;
+            }
+        }
+        .data-table th, .data-table td {
+            border: 1px solid #ddd;
+            padding: 8px;
+            text-align: center;
+        }
+        .data-table th {
+            background-color: #007bff;
+            color: white;
+            font-weight: bold;
+        }
+        .data-table tr:nth-child(even) {
+            background-color: #f2f2f2;
+        }
+        .footer {
+            margin-top: 30px;
+            text-align: center;
+            font-size: 12px;
+            color: #666;
+            border-top: 1px solid #ddd;
+            padding-top: 20px;
+        }
+        .section-title {
+            color: #007bff;
+            font-size: 18px;
+            margin: 25px 0 15px 0;
+            border-bottom: 1px solid #007bff;
+            padding-bottom: 5px;
+        }
+        .metrics-row {
+            display: flex;
+            justify-content: space-between;
+            margin: 20px 0;
+            gap: 15px;
+        }
+        
+        /* Responsive para métricas */
+        @media (max-width: 768px) {
+            .metrics-row {
+                flex-direction: column;
+                gap: 10px;
+            }
+            .metric-card {
+                margin: 0;
+            }
+        }
+        .metric-card {
+            flex: 1;
+            background-color: #fff;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            padding: 15px;
+            text-align: center;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+        .metric-value {
+            font-size: 20px;
+            font-weight: bold;
+            color: #007bff;
+            margin-bottom: 5px;
+        }
+        .metric-label {
+            font-size: 12px;
+            color: #666;
+        }
+        
+        /* ===== RESPONSIVE DESIGN GENERAL ===== */
+        
+        /* Extra Small devices (phones, 576px and down) */
+        @media (max-width: 575.98px) {
+            body {
+                padding: 10px;
+                font-size: 12px;
+            }
+            
+            .header {
+                margin-bottom: 20px;
+                padding-bottom: 15px;
+            }
+            
+            .title {
+                font-size: 18px;
+            }
+            
+            .subtitle {
+                font-size: 12px;
+            }
+            
+            .logo {
+                max-width: 100px;
+                max-height: 60px;
+            }
+            
+            .info-section {
+                padding: 10px;
+                margin-bottom: 15px;
+            }
+            
+            .section-title {
+                font-size: 16px;
+                margin: 20px 0 10px 0;
+            }
+            
+            .chart-section {
+                padding: 10px;
+            }
+            
+            .chart-title {
+                font-size: 14px;
+                margin-bottom: 10px;
+            }
+            
+            .footer {
+                margin-top: 20px;
+                padding-top: 15px;
+                font-size: 10px;
+            }
+        }
+        
+        /* Small devices (landscape phones, 576px and up) */
+        @media (min-width: 576px) and (max-width: 767.98px) {
+            body {
+                padding: 15px;
+                font-size: 13px;
+            }
+            
+            .title {
+                font-size: 20px;
+            }
+            
+            .chart-section {
+                padding: 12px;
+            }
+        }
+        
+        /* Medium devices (tablets, 768px and up) */
+        @media (min-width: 768px) and (max-width: 991.98px) {
+            body {
+                padding: 20px;
+                font-size: 14px;
+            }
+            
+            .title {
+                font-size: 22px;
+            }
+        }
+        
+        /* Large devices (desktops, 992px and up) */
+        @media (min-width: 992px) and (max-width: 1199.98px) {
+            body {
+                padding: 25px;
+                font-size: 15px;
+            }
+            
+            .title {
+                font-size: 24px;
+            }
+        }
+        
+        /* Extra large devices (large desktops, 1200px and up) */
+        @media (min-width: 1200px) and (max-width: 1399.98px) {
+            body {
+                padding: 30px;
+                font-size: 16px;
+            }
+            
+            .title {
+                font-size: 26px;
+            }
+        }
+        
+
+        
+        /* ===== IMPRESIÓN ===== */
+        @media print {
+             body {
+                 padding: 30px;
+                 font-size: 16px;
+             }
+             
+             .title {
+                 font-size: 24px;
+             }
+             
+             .subtitle {
+                 font-size: 14px;
+             }
+             
+             .logo {
+                 max-width: 180px;
+                 max-height: 90px;
+             }
+             
+             .info-section {
+                 padding: 20px;
+                 margin-bottom: 25px;
+             }
+             
+             .section-title {
+                 font-size: 20px;
+                 margin: 25px 0 15px 0;
+             }
+             
+             .chart-section {
+                 padding: 20px;
+             }
+             
+             .chart-title {
+                 font-size: 18px;
+                 margin-bottom: 15px;
+             }
+             
+             .footer {
+                 margin-top: 30px;
+                 padding-top: 20px;
+                 font-size: 12px;
+             }
+             
+             .stat-card {
+                 padding: 15px;
+                 margin-bottom: 15px;
+             }
+             
+             .stat-number {
+                 font-size: 24px;
+             }
+             
+             .stat-label {
+                 font-size: 12px;
+             }
+             
+             .metric-card {
+                 padding: 15px;
+             }
+             
+             .metric-value {
+                 font-size: 20px;
+             }
+             
+             .metric-label {
+                 font-size: 10px;
+             }
+         }
+         
+         /* Ultra wide screens (1800px and up) */
+         @media (min-width: 1800px) {
+             body {
+                 padding: 35px;
+                 font-size: 18px;
+             }
+             
+             .title {
+                 font-size: 28px;
+             }
+             
+             .subtitle {
+                 font-size: 16px;
+             }
+             
+             .logo {
+                 max-width: 220px;
+                 max-height: 110px;
+             }
+             
+             .info-section {
+                 padding: 25px;
+                 margin-bottom: 30px;
+             }
+             
+             .section-title {
+                 font-size: 24px;
+                 margin: 30px 0 20px 0;
+             }
+             
+             .chart-section {
+                 padding: 25px;
+             }
+             
+             .chart-title {
+                 font-size: 22px;
+                 margin-bottom: 20px;
+             }
+             
+             .footer {
+                 margin-top: 40px;
+                 padding-top: 25px;
+                 font-size: 14px;
+             }
+             
+             .stat-card {
+                 padding: 20px;
+                 margin-bottom: 20px;
+             }
+             
+             .stat-number {
+                 font-size: 28px;
+             }
+             
+             .stat-label {
+                 font-size: 14px;
+             }
+             
+             .metric-card {
+                 padding: 20px;
+             }
+             
+             .metric-value {
+                 font-size: 24px;
+             }
+             
+             .metric-label {
+                 font-size: 12px;
+             }
+         }
+         
+         /* 4K and large displays (2400px and up) */
+         @media (min-width: 2400px) {
+             body {
+                 padding: 40px;
+                 font-size: 20px;
+             }
+             
+             .title {
+                 font-size: 32px;
+             }
+             
+             .subtitle {
+                 font-size: 18px;
+             }
+             
+             .logo {
+                 max-width: 260px;
+                 max-height: 130px;
+             }
+             
+             .info-section {
+                 padding: 30px;
+                 margin-bottom: 35px;
+             }
+             
+             .section-title {
+                 font-size: 28px;
+                 margin: 35px 0 25px 0;
+             }
+             
+             .chart-section {
+                 padding: 30px;
+             }
+             
+             .chart-title {
+                 font-size: 26px;
+                 margin-bottom: 25px;
+             }
+             
+             .footer {
+                 margin-top: 50px;
+                 padding-top: 30px;
+                 font-size: 16px;
+             }
+             
+             .stat-card {
+                 padding: 25px;
+                 margin-bottom: 25px;
+             }
+             
+             .stat-number {
+                 font-size: 32px;
+             }
+             
+             .stat-label {
+                 font-size: 16px;
+             }
+             
+             .metric-card {
+                 padding: 25px;
+             }
+             
+             .metric-value {
+                 font-size: 28px;
+             }
+             
+             .metric-label {
+                 font-size: 14px;
+             }
+         }
+        
+        /* ===== ORIENTACIÓN LANDSCAPE ===== */
+        @media (orientation: landscape) and (max-height: 500px) {
+            .header {
+                margin-bottom: 15px;
+                padding-bottom: 10px;
+            }
+            
+            .title {
+                font-size: 18px;
+            }
+            
+            .section-title {
+                font-size: 16px;
+                margin: 15px 0 10px 0;
+            }
+        }
+        
+        /* ===== IMPRESIÓN ===== */
+        @media print {
+            body {
+                padding: 0;
+                margin: 0;
+                font-size: 12px;
+            }
+            
+            .header {
+                margin-bottom: 20px;
+            }
+            
+            .title {
+                font-size: 20px;
+            }
+            
+            .stats-grid {
+                page-break-inside: avoid;
+            }
+            
+            .horizontal-layout {
+                page-break-inside: avoid;
+            }
+            
+            .metrics-row {
+                page-break-inside: avoid;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <img src="{{ logo_path }}" alt="Logo" class="logo">
+        <h1 class="title">Reporte General del Sistema</h1>
+        <p class="subtitle">Flash Reserver - Sistema de Gestión</p>
+    </div>
+
+    <div class="info-section">
+        <div class="info-item"><strong>Fecha de Generación:</strong> {{ fecha_generacion }}</div>
+        {% if fecha_inicio and fecha_fin %}
+        <div class="info-item"><strong>Período de Análisis:</strong> {{ fecha_inicio }} - {{ fecha_fin }}</div>
+        {% endif %}
+    </div>
+
+    <!-- Estadísticas Generales - Horizontal -->
+    <div class="section-title">📊 Estadísticas Generales</div>
+    <div class="stats-grid">
+        <div class="stat-card">
+            <div class="stat-number">{{ total_usuarios }}</div>
+            <div class="stat-label">Usuarios Registrados</div>
+        </div>
+        <div class="stat-card">
+            <div class="stat-number">{{ total_canchas }}</div>
+            <div class="stat-label">Canchas Disponibles</div>
+        </div>
+        <div class="stat-card">
+            <div class="stat-number">{{ total_reservas }}</div>
+            <div class="stat-label">Total de Reservas</div>
+        </div>
+        <div class="stat-card">
+            <div class="stat-number">{{ reservas_hoy }}</div>
+            <div class="stat-label">Reservas Hoy</div>
+        </div>
+    </div>
+
+    <!-- Gráficos Principales - Horizontal -->
+    <div class="section-title">📈 Gráficos de Estadísticas</div>
+    <div class="horizontal-layout">
+        <!-- Gráfico de Reservas por Mes -->
+        <div class="chart-section">
+            <div class="chart-title">📊 Reservas por Mes</div>
+            <div class="chart-container">
+                {% set max_reservas = reservas_por_mes|max if reservas_por_mes else 1 %}
+                {% for i in range(meses|length) %}
+                <div class="chart-bar">
+                    <div class="chart-label">{{ meses[i] }}</div>
+                    <div class="chart-bar-container">
+                        <div class="chart-bar-fill" style="width: {{ (reservas_por_mes[i] / max_reservas * 100) if max_reservas > 0 else 0 }}%; background: linear-gradient(90deg, #007bff, #0056b3);"></div>
+                    </div>
+                    <div class="chart-value">{{ reservas_por_mes[i] }}</div>
+                </div>
+                {% endfor %}
+            </div>
+            <div class="chart-stats">
+                <span>Total: {{ reservas_por_mes|sum }}</span>
+                <span>Promedio: {{ "%.1f"|format((reservas_por_mes|sum) / 12) }}</span>
+            </div>
+        </div>
+
+        <!-- Gráfico de Ingresos por Mes -->
+        <div class="chart-section">
+            <div class="chart-title">💰 Ingresos por Mes</div>
+            <div class="chart-container">
+                {% set max_ingresos = ingresos_por_mes|max if ingresos_por_mes else 1 %}
+                {% for i in range(meses|length) %}
+                <div class="chart-bar">
+                    <div class="chart-label">{{ meses[i] }}</div>
+                    <div class="chart-bar-container">
+                        <div class="chart-bar-fill" style="width: {{ (ingresos_por_mes[i] / max_ingresos * 100) if max_ingresos > 0 else 0 }}%; background: linear-gradient(90deg, #28a745, #1e7e34);"></div>
+                    </div>
+                    <div class="chart-value">${{ "%.0f"|format(ingresos_por_mes[i]) }}</div>
+                </div>
+                {% endfor %}
+            </div>
+            <div class="chart-stats">
+                <span>Total: ${{ "%.0f"|format(ingresos_por_mes|sum) }}</span>
+                <span>Promedio: ${{ "%.0f"|format((ingresos_por_mes|sum) / 12) }}</span>
+            </div>
+        </div>
+    </div>
+
+    <!-- Gráficos Secundarios - Horizontal -->
+    <div class="horizontal-layout">
+        <!-- Gráfico de Ocupación por Cancha -->
+        <div class="chart-section">
+            <div class="chart-title">🏟️ Ocupación por Cancha</div>
+            <div class="chart-container">
+                {% set max_ocupacion = ocupacion_values|max if ocupacion_values else 1 %}
+                {% for i in range(ocupacion_labels|length) %}
+                <div class="chart-bar">
+                    <div class="chart-label">{{ ocupacion_labels[i] }}</div>
+                    <div class="chart-bar-container">
+                        <div class="chart-bar-fill" style="width: {{ (ocupacion_values[i] / max_ocupacion * 100) if max_ocupacion > 0 else 0 }}%; background: linear-gradient(90deg, #ffc107, #e0a800);"></div>
+                    </div>
+                    <div class="chart-value">{{ ocupacion_values[i] }}%</div>
+                </div>
+                {% endfor %}
+            </div>
+            <div class="chart-stats">
+                <span>Mayor: {{ ocupacion_values|max if ocupacion_values else 0 }}%</span>
+                <span>Promedio: {{ "%.1f"|format((ocupacion_values|sum) / (ocupacion_values|length) if ocupacion_values else 0) }}%</span>
+            </div>
+        </div>
+
+        <!-- Gráfico de Horas de Ocupación -->
+        <div class="chart-section">
+            <div class="chart-title">🔥 Horas de Mayor Ocupación</div>
+            <div class="heatmap-container">
+                <table class="heatmap-table">
+                    <thead>
+                        <tr>
+                            <th>Día/Hora</th>
+                            {% for hour in range(24) %}
+                            <th>{{ hour }}:00</th>
+                            {% endfor %}
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% set dias = ['Lun', 'Mar', 'Mié', 'Jue', 'Vie', 'Sáb', 'Dom'] %}
+                        {% for day in range(7) %}
+                        <tr>
+                            <td class="day-label">{{ dias[day] }}</td>
+                            {% for hour in range(24) %}
+                                {% set idx = day * 24 + hour %}
+                                {% set valor = heatmap[idx].v if idx < heatmap|length else 0 %}
+                                {% if valor > 10 %}
+                                    {% set color = '#d73027' %}
+                                {% elif valor > 5 %}
+                                    {% set color = '#fc8d59' %}
+                                {% elif valor > 0 %}
+                                    {% set color = '#fee090' %}
+                                {% else %}
+                                    {% set color = '#f8f9fa' %}
+                                {% endif %}
+                            <td class="heatmap-cell" style="background-color: {{ color }}; color: {% if valor > 0 %}white{% else %}#666{% endif %}; font-weight: {% if valor > 0 %}bold{% else %}normal{% endif %};">{{ valor }}</td>
+                            {% endfor %}
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+                <div class="heatmap-legend">
+                    <span class="legend-item"><span class="legend-color" style="background-color: #fee090;"></span> 1-5 reservas</span>
+                    <span class="legend-item"><span class="legend-color" style="background-color: #fc8d59;"></span> 6-10 reservas</span>
+                    <span class="legend-item"><span class="legend-color" style="background-color: #d73027;"></span> 10+ reservas</span>
+                </div>
+            </div>
+            <div class="chart-stats">
+                <span>Pico: {{ heatmap|map(attribute='v')|max if heatmap else 0 }}</span>
+                <span>Total: {{ heatmap|map(attribute='v')|sum if heatmap else 0 }}</span>
+            </div>
+        </div>
+    </div>
+
+    <!-- Datos Detallados - Horizontal -->
+    <div class="section-title">📋 Datos Detallados</div>
+    <div class="horizontal-layout">
+        <!-- Tabla de Reservas por Mes -->
+        <div class="chart-section">
+            <div class="chart-title">📈 Reservas por Mes</div>
+            <table class="data-table">
+                <thead>
+                    <tr>
+                        <th>Mes</th>
+                        <th>Reservas</th>
+                        <th>Ingresos</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for i in range(meses|length) %}
+                    <tr>
+                        <td><strong>{{ meses[i] }}</strong></td>
+                        <td>{{ reservas_por_mes[i] }}</td>
+                        <td>${{ "%.0f"|format(ingresos_por_mes[i]) }}</td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+
+        <!-- Tabla de Ocupación por Cancha -->
+        <div class="chart-section">
+            <div class="chart-title">🏟️ Ocupación por Cancha</div>
+            <table class="data-table">
+                <thead>
+                    <tr>
+                        <th>Cancha</th>
+                        <th>Ocupación %</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for i in range(ocupacion_labels|length) %}
+                    <tr>
+                        <td><strong>{{ ocupacion_labels[i] }}</strong></td>
+                        <td>{{ ocupacion_values[i] }}%</td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <!-- Métricas de Rendimiento - Horizontal -->
+    <div class="section-title">🎯 Métricas de Rendimiento</div>
+    <div class="metrics-row">
+        <div class="metric-card">
+            <div class="metric-value">{{ "%.1f"|format((reservas_por_mes|sum) / 12) }}</div>
+            <div class="metric-label">Promedio Mensual</div>
+        </div>
+        <div class="metric-card">
+            <div class="metric-value">${{ "%.0f"|format((ingresos_por_mes|sum) / 12) }}</div>
+            <div class="metric-label">Ingreso Promedio</div>
+        </div>
+        <div class="metric-card">
+            <div class="metric-value">{{ "%.1f"|format((reservas_por_mes|sum) / total_usuarios if total_usuarios > 0 else 0) }}</div>
+            <div class="metric-label">Reservas/Usuario</div>
+        </div>
+        <div class="metric-card">
+            <div class="metric-value">{{ "%.1f"|format((reservas_por_mes|sum) / total_canchas if total_canchas > 0 else 0) }}</div>
+            <div class="metric-label">Reservas/Cancha</div>
+        </div>
+        <div class="metric-card">
+            <div class="metric-value">{{ "%.1f"|format((reservas_por_mes|sum) / total_reservas * 100 if total_reservas > 0 else 0) }}%</div>
+            <div class="metric-label">Ocupación Promedio</div>
+        </div>
+        <div class="metric-card">
+            <div class="metric-value">${{ "%.2f"|format((ingresos_por_mes|sum) / (reservas_por_mes|sum) if (reservas_por_mes|sum) > 0 else 0) }}</div>
+            <div class="metric-label">Ingreso/Reserva</div>
+        </div>
+    </div>
+
+    <div class="footer">
+        <p>Este reporte fue generado automáticamente por el sistema Flash Reserver</p>
+        <p>© 2024 Flash Reserver - Todos los derechos reservados</p>
+    </div>
+</body>
+</html>

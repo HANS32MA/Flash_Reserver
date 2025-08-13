@@ -1,0 +1,3646 @@
+/* ========================================
+   RESPONSIVE CSS - FLASH RESERVER
+   ======================================== */
+
+/* ========================================
+   PÁGINA PRINCIPAL (INDEX.HTML)
+   ======================================== */
+
+/* Carrusel responsivo */
+@media (max-width: 768px) {
+    /* Carrusel en móviles */
+    #heroCarousel .carousel-caption {
+        padding: 1rem;
+        bottom: 0;
+        left: 0;
+        right: 0;
+        background: rgba(0, 0, 0, 0.7);
+        border-radius: 0;
+    }
+    
+    #heroCarousel .carousel-caption h1 {
+        font-size: 1.5rem !important;
+        margin-bottom: 0.5rem;
+    }
+    
+    #heroCarousel .carousel-caption .lead {
+        font-size: 0.9rem;
+        margin-bottom: 1rem;
+    }
+    
+    #heroCarousel .carousel-caption .btn {
+        padding: 0.5rem 1rem;
+        font-size: 0.8rem;
+        margin: 0.25rem;
+    }
+    
+    /* Botones del carrusel más pequeños */
+    .carousel-control-prev,
+    .carousel-control-next {
+        width: 40px;
+        height: 40px;
+    }
+    
+    .carousel-indicators {
+        bottom: 10px;
+    }
+    
+    .carousel-indicators button {
+        width: 8px;
+        height: 8px;
+        border-radius: 50%;
+        margin: 0 3px;
+    }
+}
+
+@media (max-width: 576px) {
+    #heroCarousel .carousel-caption {
+        padding: 0.75rem;
+    }
+    
+    #heroCarousel .carousel-caption h1 {
+        font-size: 1.25rem !important;
+    }
+    
+    #heroCarousel .carousel-caption .lead {
+        font-size: 0.8rem;
+    }
+    
+    #heroCarousel .carousel-caption .btn {
+        padding: 0.4rem 0.8rem;
+        font-size: 0.75rem;
+        margin: 0.2rem;
+    }
+    
+    /* Botones del carrusel aún más pequeños */
+    .carousel-control-prev,
+    .carousel-control-next {
+        width: 35px;
+        height: 35px;
+    }
+}
+
+/* Sección de información responsiva */
+@media (max-width: 768px) {
+    .info-section-modern {
+        padding: 2rem 0;
+    }
+    
+    .info-section-modern .container {
+        padding: 0 1rem;
+    }
+    
+    .info-title {
+        font-size: 1.5rem;
+        margin-bottom: 1rem;
+    }
+    
+    .info-text {
+        font-size: 0.9rem;
+        line-height: 1.6;
+    }
+    
+    /* Pasos en móviles */
+    .steps-container {
+        margin-bottom: 2rem;
+    }
+    
+    .step-item {
+        flex-direction: column;
+        text-align: center;
+        margin-bottom: 1.5rem;
+    }
+    
+    .step-number {
+        margin-bottom: 0.5rem;
+        margin-right: 0;
+    }
+    
+    .step-content h5 {
+        font-size: 0.9rem;
+        margin-bottom: 0.5rem;
+    }
+    
+    .step-icon {
+        font-size: 1.5rem;
+        margin-top: 0.5rem;
+    }
+    
+    /* Imágenes en móviles */
+    .info-image {
+        margin-bottom: 1.5rem;
+    }
+    
+    .info-image img {
+        max-height: 250px;
+        object-fit: cover;
+    }
+}
+
+@media (max-width: 576px) {
+    .info-section-modern {
+        padding: 1.5rem 0;
+    }
+    
+    .info-section-modern .container {
+        padding: 0 0.75rem;
+    }
+    
+    .info-title {
+        font-size: 1.25rem;
+    }
+    
+    .info-text {
+        font-size: 0.85rem;
+    }
+    
+    .step-content h5 {
+        font-size: 0.8rem;
+    }
+    
+    .info-image img {
+        max-height: 200px;
+    }
+    
+    /* CTA section en móviles */
+    .cta-section {
+        padding: 1.5rem 1rem;
+    }
+    
+    .cta-title {
+        font-size: 1.25rem;
+    }
+    
+    .cta-text {
+        font-size: 0.85rem;
+    }
+    
+    .whatsapp-btn {
+        padding: 0.75rem 1.5rem;
+        font-size: 0.9rem;
+    }
+}
+
+/* ========================================
+   NAVBAR RESPONSIVO
+   ======================================== */
+
+@media (max-width: 768px) {
+    .navbar-brand {
+        font-size: 1rem;
+    }
+    
+    .navbar-nav .nav-link {
+        padding: 0.75rem 1rem;
+        font-size: 0.9rem;
+    }
+    
+    .dropdown-menu {
+        border-radius: 10px;
+        margin-top: 0.5rem;
+        box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+    }
+    
+    .dropdown-item {
+        padding: 0.75rem 1rem;
+        font-size: 0.9rem;
+    }
+}
+
+@media (max-width: 576px) {
+    .navbar-brand {
+        font-size: 0.9rem;
+    }
+    
+    .navbar-nav .nav-link {
+        padding: 0.5rem 0.75rem;
+        font-size: 0.85rem;
+    }
+    
+    .dropdown-item {
+        padding: 0.5rem 0.75rem;
+        font-size: 0.85rem;
+    }
+}
+
+/* ========================================
+   PÁGINAS DE AUTENTICACIÓN
+   ======================================== */
+
+@media (max-width: 768px) {
+    .auth-page {
+        padding: 1rem 0.5rem 0.5rem;
+    }
+    
+    .login-container {
+        padding: 1.5rem;
+        margin-top: 0.5rem;
+    }
+    
+    .auth-card {
+        margin: 0 0.5rem;
+        border-radius: 15px;
+    }
+    
+    .card-header {
+        padding: 1.5rem 1rem !important;
+    }
+    
+    .card-header h3 {
+        font-size: 1.3rem;
+    }
+    
+    .card-body {
+        padding: 1.5rem 1rem !important;
+    }
+    
+    .form-label {
+        font-size: 0.9rem;
+    }
+    
+    .form-control {
+        padding: 0.75rem;
+        font-size: 0.9rem;
+    }
+    
+    .login-btn {
+        padding: 0.75rem;
+        font-size: 0.9rem;
+    }
+    
+    .remember-me {
+        font-size: 0.85rem;
+    }
+    
+    .forgot-password {
+        font-size: 0.85rem;
+    }
+    
+    .info-toggle {
+        font-size: 0.85rem;
+    }
+    
+    .card-footer {
+        padding: 1rem !important;
+        font-size: 0.85rem;
+    }
+}
+
+@media (max-width: 576px) {
+    .auth-page {
+        padding: 0.5rem 0.25rem 0.25rem;
+    }
+    
+    .login-container {
+        padding: 1rem;
+        margin-top: 0.25rem;
+    }
+    
+    .auth-card {
+        margin: 0 0.25rem;
+        border-radius: 12px;
+    }
+    
+    .card-header {
+        padding: 1.25rem 0.75rem !important;
+    }
+    
+    .card-header h3 {
+        font-size: 1.1rem;
+    }
+    
+    .card-body {
+        padding: 1.25rem 0.75rem !important;
+    }
+    
+    .form-label {
+        font-size: 0.85rem;
+    }
+    
+    .form-control {
+        padding: 0.6rem;
+        font-size: 0.85rem;
+    }
+    
+    .login-btn {
+        padding: 0.6rem;
+        font-size: 0.8rem;
+    }
+    
+    .remember-me {
+        font-size: 0.8rem;
+    }
+    
+    .forgot-password {
+        font-size: 0.8rem;
+    }
+    
+    .info-toggle {
+        font-size: 0.8rem;
+    }
+    
+    .card-footer {
+        padding: 0.75rem !important;
+        font-size: 0.8rem;
+    }
+    
+    /* Botón volver más pequeño en móviles */
+    .card-header a {
+        padding: 6px 12px !important;
+        font-size: 11px !important;
+    }
+    
+    /* Información de usuarios de prueba más compacta */
+    .alert-info ul {
+        padding-left: 1rem;
+    }
+    
+    .alert-info li {
+        font-size: 0.75rem;
+        margin-bottom: 0.25rem;
+    }
+    
+    /* Formulario de registro responsivo */
+    .form-group .row {
+        margin-left: 0;
+        margin-right: 0;
+    }
+    
+    .form-group .col-md-6 {
+        padding-left: 0;
+        padding-right: 0;
+        margin-bottom: 1rem;
+    }
+    
+    .form-group .col-md-6:last-child {
+        margin-bottom: 0;
+    }
+}
+
+/* ========================================
+   PÁGINA DE CANCHAS (CLIENTE)
+   ======================================== */
+
+@media (max-width: 768px) {
+    /* Header de la página */
+    .container h2 {
+        font-size: 1.5rem;
+    }
+    
+    .container p.text-muted {
+        font-size: 0.9rem;
+    }
+    
+    /* Filtros responsivos */
+    .filter-section .card-body {
+        padding: 1rem !important;
+    }
+    
+    .filter-section .row {
+        margin-left: 0;
+        margin-right: 0;
+    }
+    
+    .filter-section .col-md-4,
+    .filter-section .col-md-3,
+    .filter-section .col-md-2 {
+        margin-bottom: 1rem;
+        padding-left: 0;
+        padding-right: 0;
+    }
+    
+    .filter-section .col-md-2 {
+        display: flex;
+        gap: 0.5rem;
+    }
+    
+    .filter-section .btn {
+        padding: 0.5rem 1rem;
+        font-size: 0.9rem;
+    }
+    
+    /* Grid de canchas responsivo */
+    .cancha-item {
+        margin-bottom: 1rem;
+    }
+    
+    .card-img-top-container {
+        height: 100px !important;
+    }
+    
+    .card-header h5 {
+        font-size: 1rem;
+    }
+    
+    .card-body {
+        padding: 0.75rem !important;
+    }
+    
+    .card-body p {
+        font-size: 0.8rem;
+        margin-bottom: 0.5rem;
+    }
+    
+    .card-body strong {
+        font-size: 0.8rem;
+    }
+    
+    .card-body small {
+        font-size: 0.75rem;
+    }
+    
+    /* Botones de acción más pequeños */
+    .btn-xs {
+        padding: 0.25rem 0.5rem;
+        font-size: 0.75rem;
+    }
+    
+    /* Modal responsivo */
+    .modal-dialog {
+        margin: 1rem;
+    }
+    
+    .modal-body img {
+        max-height: 60vh !important;
+    }
+}
+
+@media (max-width: 576px) {
+    .container h2 {
+        font-size: 1.25rem;
+    }
+    
+    .container p.text-muted {
+        font-size: 0.85rem;
+    }
+    
+    /* Filtros en móviles muy pequeños */
+    .filter-section .card-body {
+        padding: 0.75rem !important;
+    }
+    
+    .filter-section .form-label {
+        font-size: 0.85rem;
+    }
+    
+    .filter-section .form-control,
+    .filter-section .form-select {
+        padding: 0.5rem;
+        font-size: 0.85rem;
+    }
+    
+    .filter-section .btn {
+        padding: 0.4rem 0.8rem;
+        font-size: 0.8rem;
+    }
+    
+    /* Grid de canchas en móviles */
+    .cancha-item {
+        margin-bottom: 0.75rem;
+    }
+    
+    .card-img-top-container {
+        height: 80px !important;
+    }
+    
+    .card-header h5 {
+        font-size: 0.9rem;
+    }
+    
+    .card-body {
+        padding: 0.5rem !important;
+    }
+    
+    .card-body p {
+        font-size: 0.75rem;
+        margin-bottom: 0.4rem;
+    }
+    
+    .card-body strong {
+        font-size: 0.75rem;
+    }
+    
+    .card-body small {
+        font-size: 0.7rem;
+    }
+    
+    /* Botones aún más pequeños */
+    .btn-xs {
+        padding: 0.2rem 0.4rem;
+        font-size: 0.7rem;
+    }
+    
+    /* Modal en móviles */
+    .modal-dialog {
+        margin: 0.5rem;
+    }
+    
+    .modal-body img {
+        max-height: 50vh !important;
+    }
+    
+    /* Badges más pequeños */
+    .badge {
+        font-size: 0.7rem;
+        padding: 0.25rem 0.5rem;
+    }
+}
+
+/* ========================================
+   PÁGINA DE RESERVAS (CLIENTE)
+   ======================================== */
+
+@media (max-width: 768px) {
+    /* Header de la página */
+    .card-header h3 {
+        font-size: 1.5rem;
+    }
+    
+    /* Información de la cancha */
+    .card-body h5 {
+        font-size: 1.1rem;
+        margin-bottom: 0.75rem;
+    }
+    
+    .card-body p {
+        font-size: 0.9rem;
+        margin-bottom: 0.5rem;
+    }
+    
+    .card-body strong {
+        font-size: 0.9rem;
+    }
+    
+    /* Formulario responsivo */
+    .form-label {
+        font-size: 0.9rem;
+        font-weight: 600;
+    }
+    
+    .form-control,
+    .form-select {
+        padding: 0.75rem;
+        font-size: 0.9rem;
+    }
+    
+    .btn {
+        padding: 0.75rem 1rem;
+        font-size: 0.9rem;
+    }
+    
+    .btn-sm {
+        padding: 0.5rem 0.75rem;
+        font-size: 0.85rem;
+    }
+    
+    /* Grid responsivo */
+    .row .col-md-6 {
+        margin-bottom: 1rem;
+    }
+    
+    .row .col-md-6:last-child {
+        margin-bottom: 0;
+    }
+    
+    /* Resumen de reserva */
+    .card.bg-light h6 {
+        font-size: 1rem;
+    }
+    
+    .card.bg-light p {
+        font-size: 0.85rem;
+    }
+}
+
+@media (max-width: 576px) {
+    /* Header más pequeño */
+    .card-header h3 {
+        font-size: 1.25rem;
+    }
+    
+    /* Información más compacta */
+    .card-body h5 {
+        font-size: 1rem;
+        margin-bottom: 0.5rem;
+    }
+    
+    .card-body p {
+        font-size: 0.85rem;
+        margin-bottom: 0.4rem;
+    }
+    
+    .card-body strong {
+        font-size: 0.85rem;
+    }
+    
+    /* Formulario más compacto */
+    .form-label {
+        font-size: 0.85rem;
+    }
+    
+    .form-control,
+    .form-select {
+        padding: 0.6rem;
+        font-size: 0.85rem;
+    }
+    
+    .btn {
+        padding: 0.6rem 0.8rem;
+        font-size: 0.8rem;
+    }
+    
+    .btn-sm {
+        padding: 0.4rem 0.6rem;
+        font-size: 0.8rem;
+    }
+    
+    /* Grid en móviles */
+    .row .col-md-6 {
+        margin-bottom: 0.75rem;
+    }
+    
+    /* Resumen más compacto */
+    .card.bg-light h6 {
+        font-size: 0.9rem;
+    }
+    
+    .card.bg-light p {
+        font-size: 0.8rem;
+    }
+    
+    /* Textarea más pequeño */
+    textarea.form-control {
+        min-height: 60px;
+    }
+}
+
+/* ========================================
+   FORO - PÁGINA PRINCIPAL
+   ======================================== */
+
+@media (max-width: 768px) {
+    /* Container principal */
+    .container.my-5 {
+        margin-top: 2rem !important;
+        margin-bottom: 2rem !important;
+    }
+    
+    /* Sidebar responsivo */
+    .col-md-3 {
+        margin-bottom: 2rem;
+    }
+    
+    .card-header h5 {
+        font-size: 1rem;
+    }
+    
+    .form-label {
+        font-size: 0.9rem;
+    }
+    
+    .form-select {
+        padding: 0.75rem;
+        font-size: 0.9rem;
+    }
+    
+    .btn {
+        padding: 0.75rem 1rem;
+        font-size: 0.9rem;
+    }
+    
+    /* Header del foro */
+    .col-md-6 h2 {
+        font-size: 1.5rem;
+    }
+    
+    .text-muted small {
+        font-size: 0.85rem;
+    }
+    
+    .btn-sm {
+        padding: 0.5rem 0.75rem;
+        font-size: 0.85rem;
+    }
+    
+    /* Posts responsivos */
+    .post-card {
+        margin-bottom: 1rem;
+    }
+    
+    .post-card .card-body {
+        padding: 1rem;
+    }
+    
+    .post-card .me-3 {
+        margin-right: 0.75rem !important;
+    }
+    
+    .post-avatar {
+        width: 40px;
+        height: 40px;
+    }
+    
+    .post-title {
+        font-size: 1.1rem;
+    }
+    
+    .post-meta {
+        font-size: 0.8rem;
+    }
+    
+    .post-excerpt {
+        font-size: 0.9rem;
+    }
+    
+    .post-stats {
+        font-size: 0.8rem;
+    }
+    
+    .post-actions .btn {
+        padding: 0.4rem 0.6rem;
+        font-size: 0.8rem;
+    }
+}
+
+@media (max-width: 576px) {
+    /* Container más compacto */
+    .container.my-5 {
+        margin-top: 1.5rem !important;
+        margin-bottom: 1.5rem !important;
+    }
+    
+    /* Sidebar en móviles */
+    .col-md-3 {
+        margin-bottom: 1.5rem;
+    }
+    
+    .card-header h5 {
+        font-size: 0.9rem;
+    }
+    
+    .form-label {
+        font-size: 0.85rem;
+    }
+    
+    .form-select {
+        padding: 0.6rem;
+        font-size: 0.85rem;
+    }
+    
+    .btn {
+        padding: 0.6rem 0.8rem;
+        font-size: 0.8rem;
+    }
+    
+    /* Header más compacto */
+    .col-md-6 h2 {
+        font-size: 1.25rem;
+    }
+    
+    .text-muted small {
+        font-size: 0.8rem;
+    }
+    
+    .btn-sm {
+        padding: 0.4rem 0.6rem;
+        font-size: 0.8rem;
+    }
+    
+    /* Posts más compactos */
+    .post-card .card-body {
+        padding: 0.75rem;
+    }
+    
+    .post-card .me-3 {
+        margin-right: 0.5rem !important;
+    }
+    
+    .post-avatar {
+        width: 35px;
+        height: 35px;
+    }
+    
+    .post-title {
+        font-size: 1rem;
+    }
+    
+    .post-meta {
+        font-size: 0.75rem;
+    }
+    
+    .post-excerpt {
+        font-size: 0.85rem;
+    }
+    
+    .post-stats {
+        font-size: 0.75rem;
+    }
+    
+    .post-actions .btn {
+        padding: 0.3rem 0.5rem;
+        font-size: 0.75rem;
+    }
+    
+    /* Dropdown más compacto */
+    .dropdown-menu {
+        font-size: 0.8rem;
+    }
+    
+    .dropdown-item {
+        padding: 0.5rem 0.75rem;
+    }
+}
+
+/* ========================================
+   DASHBOARD ADMIN
+   ======================================== */
+
+@media (max-width: 768px) {
+    /* Container principal */
+    .container-fluid {
+        padding: 1rem;
+    }
+    
+    /* Sidebar responsivo */
+    .col-md-2 {
+        margin-bottom: 2rem;
+    }
+    
+    /* Perfil admin */
+    .card-body img {
+        width: 60px !important;
+        height: 60px !important;
+    }
+    
+    .card-body h5 {
+        font-size: 1rem;
+    }
+    
+    .card-body p {
+        font-size: 0.85rem;
+    }
+    
+    /* Menú principal */
+    .card-header h5 {
+        font-size: 0.9rem;
+    }
+    
+    .nav-link {
+        padding: 0.5rem 0.75rem;
+        font-size: 0.85rem;
+    }
+    
+    .nav-link i {
+        font-size: 0.8rem;
+    }
+    
+    /* Acciones rápidas */
+    .btn {
+        padding: 0.5rem 0.75rem;
+        font-size: 0.8rem;
+    }
+    
+    .btn i {
+        font-size: 0.75rem;
+    }
+    
+    /* Contenido principal */
+    .col-md-10 h2 {
+        font-size: 1.5rem;
+    }
+    
+    /* Tarjetas resumen */
+    .col-md-3 {
+        margin-bottom: 1rem;
+    }
+    
+    .card-title {
+        font-size: 0.9rem;
+    }
+    
+    .card-body h3 {
+        font-size: 1.5rem;
+    }
+    
+    /* Tarjetas del foro */
+    .card-header h5 {
+        font-size: 1rem;
+    }
+    
+    .border-end h4 {
+        font-size: 1.25rem;
+    }
+    
+    .border-end small {
+        font-size: 0.8rem;
+    }
+}
+
+@media (max-width: 576px) {
+    /* Container más compacto */
+    .container-fluid {
+        padding: 0.75rem;
+    }
+    
+    /* Sidebar en móviles */
+    .col-md-2 {
+        margin-bottom: 1.5rem;
+    }
+    
+    /* Perfil más compacto */
+    .card-body img {
+        width: 50px !important;
+        height: 50px !important;
+    }
+    
+    .card-body h5 {
+        font-size: 0.9rem;
+    }
+    
+    .card-body p {
+        font-size: 0.8rem;
+    }
+    
+    /* Menú más compacto */
+    .card-header h5 {
+        font-size: 0.85rem;
+    }
+    
+    .nav-link {
+        padding: 0.4rem 0.6rem;
+        font-size: 0.8rem;
+    }
+    
+    .nav-link i {
+        font-size: 0.75rem;
+    }
+    
+    /* Acciones más compactas */
+    .btn {
+        padding: 0.4rem 0.6rem;
+        font-size: 0.75rem;
+    }
+    
+    .btn i {
+        font-size: 0.7rem;
+    }
+    
+    /* Contenido más compacto */
+    .col-md-10 h2 {
+        font-size: 1.25rem;
+    }
+    
+    /* Tarjetas más compactas */
+    .col-md-3 {
+        margin-bottom: 0.75rem;
+    }
+    
+    .card-title {
+        font-size: 0.85rem;
+    }
+    
+    .card-body h3 {
+        font-size: 1.25rem;
+    }
+    
+    /* Foro más compacto */
+    .card-header h5 {
+        font-size: 0.9rem;
+    }
+    
+    .border-end h4 {
+        font-size: 1.1rem;
+    }
+    
+    .border-end small {
+        font-size: 0.75rem;
+    }
+    
+    /* Grid responsivo para móviles */
+    .row .col-md-3 {
+        width: 50%;
+    }
+    
+    .row .col-md-3:nth-child(3),
+    .row .col-md-3:nth-child(4) {
+        margin-top: 0.75rem;
+    }
+    
+    /* Indicadores de estado responsivos */
+    .border-end small {
+        font-size: 0.7rem;
+    }
+    
+    .mt-1 small {
+        font-size: 0.65rem;
+    }
+}
+
+/* ========================================
+   PÁGINA DE USUARIOS (ADMIN)
+   ======================================== */
+
+@media (max-width: 768px) {
+    /* Header responsivo */
+    .container-fluid h1.h3 {
+        font-size: 1.5rem;
+    }
+    
+    /* Filtros responsivos */
+    .filter-section .card-body {
+        padding: 1rem !important;
+    }
+    
+    .filter-section .row {
+        margin-left: 0;
+        margin-right: 0;
+    }
+    
+    .filter-section .col-md-4,
+    .filter-section .col-md-3,
+    .filter-section .col-md-2 {
+        margin-bottom: 1rem;
+        padding-left: 0;
+        padding-right: 0;
+    }
+    
+    .filter-section .col-md-2 {
+        display: flex;
+        gap: 0.5rem;
+    }
+    
+    .filter-section .btn {
+        padding: 0.5rem 1rem;
+        font-size: 0.9rem;
+    }
+    
+    /* Tabla responsiva */
+    .table-responsive {
+        font-size: 0.875rem;
+    }
+    
+    .table th {
+        font-size: 0.8rem;
+        padding: 0.5rem;
+    }
+    
+    .table td {
+        padding: 0.5rem;
+    }
+    
+    /* Avatar responsivo */
+    .avatar-sm img {
+        width: 32px !important;
+        height: 32px !important;
+    }
+    
+    /* Botones de acción */
+    .btn-sm {
+        padding: 0.4rem 0.6rem;
+        font-size: 0.8rem;
+    }
+    
+    /* Badges responsivos */
+    .badge {
+        font-size: 0.7rem;
+        padding: 0.4em 0.6em;
+    }
+    
+    /* Botones de exportación */
+    .d-flex.justify-content-end .btn {
+        padding: 0.4rem 0.6rem;
+        font-size: 0.8rem;
+    }
+}
+
+@media (max-width: 576px) {
+    /* Header más compacto */
+    .container-fluid h1.h3 {
+        font-size: 1.25rem;
+    }
+    
+    /* Filtros en móviles */
+    .filter-section .card-body {
+        padding: 0.75rem !important;
+    }
+    
+    .filter-section .form-label {
+        font-size: 0.85rem;
+    }
+    
+    .filter-section .form-control,
+    .filter-section .form-select {
+        padding: 0.5rem;
+        font-size: 0.85rem;
+    }
+    
+    .filter-section .btn {
+        padding: 0.4rem 0.8rem;
+        font-size: 0.8rem;
+    }
+    
+    /* Tabla más compacta */
+    .table-responsive {
+        font-size: 0.8rem;
+    }
+    
+    .table th {
+        font-size: 0.75rem;
+        padding: 0.4rem;
+    }
+    
+    .table td {
+        padding: 0.4rem;
+    }
+    
+    /* Avatar más pequeño */
+    .avatar-sm img {
+        width: 28px !important;
+        height: 28px !important;
+    }
+    
+    /* Botones más compactos */
+    .btn-sm {
+        padding: 0.3rem 0.5rem;
+        font-size: 0.75rem;
+    }
+    
+    /* Badges más pequeños */
+    .badge {
+        font-size: 0.65rem;
+        padding: 0.3em 0.5em;
+    }
+    
+    /* Botones de exportación más pequeños */
+    .d-flex.justify-content-end .btn {
+        padding: 0.3rem 0.5rem;
+        font-size: 0.75rem;
+    }
+    
+    /* Ocultar columnas menos importantes en móviles */
+    .table th:nth-child(1), /* ID */
+    .table td:nth-child(1) {
+        display: none;
+    }
+    
+    .table th:nth-child(4), /* Teléfono */
+    .table td:nth-child(4) {
+        display: none;
+    }
+}
+
+/* ========================================
+   PÁGINA DE CANCHAS (ADMIN)
+   ======================================== */
+
+@media (max-width: 768px) {
+    /* Header responsivo */
+    .container h1, .container h2, .container h3 {
+        font-size: 1.5rem;
+    }
+    
+    /* Filtros responsivos */
+    .filter-section .card-body {
+        padding: 1rem !important;
+    }
+    
+    .filter-section .row {
+        margin-left: 0;
+        margin-right: 0;
+    }
+    
+    .filter-section .col-md-4,
+    .filter-section .col-md-3,
+    .filter-section .col-md-2 {
+        margin-bottom: 1rem;
+        padding-left: 0;
+        padding-right: 0;
+    }
+    
+    .filter-section .col-md-2 {
+        display: flex;
+        gap: 0.5rem;
+    }
+    
+    .filter-section .btn {
+        padding: 0.5rem 1rem;
+        font-size: 0.9rem;
+    }
+    
+    /* Grid de canchas responsivo */
+    .cancha-item {
+        margin-bottom: 1rem;
+    }
+    
+    .card-img-top-container {
+        height: 100px !important;
+    }
+    
+    .card-header h5 {
+        font-size: 1rem;
+    }
+    
+    .card-body {
+        padding: 0.75rem !important;
+    }
+    
+    .card-body p {
+        font-size: 0.8rem;
+        margin-bottom: 0.5rem;
+    }
+    
+    .card-body strong {
+        font-size: 0.8rem;
+    }
+    
+    .card-body small {
+        font-size: 0.75rem;
+    }
+    
+    /* Botones de acción más pequeños */
+    .btn-xs {
+        padding: 0.25rem 0.5rem;
+        font-size: 0.75rem;
+    }
+    
+    /* Modal responsivo */
+    .modal-dialog {
+        margin: 1rem;
+    }
+    
+    .modal-body img {
+        max-height: 60vh !important;
+    }
+    
+    /* Badges responsivos */
+    .filter-badges .badge {
+        font-size: 0.7rem;
+        padding: 0.4em 0.6em;
+        margin-bottom: 0.25rem;
+    }
+}
+
+@media (max-width: 576px) {
+    /* Header más compacto */
+    .container h1, .container h2, .container h3 {
+        font-size: 1.25rem;
+    }
+    
+    /* Filtros en móviles */
+    .filter-section .card-body {
+        padding: 0.75rem !important;
+    }
+    
+    .filter-section .form-label {
+        font-size: 0.85rem;
+    }
+    
+    .filter-section .form-control,
+    .filter-section .form-select {
+        padding: 0.5rem;
+        font-size: 0.85rem;
+    }
+    
+    .filter-section .btn {
+        padding: 0.4rem 0.8rem;
+        font-size: 0.8rem;
+    }
+    
+    /* Grid de canchas en móviles */
+    .cancha-item {
+        margin-bottom: 0.75rem;
+    }
+    
+    .card-img-top-container {
+        height: 80px !important;
+    }
+    
+    .card-header h5 {
+        font-size: 0.9rem;
+    }
+    
+    .card-body {
+        padding: 0.5rem !important;
+    }
+    
+    .card-body p {
+        font-size: 0.75rem;
+        margin-bottom: 0.4rem;
+    }
+    
+    .card-body strong {
+        font-size: 0.75rem;
+    }
+    
+    .card-body small {
+        font-size: 0.7rem;
+    }
+    
+    /* Botones aún más pequeños */
+    .btn-xs {
+        padding: 0.2rem 0.4rem;
+        font-size: 0.7rem;
+    }
+    
+    /* Modal en móviles */
+    .modal-dialog {
+        margin: 0.5rem;
+    }
+    
+    .modal-body img {
+        max-height: 50vh !important;
+    }
+    
+    /* Badges más pequeños */
+    .filter-badges .badge {
+        font-size: 0.65rem;
+        padding: 0.3em 0.5em;
+        margin-bottom: 0.2rem;
+    }
+    
+    /* Ocultar columnas menos importantes en móviles */
+    .table th:nth-child(3), /* Precio */
+    .table td:nth-child(3) {
+        display: none;
+    }
+}
+
+/* ========================================
+   PÁGINA DE RESERVAS (ADMIN)
+   ======================================== */
+
+@media (max-width: 768px) {
+    /* Header responsivo */
+    .container h2 {
+        font-size: 1.5rem;
+    }
+    
+    /* Filtros responsivos */
+    .filter-section .card-body {
+        padding: 1rem !important;
+    }
+    
+    .filter-section .row {
+        margin-left: 0;
+        margin-right: 0;
+    }
+    
+    .filter-section .col-md-4,
+    .filter-section .col-md-3,
+    .filter-section .col-md-2 {
+        margin-bottom: 1rem;
+        padding-left: 0;
+        padding-right: 0;
+    }
+    
+    .filter-section .col-md-2 {
+        display: flex;
+        gap: 0.5rem;
+    }
+    
+    .filter-section .btn {
+        padding: 0.5rem 1rem;
+        font-size: 0.9rem;
+    }
+    
+    /* Tabla responsiva */
+    .table-responsive {
+        font-size: 0.875rem;
+    }
+    
+    .table th {
+        font-size: 0.8rem;
+        padding: 0.5rem;
+    }
+    
+    .table td {
+        padding: 0.5rem;
+    }
+    
+    /* Avatar responsivo */
+    .user-profile-image {
+        width: 32px !important;
+        height: 32px !important;
+    }
+    
+    .user-profile-cell {
+        min-width: 150px;
+    }
+    
+    /* Botones de acción */
+    .btn-sm {
+        padding: 0.4rem 0.6rem;
+        font-size: 0.8rem;
+    }
+    
+    /* Badges responsivos */
+    .badge {
+        font-size: 0.7rem;
+        padding: 0.4em 0.6em;
+    }
+    
+    /* Botones de exportación */
+    .d-flex.justify-content-end .btn {
+        padding: 0.4rem 0.6rem;
+        font-size: 0.8rem;
+    }
+}
+
+@media (max-width: 576px) {
+    /* Header más compacto */
+    .container h2 {
+        font-size: 1.25rem;
+    }
+    
+    /* Filtros en móviles */
+    .filter-section .card-body {
+        padding: 0.75rem !important;
+    }
+    
+    .filter-section .form-label {
+        font-size: 0.85rem;
+    }
+    
+    .filter-section .form-control,
+    .filter-section .form-select {
+        padding: 0.5rem;
+        font-size: 0.85rem;
+    }
+    
+    .filter-section .btn {
+        padding: 0.4rem 0.8rem;
+        font-size: 0.8rem;
+    }
+    
+    /* Tabla más compacta */
+    .table-responsive {
+        font-size: 0.8rem;
+    }
+    
+    .table th {
+        font-size: 0.75rem;
+        padding: 0.4rem;
+    }
+    
+    .table td {
+        padding: 0.4rem;
+    }
+    
+    /* Avatar más pequeño */
+    .user-profile-image {
+        width: 28px !important;
+        height: 28px !important;
+    }
+    
+    .user-profile-cell {
+        min-width: 120px;
+    }
+    
+    /* Botones más compactos */
+    .btn-sm {
+        padding: 0.3rem 0.5rem;
+        font-size: 0.75rem;
+    }
+    
+    /* Badges más pequeños */
+    .badge {
+        font-size: 0.65rem;
+        padding: 0.3em 0.5em;
+    }
+    
+    /* Botones de exportación más pequeños */
+    .d-flex.justify-content-end .btn {
+        padding: 0.3rem 0.5rem;
+        font-size: 0.75rem;
+    }
+    
+    /* Ocultar columnas menos importantes en móviles */
+    .table th:nth-child(1), /* ID */
+    .table td:nth-child(1) {
+        display: none;
+    }
+    
+    .table th:nth-child(6), /* Hora Fin */
+    .table td:nth-child(6) {
+        display: none;
+    }
+    
+    .table th:nth-child(7), /* Observaciones */
+    .table td:nth-child(7) {
+        display: none;
+    }
+}
+
+/* ========================================
+   PÁGINA DE GESTIÓN DEL FORO (ADMIN)
+   ======================================== */
+
+@media (max-width: 768px) {
+    /* Header responsivo */
+    .container-fluid h2 {
+        font-size: 1.5rem;
+    }
+    
+    .container-fluid p.text-muted {
+        font-size: 0.9rem;
+    }
+    
+    /* Filtros responsivos */
+    .card-body .row {
+        margin-left: 0;
+        margin-right: 0;
+    }
+    
+    .card-body .col-md-3 {
+        margin-bottom: 1rem;
+        padding-left: 0;
+        padding-right: 0;
+    }
+    
+    .card-body .col-md-3:last-child {
+        margin-bottom: 0;
+    }
+    
+    .form-label {
+        font-size: 0.9rem;
+    }
+    
+    .form-control,
+    .form-select {
+        padding: 0.75rem;
+        font-size: 0.9rem;
+    }
+    
+    .btn {
+        padding: 0.75rem 1rem;
+        font-size: 0.9rem;
+    }
+    
+    /* Tabla responsiva */
+    .table-responsive {
+        font-size: 0.875rem;
+    }
+    
+    .table th {
+        font-size: 0.8rem;
+        padding: 0.5rem;
+    }
+    
+    .table td {
+        padding: 0.5rem;
+    }
+    
+    /* Badges responsivos */
+    .badge {
+        font-size: 0.7rem;
+        padding: 0.4em 0.6em;
+    }
+    
+    /* Botones de acción */
+    .btn-sm {
+        padding: 0.4rem 0.6rem;
+        font-size: 0.8rem;
+    }
+}
+
+@media (max-width: 576px) {
+    /* Header más compacto */
+    .container-fluid h2 {
+        font-size: 1.25rem;
+    }
+    
+    .container-fluid p.text-muted {
+        font-size: 0.85rem;
+    }
+    
+    /* Filtros en móviles */
+    .card-body .col-md-3 {
+        margin-bottom: 0.75rem;
+    }
+    
+    .form-label {
+        font-size: 0.85rem;
+    }
+    
+    .form-control,
+    .form-select {
+        padding: 0.6rem;
+        font-size: 0.85rem;
+    }
+    
+    .btn {
+        padding: 0.6rem 0.8rem;
+        font-size: 0.8rem;
+    }
+    
+    /* Tabla más compacta */
+    .table-responsive {
+        font-size: 0.8rem;
+    }
+    
+    .table th {
+        font-size: 0.75rem;
+        padding: 0.4rem;
+    }
+    
+    .table td {
+        padding: 0.4rem;
+    }
+    
+    /* Badges más pequeños */
+    .badge {
+        font-size: 0.65rem;
+        padding: 0.3em 0.5em;
+    }
+    
+    /* Botones más compactos */
+    .btn-sm {
+        padding: 0.3rem 0.5rem;
+        font-size: 0.75rem;
+    }
+    
+    /* Ocultar columnas menos importantes en móviles */
+    .table th:nth-child(1), /* ID */
+    .table td:nth-child(1) {
+        display: none;
+    }
+    
+    .table th:nth-child(6), /* Likes */
+    .table td:nth-child(6) {
+        display: none;
+    }
+    
+    .table th:nth-child(7), /* Comentarios */
+    .table td:nth-child(7) {
+        display: none;
+    }
+    
+    .table th:nth-child(8), /* Fecha */
+    .table td:nth-child(8) {
+        display: none;
+    }
+}
+
+/* ========================================
+   PÁGINA DE REPORTES (ADMIN)
+   ======================================== */
+
+@media (max-width: 768px) {
+    /* Header responsivo */
+    .container-fluid h2 {
+        font-size: 1.5rem;
+    }
+    
+    /* Filtros responsivos */
+    .card-body .row {
+        margin-left: 0;
+        margin-right: 0;
+    }
+    
+    .card-body .col-md-3,
+    .card-body .col-md-2 {
+        margin-bottom: 1rem;
+        padding-left: 0;
+        padding-right: 0;
+    }
+    
+    .form-label {
+        font-size: 0.9rem;
+    }
+    
+    .form-control,
+    .form-select {
+        padding: 0.75rem;
+        font-size: 0.9rem;
+    }
+    
+    .btn {
+        padding: 0.75rem 1rem;
+        font-size: 0.9rem;
+    }
+    
+    /* Rango personalizado responsivo */
+    .d-flex.gap-2 {
+        flex-direction: column;
+        gap: 0.5rem !important;
+    }
+    
+    /* Gráficos responsivos */
+    .chart-container {
+        height: 300px !important;
+    }
+    
+    /* Tablas responsivas */
+    .table-responsive {
+        font-size: 0.875rem;
+    }
+    
+    .table th {
+        font-size: 0.8rem;
+        padding: 0.5rem;
+    }
+    
+    .table td {
+        padding: 0.5rem;
+    }
+    
+    /* Cards de estadísticas */
+    .stats-card {
+        margin-bottom: 1rem;
+    }
+    
+    .stats-card .card-body {
+        padding: 1rem;
+    }
+    
+    .stats-card h3 {
+        font-size: 1.5rem;
+    }
+    
+    .stats-card p {
+        font-size: 0.9rem;
+    }
+}
+
+@media (max-width: 576px) {
+    /* Header más compacto */
+    .container-fluid h2 {
+        font-size: 1.25rem;
+    }
+    
+    /* Filtros en móviles */
+    .card-body .col-md-3,
+    .card-body .col-md-2 {
+        margin-bottom: 0.75rem;
+    }
+    
+    .form-label {
+        font-size: 0.85rem;
+    }
+    
+    .form-control,
+    .form-select {
+        padding: 0.6rem;
+        font-size: 0.85rem;
+    }
+    
+    .btn {
+        padding: 0.6rem 0.8rem;
+        font-size: 0.8rem;
+    }
+    
+    /* Rango personalizado más compacto */
+    .d-flex.gap-2 {
+        gap: 0.25rem !important;
+    }
+    
+    /* Gráficos más pequeños */
+    .chart-container {
+        height: 250px !important;
+    }
+    
+    /* Tablas más compactas */
+    .table-responsive {
+        font-size: 0.8rem;
+    }
+    
+    .table th {
+        font-size: 0.75rem;
+        padding: 0.4rem;
+    }
+    
+    .table td {
+        padding: 0.4rem;
+    }
+    
+    /* Cards de estadísticas más compactos */
+    .stats-card .card-body {
+        padding: 0.75rem;
+    }
+    
+    .stats-card h3 {
+        font-size: 1.25rem;
+    }
+    
+    .stats-card p {
+        font-size: 0.85rem;
+    }
+    
+    /* Ocultar elementos menos importantes en móviles */
+    .d-flex.justify-content-between .btn:not(:first-child) {
+        display: none;
+    }
+    
+    .d-flex.gap-2 .btn:not(:first-child) {
+        display: none;
+    }
+}
+
+/* ========================================
+   PÁGINA DE AYUDA (ADMIN)
+   ======================================== */
+
+@media (max-width: 768px) {
+    /* Header responsivo */
+    .container-fluid h1 {
+        font-size: 2rem;
+    }
+
+    .container-fluid p.text-muted {
+        font-size: 1rem;
+    }
+
+    /* Manual de administrador */
+    .col-md-8.mx-auto {
+        margin-left: 0 !important;
+        margin-right: 0 !important;
+    }
+
+    .card-body .fas {
+        font-size: 3rem !important;
+    }
+
+    .card-title {
+        font-size: 1.25rem;
+    }
+
+    .card-text {
+        font-size: 0.9rem;
+    }
+
+    .btn-lg {
+        padding: 0.75rem 1.5rem;
+        font-size: 1rem;
+    }
+
+    /* Funciones principales */
+    .container-fluid h3 {
+        font-size: 1.5rem;
+    }
+
+    .col-md-4 .fas {
+        font-size: 2.5rem !important;
+    }
+
+    .col-md-4 .card-title {
+        font-size: 1.1rem;
+    }
+
+    .col-md-4 .card-text {
+        font-size: 0.85rem;
+    }
+
+    .col-md-4 .btn {
+        padding: 0.5rem 1rem;
+        font-size: 0.9rem;
+    }
+}
+
+@media (max-width: 576px) {
+    /* Header más compacto */
+    .container-fluid h1 {
+        font-size: 1.5rem;
+    }
+
+    .container-fluid p.text-muted {
+        font-size: 0.9rem;
+    }
+
+    /* Manual más compacto */
+    .card-body .fas {
+        font-size: 2.5rem !important;
+    }
+
+    .card-title {
+        font-size: 1.1rem;
+    }
+
+    .card-text {
+        font-size: 0.85rem;
+    }
+
+    .btn-lg {
+        padding: 0.6rem 1.2rem;
+        font-size: 0.9rem;
+    }
+
+    /* Funciones más compactas */
+    .container-fluid h3 {
+        font-size: 1.25rem;
+    }
+
+    .col-md-4 .fas {
+        font-size: 2rem !important;
+    }
+
+    .col-md-4 .card-title {
+        font-size: 1rem;
+    }
+
+    .col-md-4 .card-text {
+        font-size: 0.8rem;
+    }
+
+    .col-md-4 .btn {
+        padding: 0.4rem 0.8rem;
+        font-size: 0.8rem;
+    }
+
+    /* Grid responsivo para móviles */
+    .col-md-4 {
+        margin-bottom: 1rem;
+    }
+
+    .col-md-4:last-child {
+        margin-bottom: 0;
+    }
+}
+
+/* ========================================
+   FORMULARIOS DE CREACIÓN/EDICIÓN (ADMIN)
+   ======================================== */
+
+@media (max-width: 768px) {
+    /* Header responsivo */
+    .card-header h3, .card-header h4 {
+        font-size: 1.5rem;
+    }
+
+    /* Contenedor principal */
+    .col-md-8.mx-auto {
+        margin-left: 0 !important;
+        margin-right: 0 !important;
+    }
+
+    .col-lg-6 {
+        margin-left: 0 !important;
+        margin-right: 0 !important;
+    }
+
+    /* Formularios responsivos */
+    .card-body {
+        padding: 1rem !important;
+    }
+
+    .form-label {
+        font-size: 0.9rem;
+        font-weight: 500;
+    }
+
+    .form-control,
+    .form-select {
+        padding: 0.75rem;
+        font-size: 0.9rem;
+    }
+
+    .input-group-text {
+        font-size: 0.9rem;
+        padding: 0.75rem;
+    }
+
+    /* Grid responsivo para campos */
+    .row .col-md-6,
+    .row .col-md-4 {
+        margin-bottom: 1rem;
+    }
+
+    .row .col-md-6:last-child,
+    .row .col-md-4:last-child {
+        margin-bottom: 0;
+    }
+
+    /* Textarea responsivo */
+    textarea.form-control {
+        min-height: 80px;
+    }
+
+    /* Botones responsivos */
+    .d-flex.justify-content-between {
+        flex-direction: column;
+        gap: 1rem;
+    }
+
+    .d-flex.justify-content-between .btn {
+        width: 100%;
+        padding: 0.75rem 1rem;
+        font-size: 0.9rem;
+    }
+
+    /* Sección de ubicación */
+    .card.mb-3 .card-header h5 {
+        font-size: 1.1rem;
+    }
+
+    .card.mb-3 .card-body {
+        padding: 1rem !important;
+    }
+
+    /* Imagen actual */
+    .img-fluid.rounded {
+        max-width: 100% !important;
+        height: auto;
+    }
+
+    /* Alertas responsivas */
+    .alert {
+        font-size: 0.9rem;
+        padding: 0.75rem;
+    }
+
+    /* Input groups responsivos */
+    .input-group .btn {
+        padding: 0.75rem 0.5rem;
+        font-size: 0.9rem;
+    }
+}
+
+@media (max-width: 576px) {
+    /* Header más compacto */
+    .card-header h3, .card-header h4 {
+        font-size: 1.25rem;
+    }
+
+    /* Formularios más compactos */
+    .card-body {
+        padding: 0.75rem !important;
+    }
+
+    .form-label {
+        font-size: 0.85rem;
+        margin-bottom: 0.5rem;
+    }
+
+    .form-control,
+    .form-select {
+        padding: 0.6rem;
+        font-size: 0.85rem;
+    }
+
+    .input-group-text {
+        font-size: 0.85rem;
+        padding: 0.6rem;
+    }
+
+    /* Grid más compacto */
+    .row .col-md-6,
+    .row .col-md-4 {
+        margin-bottom: 0.75rem;
+    }
+
+    /* Textarea más compacto */
+    textarea.form-control {
+        min-height: 60px;
+        font-size: 0.85rem;
+    }
+
+    /* Botones más compactos */
+    .d-flex.justify-content-between .btn {
+        padding: 0.6rem 0.8rem;
+        font-size: 0.85rem;
+    }
+
+    /* Sección de ubicación más compacta */
+    .card.mb-3 .card-header h5 {
+        font-size: 1rem;
+    }
+
+    .card.mb-3 .card-body {
+        padding: 0.75rem !important;
+    }
+
+    /* Imagen actual más pequeña */
+    .img-fluid.rounded {
+        max-width: 200px !important;
+    }
+
+    /* Alertas más compactas */
+    .alert {
+        font-size: 0.85rem;
+        padding: 0.6rem;
+    }
+
+    /* Input groups más compactos */
+    .input-group .btn {
+        padding: 0.6rem 0.4rem;
+        font-size: 0.85rem;
+    }
+
+    /* Campos de coordenadas más pequeños */
+    input[type="number"] {
+        font-size: 0.8rem;
+    }
+
+    /* Texto de ayuda más pequeño */
+    .form-text {
+        font-size: 0.75rem;
+    }
+}
+
+/* ========================================
+   GESTIÓN DE CATEGORÍAS Y TIPOS (ADMIN)
+   ======================================== */
+
+@media (max-width: 768px) {
+    /* Header responsivo */
+    .container-fluid h1.h3 {
+        font-size: 1.5rem;
+    }
+
+    .d-flex.justify-content-between {
+        flex-direction: column;
+        gap: 1rem;
+        align-items: stretch !important;
+    }
+
+    .d-flex.justify-content-between .btn {
+        width: 100%;
+        padding: 0.75rem 1rem;
+        font-size: 0.9rem;
+    }
+
+    /* Grid responsivo */
+    .col-md-6.col-lg-4 {
+        margin-bottom: 1rem;
+    }
+
+    /* Cards responsivas */
+    .card.h-100 {
+        height: auto !important;
+    }
+
+    .card-body {
+        padding: 1rem !important;
+    }
+
+    .card-title {
+        font-size: 1.1rem;
+    }
+
+    .card-text {
+        font-size: 0.9rem;
+    }
+
+    /* Dropdown responsivo */
+    .dropdown .btn {
+        padding: 0.5rem 0.75rem;
+        font-size: 0.9rem;
+    }
+
+    .dropdown-menu {
+        font-size: 0.9rem;
+    }
+
+    /* Badges responsivos */
+    .badge {
+        font-size: 0.8rem;
+        padding: 0.4em 0.6em;
+    }
+
+    /* Texto pequeño responsivo */
+    .text-muted.small {
+        font-size: 0.8rem;
+    }
+
+    /* Estado vacío responsivo */
+    .text-center.py-5 {
+        padding: 2rem 1rem !important;
+    }
+
+    .text-center.py-5 .fas {
+        font-size: 2.5rem !important;
+    }
+
+    .text-center.py-5 h5 {
+        font-size: 1.1rem;
+    }
+
+    .text-center.py-5 p {
+        font-size: 0.9rem;
+    }
+}
+
+@media (max-width: 576px) {
+    /* Header más compacto */
+    .container-fluid h1.h3 {
+        font-size: 1.25rem;
+    }
+
+    /* Botones más compactos */
+    .d-flex.justify-content-between .btn {
+        padding: 0.6rem 0.8rem;
+        font-size: 0.85rem;
+    }
+
+    /* Grid más compacto */
+    .col-md-6.col-lg-4 {
+        margin-bottom: 0.75rem;
+    }
+
+    /* Cards más compactas */
+    .card-body {
+        padding: 0.75rem !important;
+    }
+
+    .card-title {
+        font-size: 1rem;
+    }
+
+    .card-text {
+        font-size: 0.85rem;
+    }
+
+    /* Dropdown más compacto */
+    .dropdown .btn {
+        padding: 0.4rem 0.6rem;
+        font-size: 0.85rem;
+    }
+
+    .dropdown-menu {
+        font-size: 0.85rem;
+    }
+
+    .dropdown-item {
+        padding: 0.5rem 0.75rem;
+    }
+
+    /* Badges más pequeños */
+    .badge {
+        font-size: 0.75rem;
+        padding: 0.3em 0.5em;
+    }
+
+    /* Texto más pequeño */
+    .text-muted.small {
+        font-size: 0.75rem;
+    }
+
+    /* Estado vacío más compacto */
+    .text-center.py-5 {
+        padding: 1.5rem 0.75rem !important;
+    }
+
+    .text-center.py-5 .fas {
+        font-size: 2rem !important;
+    }
+
+    .text-center.py-5 h5 {
+        font-size: 1rem;
+    }
+
+    .text-center.py-5 p {
+        font-size: 0.85rem;
+    }
+
+    /* Ocultar elementos menos importantes en móviles */
+    .text-muted.small {
+        display: none;
+    }
+
+    .d-flex.justify-content-between.align-items-center .small {
+        display: none;
+    }
+}
+
+/* ========================================
+   PÁGINAS DE PERFIL DE USUARIO
+   ======================================== */
+
+@media (max-width: 768px) {
+    /* Header responsivo */
+    .card-header h4, .card-header h5 {
+        font-size: 1.25rem;
+    }
+
+    /* Layout responsivo */
+    .col-md-4.mb-4 {
+        margin-bottom: 1.5rem !important;
+    }
+
+    /* Información personal responsiva */
+    .card-body.text-center {
+        padding: 1rem !important;
+    }
+
+    .img-thumbnail.rounded-circle {
+        width: 120px !important;
+        height: 120px !important;
+    }
+
+    .card-body.text-center h4 {
+        font-size: 1.5rem;
+        margin-top: 1rem;
+    }
+
+    .badge.fs-6 {
+        font-size: 0.9rem !important;
+    }
+
+    /* Detalles del perfil responsivos */
+    .card-body .row {
+        margin-left: 0;
+        margin-right: 0;
+    }
+
+    .col-md-6.mb-3 {
+        margin-bottom: 1rem !important;
+        padding-left: 0;
+        padding-right: 0;
+    }
+
+    .d-flex.align-items-center {
+        padding: 0.75rem;
+        border-radius: 0.5rem;
+        background-color: #f8f9fa;
+    }
+
+    .d-flex.align-items-center .fas {
+        font-size: 1.2rem;
+        width: 30px;
+        text-align: center;
+    }
+
+    .d-flex.align-items-center small {
+        font-size: 0.8rem;
+        font-weight: 500;
+    }
+
+    .d-flex.align-items-center div div {
+        font-size: 0.9rem;
+        font-weight: 500;
+    }
+
+    /* Estadísticas responsivas */
+    .stats-card {
+        margin-bottom: 1rem;
+    }
+
+    .stats-card .card-body {
+        padding: 1rem;
+    }
+
+    .stats-card h3 {
+        font-size: 1.5rem;
+    }
+
+    .stats-card p {
+        font-size: 0.9rem;
+    }
+
+    /* Botones responsivos */
+    .btn-group {
+        flex-direction: column;
+        width: 100%;
+    }
+
+    .btn-group .btn {
+        margin-bottom: 0.5rem;
+        width: 100%;
+    }
+
+    .btn-group .btn:last-child {
+        margin-bottom: 0;
+    }
+}
+
+@media (max-width: 576px) {
+    /* Header más compacto */
+    .card-header h4, .card-header h5 {
+        font-size: 1.1rem;
+    }
+
+    /* Información personal más compacta */
+    .card-body.text-center {
+        padding: 0.75rem !important;
+    }
+
+    .img-thumbnail.rounded-circle {
+        width: 100px !important;
+        height: 100px !important;
+    }
+
+    .card-body.text-center h4 {
+        font-size: 1.25rem;
+        margin-top: 0.75rem;
+    }
+
+    .badge.fs-6 {
+        font-size: 0.8rem !important;
+    }
+
+    /* Detalles más compactos */
+    .col-md-6.mb-3 {
+        margin-bottom: 0.75rem !important;
+    }
+
+    .d-flex.align-items-center {
+        padding: 0.5rem;
+    }
+
+    .d-flex.align-items-center .fas {
+        font-size: 1rem;
+        width: 25px;
+    }
+
+    .d-flex.align-items-center small {
+        font-size: 0.75rem;
+    }
+
+    .d-flex.align-items-center div div {
+        font-size: 0.85rem;
+    }
+
+    /* Estadísticas más compactas */
+    .stats-card .card-body {
+        padding: 0.75rem;
+    }
+
+    .stats-card h3 {
+        font-size: 1.25rem;
+    }
+
+    .stats-card p {
+        font-size: 0.85rem;
+    }
+
+    /* Botones más compactos */
+    .btn-group .btn {
+        padding: 0.6rem 0.8rem;
+        font-size: 0.85rem;
+        margin-bottom: 0.4rem;
+    }
+}
+
+/* ========================================
+   PÁGINA DE DETALLES DE USUARIO (ADMIN)
+   ======================================== */
+
+@media (max-width: 768px) {
+    /* Header responsivo */
+    .container-fluid h1.h3 {
+        font-size: 1.5rem;
+    }
+
+    .d-flex.justify-content-between {
+        flex-direction: column;
+        gap: 1rem;
+        align-items: stretch !important;
+    }
+
+    .d-flex.justify-content-between .btn {
+        width: 100%;
+        padding: 0.75rem 1rem;
+        font-size: 0.9rem;
+    }
+
+    /* Layout responsivo */
+    .col-md-4.mb-4 {
+        margin-bottom: 1.5rem !important;
+    }
+
+    /* Información personal responsiva */
+    .card-body.text-center {
+        padding: 1rem !important;
+    }
+
+    .rounded-circle {
+        width: 120px !important;
+        height: 120px !important;
+    }
+
+    .card-body.text-center h4 {
+        font-size: 1.5rem;
+        margin-top: 1rem;
+    }
+
+    .badge.fs-6 {
+        font-size: 0.9rem !important;
+    }
+
+    /* Detalles del usuario responsivos */
+    .d-flex.align-items-center {
+        padding: 0.75rem;
+        border-radius: 0.5rem;
+        background-color: #f8f9fa;
+        margin-bottom: 0.75rem;
+    }
+
+    .d-flex.align-items-center .fas {
+        font-size: 1.2rem;
+        width: 30px;
+        text-align: center;
+    }
+
+    .d-flex.align-items-center small {
+        font-size: 0.8rem;
+        font-weight: 500;
+    }
+
+    .d-flex.align-items-center div div {
+        font-size: 0.9rem;
+        font-weight: 500;
+    }
+
+    /* Estadísticas responsivas */
+    .col-md-4.mb-3 {
+        margin-bottom: 1rem !important;
+    }
+
+    .card.bg-primary,
+    .card.bg-success,
+    .card.bg-warning {
+        margin-bottom: 1rem;
+    }
+
+    .card-body.text-center .fas {
+        font-size: 2rem !important;
+    }
+
+    .card-body.text-center h4 {
+        font-size: 1.5rem;
+    }
+
+    .card-body.text-center p {
+        font-size: 0.9rem;
+    }
+
+    /* Tabla responsiva */
+    .table-responsive {
+        font-size: 0.875rem;
+    }
+
+    .table th {
+        font-size: 0.8rem;
+        padding: 0.5rem;
+    }
+
+    .table td {
+        padding: 0.5rem;
+    }
+
+    /* Botones de acción */
+    .btn-sm {
+        padding: 0.4rem 0.6rem;
+        font-size: 0.8rem;
+    }
+
+    /* Badges responsivos */
+    .badge {
+        font-size: 0.7rem;
+        padding: 0.4em 0.6em;
+    }
+}
+
+@media (max-width: 576px) {
+    /* Header más compacto */
+    .container-fluid h1.h3 {
+        font-size: 1.25rem;
+    }
+
+    /* Botones más compactos */
+    .d-flex.justify-content-between .btn {
+        padding: 0.6rem 0.8rem;
+        font-size: 0.85rem;
+    }
+
+    /* Información personal más compacta */
+    .card-body.text-center {
+        padding: 0.75rem !important;
+    }
+
+    .rounded-circle {
+        width: 100px !important;
+        height: 100px !important;
+    }
+
+    .card-body.text-center h4 {
+        font-size: 1.25rem;
+        margin-top: 0.75rem;
+    }
+
+    .badge.fs-6 {
+        font-size: 0.8rem !important;
+    }
+
+    /* Detalles más compactos */
+    .d-flex.align-items-center {
+        padding: 0.5rem;
+        margin-bottom: 0.5rem;
+    }
+
+    .d-flex.align-items-center .fas {
+        font-size: 1rem;
+        width: 25px;
+    }
+
+    .d-flex.align-items-center small {
+        font-size: 0.75rem;
+    }
+
+    .d-flex.align-items-center div div {
+        font-size: 0.85rem;
+    }
+
+    /* Estadísticas más compactas */
+    .card-body.text-center .fas {
+        font-size: 1.5rem !important;
+    }
+
+    .card-body.text-center h4 {
+        font-size: 1.25rem;
+    }
+
+    .card-body.text-center p {
+        font-size: 0.85rem;
+    }
+
+    /* Tabla más compacta */
+    .table-responsive {
+        font-size: 0.8rem;
+    }
+
+    .table th {
+        font-size: 0.75rem;
+        padding: 0.4rem;
+    }
+
+    .table td {
+        padding: 0.4rem;
+    }
+
+    /* Botones más compactos */
+    .btn-sm {
+        padding: 0.3rem 0.5rem;
+        font-size: 0.75rem;
+    }
+
+    /* Badges más pequeños */
+    .badge {
+        font-size: 0.65rem;
+        padding: 0.3em 0.5em;
+    }
+
+    /* Ocultar columnas menos importantes en móviles */
+    .table th:nth-child(1), /* ID */
+    .table td:nth-child(1) {
+        display: none;
+    }
+
+    .table th:nth-child(6), /* Duración */
+    .table td:nth-child(6) {
+        display: none;
+    }
+}
+
+/* ========================================
+   PÁGINA DE DETALLES DE RESERVA (ADMIN)
+   ======================================== */
+
+@media (max-width: 768px) {
+    /* Header responsivo */
+    .card-header h3 {
+        font-size: 1.5rem;
+    }
+
+    /* Layout responsivo */
+    .col-md-8.mx-auto {
+        margin-left: 0 !important;
+        margin-right: 0 !important;
+    }
+
+    .col-md-6 {
+        margin-bottom: 1.5rem;
+    }
+
+    .col-md-6:last-child {
+        margin-bottom: 0;
+    }
+
+    /* Información responsiva */
+    .card-body h5 {
+        font-size: 1.1rem;
+        margin-bottom: 1rem;
+    }
+
+    .card-body p {
+        font-size: 0.9rem;
+        margin-bottom: 0.75rem;
+    }
+
+    .card-body strong {
+        font-size: 0.9rem;
+    }
+
+    /* Badges responsivos */
+    .badge {
+        font-size: 0.8rem;
+        padding: 0.4em 0.6em;
+    }
+
+    /* Botones responsivos */
+    .d-flex.justify-content-between {
+        flex-direction: column;
+        gap: 1rem;
+    }
+
+    .d-flex.justify-content-between .btn {
+        width: 100%;
+        padding: 0.75rem 1rem;
+        font-size: 0.9rem;
+    }
+}
+
+@media (max-width: 576px) {
+    /* Header más compacto */
+    .card-header h3 {
+        font-size: 1.25rem;
+    }
+
+    /* Layout más compacto */
+    .col-md-6 {
+        margin-bottom: 1rem;
+    }
+
+    /* Información más compacta */
+    .card-body h5 {
+        font-size: 1rem;
+        margin-bottom: 0.75rem;
+    }
+
+    .card-body p {
+        font-size: 0.85rem;
+        margin-bottom: 0.5rem;
+    }
+
+    .card-body strong {
+        font-size: 0.85rem;
+    }
+
+    /* Badges más pequeños */
+    .badge {
+        font-size: 0.75rem;
+        padding: 0.3em 0.5em;
+    }
+
+    /* Botones más compactos */
+    .d-flex.justify-content-between .btn {
+        padding: 0.6rem 0.8rem;
+        font-size: 0.85rem;
+    }
+
+    /* Observaciones más compactas */
+    .text-muted {
+        font-size: 0.85rem;
+        line-height: 1.4;
+    }
+}
+
+/* ========================================
+   PÁGINA DE CONFIGURACIÓN DEL SISTEMA (ADMIN)
+   ======================================== */
+
+@media (max-width: 768px) {
+    /* Header responsivo */
+    .container h2 {
+        font-size: 1.5rem;
+    }
+
+    /* Layout responsivo */
+    .col-md-6.mb-3 {
+        margin-bottom: 1rem !important;
+    }
+
+    /* Formulario responsivo */
+    .form-label {
+        font-size: 0.9rem;
+        font-weight: 500;
+    }
+
+    .form-control {
+        padding: 0.75rem;
+        font-size: 0.9rem;
+    }
+
+    /* Botones responsivos */
+    .text-end {
+        text-align: center !important;
+    }
+
+    .text-end .btn {
+        width: 100%;
+        padding: 0.75rem 1rem;
+        font-size: 0.9rem;
+    }
+}
+
+@media (max-width: 576px) {
+    /* Header más compacto */
+    .container h2 {
+        font-size: 1.25rem;
+    }
+
+    /* Layout más compacto */
+    .col-md-6.mb-3 {
+        margin-bottom: 0.75rem !important;
+    }
+
+    /* Formulario más compacto */
+    .form-label {
+        font-size: 0.85rem;
+        margin-bottom: 0.5rem;
+    }
+
+    .form-control {
+        padding: 0.6rem;
+        font-size: 0.85rem;
+    }
+
+    /* Botones más compactos */
+    .text-end .btn {
+        padding: 0.6rem 0.8rem;
+        font-size: 0.85rem;
+    }
+}
+
+/* ========================================
+   PÁGINA DE ESTADÍSTICAS DEL FORO (ADMIN)
+   ======================================== */
+
+@media (max-width: 768px) {
+    /* Header responsivo */
+    .container-fluid h2 {
+        font-size: 1.5rem;
+    }
+
+    .container-fluid p.text-muted {
+        font-size: 0.9rem;
+    }
+
+    .d-flex.justify-content-between {
+        flex-direction: column;
+        gap: 1rem;
+        align-items: stretch !important;
+    }
+
+    .d-flex.justify-content-between .btn {
+        width: 100%;
+        padding: 0.75rem 1rem;
+        font-size: 0.9rem;
+    }
+
+    /* Estadísticas generales responsivas */
+    .col-md-3 {
+        margin-bottom: 1rem;
+    }
+
+    .card.bg-primary,
+    .card.bg-success,
+    .card.bg-info,
+    .card.bg-warning {
+        margin-bottom: 1rem;
+    }
+
+    .card-body.text-center .fas {
+        font-size: 2rem !important;
+    }
+
+    .card-body.text-center h3 {
+        font-size: 1.5rem;
+    }
+
+    .card-body.text-center p {
+        font-size: 0.9rem;
+    }
+
+    /* Detalles de estados responsivos */
+    .col-md-6 {
+        margin-bottom: 1rem;
+    }
+
+    .card-header h5 {
+        font-size: 1.1rem;
+    }
+
+    .card-body .row.text-center h4 {
+        font-size: 1.25rem;
+    }
+
+    .card-body .row.text-center small {
+        font-size: 0.8rem;
+    }
+
+    /* Gráficos responsivos */
+    .chart-container {
+        height: 300px !important;
+    }
+
+    /* Tablas responsivas */
+    .table-responsive {
+        font-size: 0.875rem;
+    }
+
+    .table th {
+        font-size: 0.8rem;
+        padding: 0.5rem;
+    }
+
+    .table td {
+        padding: 0.5rem;
+    }
+}
+
+@media (max-width: 576px) {
+    /* Header más compacto */
+    .container-fluid h2 {
+        font-size: 1.25rem;
+    }
+
+    .container-fluid p.text-muted {
+        font-size: 0.85rem;
+    }
+
+    /* Botones más compactos */
+    .d-flex.justify-content-between .btn {
+        padding: 0.6rem 0.8rem;
+        font-size: 0.85rem;
+    }
+
+    /* Estadísticas más compactas */
+    .card-body.text-center .fas {
+        font-size: 1.5rem !important;
+    }
+
+    .card-body.text-center h3 {
+        font-size: 1.25rem;
+    }
+
+    .card-body.text-center p {
+        font-size: 0.85rem;
+    }
+
+    /* Detalles más compactos */
+    .card-header h5 {
+        font-size: 1rem;
+    }
+
+    .card-body .row.text-center h4 {
+        font-size: 1.1rem;
+    }
+
+    .card-body .row.text-center small {
+        font-size: 0.75rem;
+    }
+
+    /* Gráficos más pequeños */
+    .chart-container {
+        height: 250px !important;
+    }
+
+    /* Tablas más compactas */
+    .table-responsive {
+        font-size: 0.8rem;
+    }
+
+    .table th {
+        font-size: 0.75rem;
+        padding: 0.4rem;
+    }
+
+    .table td {
+        padding: 0.4rem;
+    }
+
+    /* Ocultar elementos menos importantes en móviles */
+    .d-flex.justify-content-between .btn:not(:first-child) {
+        display: none;
+    }
+}
+
+/* ========================================
+   UTILIDADES RESPONSIVAS GENERALES
+   ======================================== */
+
+/* Ocultar elementos en móviles cuando sea necesario */
+@media (max-width: 576px) {
+    .d-mobile-none {
+        display: none !important;
+    }
+    
+    .d-mobile-block {
+        display: block !important;
+    }
+}
+
+/* Espaciado responsivo */
+@media (max-width: 768px) {
+    .container {
+        padding-left: 1rem;
+        padding-right: 1rem;
+    }
+    
+    .row {
+        margin-left: -0.5rem;
+        margin-right: -0.5rem;
+    }
+    
+    .col, .col-1, .col-2, .col-3, .col-4, .col-5, .col-6, 
+    .col-7, .col-8, .col-9, .col-10, .col-11, .col-12 {
+        padding-left: 0.5rem;
+        padding-right: 0.5rem;
+    }
+}
+
+@media (max-width: 576px) {
+    .container {
+        padding-left: 0.75rem;
+        padding-right: 0.75rem;
+    }
+    
+    .row {
+        margin-left: -0.25rem;
+        margin-right: -0.25rem;
+    }
+    
+    .col, .col-1, .col-2, .col-3, .col-4, .col-5, .col-6, 
+    .col-7, .col-8, .col-9, .col-10, .col-11, .col-12 {
+        padding-left: 0.25rem;
+        padding-right: 0.25rem;
+    }
+}
+
+/* ========================================
+   PÁGINAS DE REPORTES PDF
+   ======================================== */
+
+/* ========================================
+   REPORTE GENERAL PDF (reportes_pdf.html)
+   ======================================== */
+
+@media (max-width: 768px) {
+    /* Header responsivo */
+    .header {
+        margin-bottom: 20px;
+        padding-bottom: 15px;
+    }
+    
+    .header .title {
+        font-size: 18px;
+        margin: 8px 0;
+    }
+    
+    .header .subtitle {
+        font-size: 12px;
+    }
+    
+    .header .logo {
+        max-width: 100px;
+        max-height: 60px;
+    }
+    
+    /* Información responsiva */
+    .info-section {
+        padding: 10px;
+        margin-bottom: 15px;
+        font-size: 12px;
+    }
+    
+    .info-item {
+        margin: 3px 0;
+    }
+    
+    /* Títulos de sección responsivos */
+    .section-title {
+        font-size: 16px;
+        margin: 20px 0 10px 0;
+    }
+    
+    /* Estadísticas responsivas */
+    .stats-grid {
+        gap: 10px;
+    }
+    
+    .stat-card {
+        padding: 12px;
+        min-width: auto;
+    }
+    
+    .stat-number {
+        font-size: 20px;
+    }
+    
+    .stat-label {
+        font-size: 12px;
+    }
+    
+    /* Layout horizontal responsivo */
+    .horizontal-layout {
+        gap: 15px;
+    }
+    
+    .chart-section {
+        padding: 12px;
+    }
+    
+    .chart-title {
+        font-size: 14px;
+        margin-bottom: 10px;
+    }
+    
+    /* Gráficos responsivos */
+    .chart-bar {
+        height: 20px;
+        margin: 6px 0;
+    }
+    
+    .chart-label {
+        width: 60px;
+        font-size: 10px;
+    }
+    
+    .chart-value {
+        width: 50px;
+        font-size: 10px;
+    }
+    
+    .chart-stats {
+        font-size: 10px;
+    }
+    
+    /* Heatmap responsivo */
+    .heatmap-container {
+        font-size: 7px;
+    }
+    
+    .heatmap-table th,
+    .heatmap-table td {
+        padding: 2px;
+        font-size: 6px;
+    }
+    
+    .heatmap-legend {
+        font-size: 8px;
+    }
+    
+    .legend-item {
+        margin: 0 3px;
+    }
+    
+    .legend-color {
+        width: 12px;
+        height: 10px;
+    }
+    
+    /* Tablas responsivas */
+    .data-table {
+        font-size: 10px;
+    }
+    
+    .data-table th,
+    .data-table td {
+        padding: 5px 3px;
+    }
+    
+    /* Métricas responsivas */
+    .metrics-row {
+        gap: 10px;
+    }
+    
+    .metric-card {
+        padding: 12px;
+    }
+    
+    .metric-value {
+        font-size: 18px;
+    }
+    
+    .metric-label {
+        font-size: 10px;
+    }
+    
+    /* Footer responsivo */
+    .footer {
+        margin-top: 20px;
+        padding-top: 15px;
+        font-size: 10px;
+    }
+}
+
+@media (max-width: 576px) {
+    /* Header más compacto */
+    .header .title {
+        font-size: 16px;
+    }
+    
+    .header .subtitle {
+        font-size: 11px;
+    }
+    
+    .header .logo {
+        max-width: 80px;
+        max-height: 50px;
+    }
+    
+    /* Información más compacta */
+    .info-section {
+        padding: 8px;
+        font-size: 11px;
+    }
+    
+    /* Títulos más compactos */
+    .section-title {
+        font-size: 14px;
+        margin: 15px 0 8px 0;
+    }
+    
+    /* Estadísticas más compactas */
+    .stat-card {
+        padding: 10px;
+    }
+    
+    .stat-number {
+        font-size: 18px;
+    }
+    
+    .stat-label {
+        font-size: 11px;
+    }
+    
+    /* Layout más compacto */
+    .horizontal-layout {
+        gap: 12px;
+    }
+    
+    .chart-section {
+        padding: 10px;
+    }
+    
+    .chart-title {
+        font-size: 13px;
+        margin-bottom: 8px;
+    }
+    
+    /* Gráficos más compactos */
+    .chart-bar {
+        height: 18px;
+        margin: 5px 0;
+    }
+    
+    .chart-label {
+        width: 50px;
+        font-size: 9px;
+    }
+    
+    .chart-value {
+        width: 45px;
+        font-size: 9px;
+    }
+    
+    .chart-stats {
+        font-size: 9px;
+    }
+    
+    /* Heatmap más compacto */
+    .heatmap-container {
+        font-size: 6px;
+    }
+    
+    .heatmap-table th,
+    .heatmap-table td {
+        padding: 1px;
+        font-size: 5px;
+    }
+    
+    .heatmap-legend {
+        font-size: 7px;
+    }
+    
+    .legend-color {
+        width: 10px;
+        height: 8px;
+    }
+    
+    /* Tablas más compactas */
+    .data-table {
+        font-size: 9px;
+    }
+    
+    .data-table th,
+    .data-table td {
+        padding: 4px 2px;
+    }
+    
+    /* Métricas más compactas */
+    .metric-card {
+        padding: 10px;
+    }
+    
+    .metric-value {
+        font-size: 16px;
+    }
+    
+    .metric-label {
+        font-size: 9px;
+    }
+    
+    /* Footer más compacto */
+    .footer {
+        margin-top: 15px;
+        padding-top: 12px;
+        font-size: 9px;
+    }
+}
+
+/* ========================================
+   REPORTE DE USUARIOS PDF (usuarios_pdf.html)
+   ======================================== */
+
+@media (max-width: 768px) {
+    /* Header responsivo */
+    header {
+        flex-direction: column;
+        text-align: center;
+        padding-bottom: 15px;
+        margin-bottom: 15px;
+    }
+    
+    header img {
+        height: 35px;
+        margin-right: 0;
+        margin-bottom: 10px;
+    }
+    
+    header h1 {
+        font-size: 20px;
+        flex-grow: 0;
+    }
+    
+    /* Resumen responsivo */
+    .resumen {
+        display: block;
+        width: 100%;
+    }
+    
+    .resumen .card {
+        display: block;
+        margin-bottom: 10px;
+        padding: 10px;
+    }
+    
+    .resumen .icon {
+        font-size: 24px;
+        margin-bottom: 3px;
+    }
+    
+    .resumen h3 {
+        font-size: 18px;
+        margin: 3px 0;
+    }
+    
+    .resumen p {
+        font-size: 12px;
+        margin: 0;
+    }
+    
+    /* Tabla responsiva */
+    table {
+        font-size: 10px;
+        margin-bottom: 20px;
+    }
+    
+    table th,
+    table td {
+        padding: 5px 3px;
+    }
+    
+    table th {
+        font-size: 11px;
+    }
+    
+    /* Badges responsivos */
+    .badge {
+        padding: 1px 6px;
+        font-size: 9px;
+    }
+    
+    /* Footer responsivo */
+    footer {
+        position: static;
+        margin-top: 20px;
+        font-size: 10px;
+    }
+}
+
+@media (max-width: 576px) {
+    /* Header más compacto */
+    header {
+        padding-bottom: 12px;
+        margin-bottom: 12px;
+    }
+    
+    header img {
+        height: 30px;
+        margin-bottom: 8px;
+    }
+    
+    header h1 {
+        font-size: 18px;
+    }
+    
+    /* Resumen más compacto */
+    .resumen .card {
+        margin-bottom: 8px;
+        padding: 8px;
+    }
+    
+    .resumen .icon {
+        font-size: 20px;
+        margin-bottom: 2px;
+    }
+    
+    .resumen h3 {
+        font-size: 16px;
+        margin: 2px 0;
+    }
+    
+    .resumen p {
+        font-size: 11px;
+    }
+    
+    /* Tabla más compacta */
+    table {
+        font-size: 9px;
+        margin-bottom: 15px;
+    }
+    
+    table th,
+    table td {
+        padding: 4px 2px;
+    }
+    
+    table th {
+        font-size: 10px;
+    }
+    
+    /* Badges más pequeños */
+    .badge {
+        padding: 1px 4px;
+        font-size: 8px;
+    }
+    
+    /* Footer más compacto */
+    footer {
+        margin-top: 15px;
+        font-size: 9px;
+    }
+    
+    /* Ocultar columnas menos importantes en móviles */
+    table th:nth-child(1), /* ID */
+    table td:nth-child(1) {
+        display: none;
+    }
+    
+    table th:nth-child(4), /* Teléfono */
+    table td:nth-child(4) {
+        display: none;
+    }
+}
+
+/* ========================================
+   ORIENTACIÓN LANDSCAPE PARA PDFs
+   ======================================== */
+
+@media (orientation: landscape) and (max-height: 500px) {
+    /* Ajustes para orientación landscape en móviles */
+    .header {
+        margin-bottom: 10px;
+        padding-bottom: 8px;
+    }
+    
+    .header .title {
+        font-size: 14px;
+    }
+    
+    .section-title {
+        font-size: 12px;
+        margin: 10px 0 5px 0;
+    }
+    
+    .stats-grid {
+        gap: 8px;
+    }
+    
+    .stat-card {
+        padding: 8px;
+    }
+    
+    .stat-number {
+        font-size: 16px;
+    }
+    
+    .stat-label {
+        font-size: 10px;
+    }
+    
+    .horizontal-layout {
+        gap: 10px;
+    }
+    
+    .chart-section {
+        padding: 8px;
+    }
+    
+    .chart-title {
+        font-size: 11px;
+        margin-bottom: 6px;
+    }
+    
+    /* Para usuarios_pdf.html en landscape */
+    header {
+        padding-bottom: 8px;
+        margin-bottom: 8px;
+    }
+    
+    header h1 {
+        font-size: 16px;
+    }
+    
+    .resumen .card {
+        margin-bottom: 6px;
+        padding: 6px;
+    }
+    
+    .resumen h3 {
+        font-size: 14px;
+    }
+    
+    .resumen p {
+        font-size: 10px;
+    }
+}
+
+/* ========================================
+   IMPRESIÓN OPTIMIZADA PARA PDFs
+   ======================================== */
+
+@media print {
+    /* Asegurar que los elementos se impriman correctamente */
+    body {
+        padding: 20px;
+        font-size: 12px;
+        line-height: 1.4;
+    }
+    
+    .header {
+        page-break-inside: avoid;
+        margin-bottom: 20px;
+    }
+    
+    .stats-grid {
+        page-break-inside: avoid;
+    }
+    
+    .horizontal-layout {
+        page-break-inside: avoid;
+    }
+    
+    .metrics-row {
+        page-break-inside: avoid;
+    }
+    
+    .resumen {
+        page-break-inside: avoid;
+    }
+    
+    table {
+        page-break-inside: avoid;
+    }
+    
+    /* Evitar cortes en elementos importantes */
+    .chart-section {
+        page-break-inside: avoid;
+    }
+    
+    .stat-card {
+        page-break-inside: avoid;
+    }
+    
+    .metric-card {
+        page-break-inside: avoid;
+    }
+    
+    /* Asegurar que el footer aparezca en la última página */
+    .footer {
+        position: fixed;
+        bottom: 20px;
+        left: 0;
+        right: 0;
+        text-align: center;
+    }
+    
+    footer {
+        position: fixed;
+        bottom: 10px;
+        left: 0;
+        right: 0;
+        text-align: center;
+    }
+}

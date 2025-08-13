@@ -1,0 +1,159 @@
+{% extends "base.html" %}
+
+{% block title %}Editar Cancha{% endblock %}
+
+{% block content %}
+<div class="container-fluid">
+    <div class="row">
+        <div class="col-md-8 mx-auto">
+            <div class="card">
+                <div class="card-header bg-gradient" style="background: linear-gradient(90deg, #6a11cb, #2575fc); color:white;">
+                    <h3><i class="fas fa-edit"></i> Editar Cancha</h3>
+                </div>
+                <div class="card-body">
+                    <form method="POST" enctype="multipart/form-data">
+                        <!-- Nombre -->
+                        <div class="mb-3">
+                            <label for="nombre" class="form-label">Nombre de la Cancha</label>
+                            <input type="text" class="form-control" id="nombre" name="nombre" 
+                                   value="{{ cancha.Nombre }}" required>
+                        </div>
+
+                        <!-- Descripción -->
+                        <div class="mb-3">
+                            <label for="descripcion" class="form-label">Descripción</label>
+                            <textarea class="form-control" id="descripcion" name="descripcion" rows="3">{{ cancha.Descripcion or '' }}</textarea>
+                        </div>
+
+                        <div class="row">
+                            <!-- Precio por Hora -->
+                            <div class="col-md-6">
+                                <div class="mb-3">
+                                    <label for="precio_hora" class="form-label">Precio por Hora (COP)</label>
+                                    <div class="input-group">
+                                        <span class="input-group-text">COP</span>
+                                        <input type="number" class="form-control" id="precio_hora" name="precio_hora" 
+                                               step="1" min="0" value="{{ "%.0f"|format(cancha.PrecioHora) }}" required>
+                                    </div>
+                                    <small class="form-text text-muted">Precio en pesos colombianos</small>
+                                </div>
+                            </div>
+
+                            <!-- Categoría -->
+                            <div class="col-md-6">
+                                <div class="mb-3">
+                                    <label for="categoria" class="form-label">Categoría</label>
+                                    <select class="form-select" id="categoria" name="categoria" required>
+                                        <option value="">Selecciona una categoría</option>
+                                        {% for categoria in categorias %}
+                                        <option value="{{ categoria.Id }}" 
+                                                {% if categoria.Id == cancha.CategoriaId %}selected{% endif %}>
+                                            {{ categoria.Nombre }}
+                                        </option>
+                                        {% endfor %}
+                                    </select>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="row">
+                            <!-- Tipo de Superficie -->
+                            <div class="col-md-6">
+                                <div class="mb-3">
+                                    <label for="tipo_cancha" class="form-label">Tipo de Superficie</label>
+                                    <select class="form-select" id="tipo_cancha" name="tipo_cancha" required>
+                                        <option value="">Selecciona un tipo</option>
+                                        {% for tipo in tipos %}
+                                        <option value="{{ tipo.Id }}" 
+                                                {% if tipo.Id == cancha.TipoCanchaId %}selected{% endif %}>
+                                            {{ tipo.Nombre }}
+                                        </option>
+                                        {% endfor %}
+                                    </select>
+                                </div>
+                            </div>
+
+                            <!-- Estado -->
+                            <div class="col-md-6">
+                                <div class="mb-3">
+                                    <label for="estado" class="form-label">Estado de la Cancha</label>
+                                    <select class="form-select" id="estado" name="estado" required>
+                                        <option value="Disponible" {% if cancha.Estado == 'Disponible' %}selected{% endif %}>Disponible</option>
+                                        <option value="Ocupado" {% if cancha.Estado == 'Ocupado' %}selected{% endif %}>Ocupado</option>
+                                        <option value="Mantenimiento" {% if cancha.Estado == 'Mantenimiento' %}selected{% endif %}>Mantenimiento</option>
+                                    </select>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Imagen nueva -->
+                        <div class="mb-3">
+                            <label for="imagen" class="form-label">Nueva imagen de la cancha (opcional)</label>
+                            <input type="file" class="form-control" name="imagen" id="imagen" accept="image/*">
+                        </div>
+
+                        <!-- Imagen actual -->
+                        {% if cancha.Imagen %}
+                        <div class="mb-3">
+                            <p>Imagen actual:</p>
+                            <img src="{{ url_for('static', filename=cancha.Imagen) }}" 
+                                 class="img-fluid rounded shadow-sm mb-2" style="max-width: 300px;">
+                            <div class="form-check mt-2">
+                                <input class="form-check-input" type="checkbox" name="eliminar_imagen" id="eliminar_imagen">
+                                <label class="form-check-label" for="eliminar_imagen">
+                                    Eliminar imagen actual
+                                </label>
+                            </div>
+                        </div>
+                        {% endif %}
+
+                        <!-- Información adicional -->
+                        <div class="alert alert-info">
+                            <h6><i class="fas fa-info-circle"></i> Información de la Cancha</h6>
+                            <p class="mb-1"><strong>ID:</strong> {{ cancha.Id }}</p>
+                            <p class="mb-1"><strong>Reservas Activas:</strong> {{ cancha.reservas|length }}</p>
+                            <p class="mb-0"><strong>Fecha de Creación:</strong> 
+                                {{ cancha.FechaCreacion.strftime('%d/%m/%Y') if cancha.FechaCreacion else 'N/A' }}
+                            </p>
+                        </div>
+
+                        <div class="d-flex justify-content-between">
+                                                <a href="{{ url_for('admin.canchas') }}" class="btn admin-back-btn">
+                        <i class="fas fa-arrow-left"></i> Cancelar
+                    </a>
+                            <button type="submit" class="btn btn-primary">
+                                <i class="fas fa-save"></i> Guardar Cambios
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Validación simple del formulario -->
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    const form = document.querySelector('form');
+    form.addEventListener('submit', function(e) {
+        const nombre = document.getElementById('nombre').value.trim();
+        const precio = document.getElementById('precio_hora').value;
+        const categoria = document.getElementById('categoria').value;
+        const tipo = document.getElementById('tipo_cancha').value;
+
+        if (!nombre || !precio || !categoria || !tipo) {
+            e.preventDefault();
+            alert('Por favor completa todos los campos requeridos');
+            return false;
+        }
+
+        if (parseFloat(precio) <= 0) {
+            e.preventDefault();
+            alert('El precio debe ser mayor a 0');
+            return false;
+        }
+    });
+});
+</script>
+{% endblock %}

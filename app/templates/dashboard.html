@@ -1,0 +1,32 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="container-fluid mt-4">
+    <h2>Bienvenido, {{ current_user.Nombre }}</h2>
+    
+    {% if current_user.rol.Nombre == 'Administrador' %}
+        <div class="alert alert-info mt-4">
+            <h4>Panel de Administración</h4>
+            <a href="{{ url_for('admin.canchas') }}" class="btn btn-primary mt-2">
+                Gestionar Canchas
+            </a>
+        </div>
+    {% elif current_user.rol.Nombre == 'Cliente' %}
+        <div class="alert alert-success mt-4">
+            <h4>Panel de Cliente</h4>
+            <a href="{{ url_for('client.reservar') }}" class="btn btn-success mt-2">
+                Hacer una Reserva
+            </a>
+        </div>
+    {% endif %}
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script>
+    // Si el usuario vuelve con las flechas, recargamos desde el servidor
+    if (performance.navigation.type === 2) {
+        location.reload(true);
+    }
+</script>
+{% endblock %}

@@ -1,0 +1,401 @@
+{% extends "base.html" %}
+
+{% block title %}Gestion Reservas{% endblock %}
+
+{% block head %}
+<!-- SweetAlert2 CSS -->
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.min.css">
+<style>
+            /* Estilos para las fotos de perfil en la tabla */
+            .user-profile-cell {
+                min-width: 200px;
+            }
+            
+            .avatar-sm {
+                flex-shrink: 0;
+            }
+            
+            .user-profile-image {
+                transition: transform 0.2s ease, box-shadow 0.2s ease;
+            }
+            
+            .user-profile-image:hover {
+                transform: scale(1.1);
+                box-shadow: 0 4px 8px rgba(0,0,0,0.2);
+            }
+
+/* Mejorar la apariencia de la tabla */
+.table th {
+    background-color: #f8f9fa;
+    border-bottom: 2px solid #dee2e6;
+    font-weight: 600;
+    color: #495057;
+}
+
+.table td {
+    vertical-align: middle;
+    padding: 0.75rem;
+}
+
+/* Estilos para el estado de las reservas */
+.badge {
+    font-size: 0.75rem;
+    padding: 0.5em 0.75em;
+}
+
+/* Responsive para móviles */
+@media (max-width: 768px) {
+    .user-profile-cell {
+        min-width: 150px;
+    }
+    
+    .user-profile-image {
+        width: 32px !important;
+        height: 32px !important;
+    }
+    
+    .table-responsive {
+        font-size: 0.875rem;
+    }
+}
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="container-fluid">
+    <div class="row mb-4">
+        <div class="col">
+            <div class="d-flex align-items-center gap-3">
+                <a href="{{ url_for('admin.dashboard') }}" class="btn admin-back-btn">
+                    <i class="fas fa-arrow-left me-2"></i>Regresar
+                </a>
+                <h2><i class="fas fa-calendar-check me-2"></i>Gestion Reservas</h2>
+            </div>
+        </div>
+    </div>
+
+    <!-- Filtros -->
+    <div class="card shadow-sm mb-4 filter-section filtro-estetico">
+        <div class="card-header bg-white border-0 pb-0">
+            <h5 class="mb-0 text-dark">
+                <i class="fas fa-filter me-2"></i>Filtros de Búsqueda
+            </h5>
+        </div>
+        <div class="card-body pt-3">
+            <form method="GET" action="{{ url_for('admin.reservas') }}" id="filtrosForm">
+                <div class="row g-3 align-items-end">
+                    <div class="col-md-4">
+                        <label for="cliente" class="form-label fw-semibold">
+                            <i class="fas fa-user me-1"></i>Nombre del Cliente
+                        </label>
+                        <input type="text" class="form-control filtro-input" id="cliente" name="cliente" 
+                               value="{{ cliente_filter }}" placeholder="Buscar por cliente...">
+                    </div>
+                    <div class="col-md-3">
+                        <label for="cancha" class="form-label fw-semibold">
+                            <i class="fas fa-futbol me-1"></i>Nombre de Cancha
+                        </label>
+                        <select class="form-select filtro-input" id="cancha" name="cancha">
+                            <option value="">Todas las canchas</option>
+                            {% for cancha in canchas %}
+                            <option value="{{ cancha }}" 
+                                    {% if cancha_filter == cancha %}selected{% endif %}>
+                                {{ cancha }}
+                            </option>
+                            {% endfor %}
+                        </select>
+                    </div>
+                    <div class="col-md-3">
+                        <label for="fecha" class="form-label fw-semibold">
+                            <i class="fas fa-calendar me-1"></i>Fecha
+                        </label>
+                        <input type="date" class="form-control filtro-input" id="fecha" name="fecha" 
+                               value="{{ fecha_filter }}">
+                    </div>
+                    <div class="col-md-2 d-flex gap-2">
+                        <button type="submit" class="btn btn-success w-100">
+                            <i class="fas fa-search"></i>
+                        </button>
+                        <a href="{{ url_for('admin.reservas') }}" class="btn btn-outline-secondary w-100">
+                            <i class="fas fa-times"></i>
+                        </a>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Resultados -->
+    <div class="row mb-3">
+        <div class="col-12">
+            <div class="results-header">
+                <div class="d-flex justify-content-between align-items-center">
+                    <h5 class="mb-0">
+                        <i class="fas fa-list me-2"></i>Resultados ({{ reservas|length }} reserva{{ 's' if reservas|length != 1 else '' }})
+                    </h5>
+                    {% if cliente_filter or cancha_filter or fecha_filter %}
+                    <div class="filter-badges">
+                        {% if cliente_filter %}<span class="badge">usuario: {{ cliente_filter }}</span>{% endif %}
+                        {% if cancha_filter %}<span class="badge">Cancha: {{ cancha_filter }}</span>{% endif %}
+                        {% if fecha_filter %}<span class="badge">fecha: {{ fecha_filter }}</span>{% endif %}
+                    </div>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    </div>
+
+    {% if reservas %}
+    <div class="row">
+        <div class="col-12">
+            <div class="card">
+                <div class="card-header">
+                    <h5>Todas las Reservas</h5>
+                </div>
+                <div class="card-body">
+                    <div class="table-responsive">
+                        <table class="table table-striped">
+                            <thead>
+                                <tr>
+                                    <th>ID</th>
+                                    <th>Cliente</th>
+                                    <th>Cancha</th>
+                                    <th>Fecha</th>
+                                    <th>Horario</th>
+                                    <th>Precio</th>
+                                    <th>Estado</th>
+                                    <th>Acciones</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for reserva in reservas %}
+                                <tr>
+                                    <td>{{ reserva.Id }}</td>
+                                    <td class="user-profile-cell">
+                                        <div class="d-flex align-items-center">
+                                            <div class="avatar-sm me-3">
+                                                {% if reserva.usuario.FotoPerfil %}
+                                                    <img src="{{ url_for('static', filename=reserva.usuario.FotoPerfil) }}"
+                                                         alt="Foto de {{ reserva.usuario.Nombre }}" 
+                                                         class="rounded-circle user-profile-image"
+                                                         style="width: 40px; height: 40px; object-fit: cover; border: 2px solid #e9ecef;"
+                                                         data-bs-toggle="tooltip" 
+                                                         data-bs-placement="top" 
+                                                         title="{{ reserva.usuario.Nombre }} - {{ reserva.usuario.Email if reserva.usuario.Email else 'Sin email' }}">
+                                                {% else %}
+                                                    <img src="{{ url_for('static', filename='images/default-user.png') }}"
+                                                         alt="Sin foto" 
+                                                         class="rounded-circle user-profile-image"
+                                                         style="width: 40px; height: 40px; object-fit: cover; border: 2px solid #e9ecef;"
+                                                         data-bs-toggle="tooltip" 
+                                                         data-bs-placement="top" 
+                                                         title="{{ reserva.usuario.Nombre }} - {{ reserva.usuario.Email if reserva.usuario.Email else 'Sin email' }}">
+                                                {% endif %}
+                                            </div>
+                                            <div class="flex-grow-1">
+                                                <div class="fw-bold">{{ reserva.usuario.Nombre }}</div>
+                                                <small class="text-muted">{{ reserva.usuario.Email if reserva.usuario.Email else 'Sin email' }}</small>
+                                            </div>
+                                        </div>
+                                    </td>
+                                    <td>{{ reserva.cancha.Nombre }}</td>
+                                    <td>{{ reserva.Fecha.strftime('%d/%m/%Y') }}</td>
+                                    <td>{{ reserva.HoraInicio.strftime('%H:%M') }} - {{ reserva.HoraFin.strftime('%H:%M') }}</td>
+                                    <td>{{ format_currency(reserva.precio_total) }}</td>
+                                    <td>
+                                        <span class="badge bg-{{ 'success' if reserva.Estado == 'Confirmada' else 'danger' if reserva.Estado == 'Cancelada' else 'info' }}">
+                                            {{ reserva.Estado }}
+                                        </span>
+                                    </td>
+                                    <td>
+                                        <div class="btn-group" role="group">
+                                            <a href="{{ url_for('admin.ver_reserva', reserva_id=reserva.Id) }}" 
+                                               class="btn btn-sm btn-outline-info" title="Ver detalles">
+                                                <i class="fas fa-eye"></i>
+                                            </a>
+                                            {% if reserva.Estado == 'Confirmada' %}
+                                            <button type="button" 
+                                                    class="btn btn-sm btn-outline-danger" 
+                                                    onclick="confirmarCancelacionReserva({{ reserva.Id }}, '{{ reserva.usuario.Nombre }}', '{{ reserva.cancha.Nombre }}', '{{ reserva.Fecha.strftime('%d/%m/%Y') }}')"
+                                                    title="Cancelar reserva">
+                                                <i class="fas fa-times"></i>
+                                            </button>
+                                            {% endif %}
+                                            {% if reserva.Estado == 'Cancelada' %}
+                                            <button type="button" 
+                                                    class="btn btn-sm btn-outline-success" 
+                                                    onclick="confirmarConfirmacionReserva({{ reserva.Id }}, '{{ reserva.usuario.Nombre }}', '{{ reserva.cancha.Nombre }}', '{{ reserva.Fecha.strftime('%d/%m/%Y') }}')" 
+                                                    title="Confirmar reserva">
+                                                <i class="fas fa-check"></i>
+                                            </button>
+                                            {% endif %}
+                                        </div>
+                                    </td>
+                                </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    {% else %}
+    <div class="row">
+        <div class="col-12">
+            <div class="alert alert-info">
+                <h5>No hay reservas registradas</h5>
+                <p>Las reservas aparecerán aquí cuando los clientes las creen.</p>
+            </div>
+        </div>
+    </div>
+    {% endif %}
+</div>
+
+{% block scripts %}
+<!-- SweetAlert2 JS -->
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
+<script>
+// Función para confirmar cancelación de reserva con SweetAlert2
+window.confirmarCancelacionReserva = function(reservaId, cliente, cancha, fecha) {
+    console.log('Función cancelación llamada:', reservaId, cliente, cancha, fecha);
+    
+    // Verificar si SweetAlert2 está disponible
+    if (typeof Swal === 'undefined') {
+        console.error('SweetAlert2 no está cargado');
+        alert('Error: SweetAlert2 no está disponible');
+        return;
+    }
+    
+    Swal.fire({
+        title: '¿Cancelar reserva?',
+        html: `
+            <div class="text-start">
+                <p><strong>Cliente:</strong> ${cliente}</p>
+                <p><strong>Cancha:</strong> ${cancha}</p>
+                <p><strong>Fecha:</strong> ${fecha}</p>
+                <p class="text-warning mt-3"><i class="fas fa-exclamation-triangle me-2"></i>Esta acción no se puede deshacer.</p>
+            </div>
+        `,
+        icon: 'warning',
+        showCancelButton: true,
+        confirmButtonColor: '#dc3545',
+        cancelButtonColor: '#6c757d',
+        confirmButtonText: 'Sí, cancelar',
+        cancelButtonText: 'No, mantener'
+    }).then((result) => {
+        console.log('Resultado cancelación:', result);
+        if (result.isConfirmed) {
+            console.log('Confirmado cancelación, enviando formulario...');
+            // Crear y enviar formulario
+            const form = document.createElement('form');
+            form.method = 'POST';
+            form.action = `/admin/reserva/cancelar/${reservaId}`;
+            document.body.appendChild(form);
+            form.submit();
+        }
+    });
+};
+
+// Función para confirmar confirmación de reserva con SweetAlert2
+window.confirmarConfirmacionReserva = function(reservaId, cliente, cancha, fecha) {
+    console.log('Función confirmación llamada:', reservaId, cliente, cancha, fecha);
+    
+    // Verificar si SweetAlert2 está disponible
+    if (typeof Swal === 'undefined') {
+        console.error('SweetAlert2 no está cargado');
+        alert('Error: SweetAlert2 no está disponible');
+        return;
+    }
+    
+    Swal.fire({
+        title: '¿Confirmar reserva?',
+        html: `
+            <div class="text-start">
+                <p><strong>Cliente:</strong> ${cliente}</p>
+                <p><strong>Cancha:</strong> ${cancha}</p>
+                <p><strong>Fecha:</strong> ${fecha}</p>
+                <p class="text-success mt-3"><i class="fas fa-check-circle me-2"></i>La reserva será confirmada y el cliente será notificado.</p>
+            </div>
+        `,
+        icon: 'question',
+        showCancelButton: true,
+        confirmButtonColor: '#28a745',
+        cancelButtonColor: '#6c757d',
+        confirmButtonText: 'Sí, confirmar',
+        cancelButtonText: 'No, mantener cancelada'
+    }).then((result) => {
+        console.log('Resultado confirmación:', result);
+        if (result.isConfirmed) {
+            console.log('Confirmado confirmación, enviando formulario...');
+            // Crear y enviar formulario
+            const form = document.createElement('form');
+            form.method = 'POST';
+            form.action = `/admin/reserva/confirmar/${reservaId}`;
+            document.body.appendChild(form);
+            form.submit();
+        }
+    });
+};
+
+document.addEventListener('DOMContentLoaded', function() {
+    // Inicializar tooltips de Bootstrap
+    var tooltipTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="tooltip"]'));
+    var tooltipList = tooltipTriggerList.map(function (tooltipTriggerEl) {
+        return new bootstrap.Tooltip(tooltipTriggerEl);
+    });
+    
+    // Funcionalidad para los filtros
+    // Auto-submit en cambios de select
+    const canchaSelect = document.getElementById('cancha');
+    if (canchaSelect) {
+        canchaSelect.addEventListener('change', function() {
+            document.getElementById('filtrosForm').submit();
+        });
+    }
+
+    // Auto-submit en cambios de fecha
+    const fechaInput = document.getElementById('fecha');
+    if (fechaInput) {
+        fechaInput.addEventListener('change', function() {
+            document.getElementById('filtrosForm').submit();
+        });
+    }
+
+    // Búsqueda en tiempo real para el campo de cliente
+    const clienteInput = document.getElementById('cliente');
+    if (clienteInput) {
+        let timeoutId;
+        clienteInput.addEventListener('input', function() {
+            clearTimeout(timeoutId);
+            timeoutId = setTimeout(() => {
+                document.getElementById('filtrosForm').submit();
+            }, 1500); // Esperar 500ms después de que el usuario deje de escribir
+        });
+    }
+
+    // Función para exportar datos
+    window.exportReservas = function() {
+        const table = document.querySelector('table');
+        const rows = Array.from(table.querySelectorAll('tbody tr'));
+        
+        const data = rows.map(row => {
+            const cells = row.querySelectorAll('td');
+            return {
+                ID: cells[0].textContent,
+                Cliente: cells[1].textContent,
+                Cancha: cells[2].textContent,
+                Fecha: cells[3].textContent,
+                Horario: cells[4].textContent,
+                Precio: cells[5].textContent,
+                Estado: cells[6].textContent.trim()
+            };
+        });
+        
+        exportData(data, 'reservas.csv', 'csv');
+    };
+});
+</script>
+{% endblock %}
+{% endblock %} 

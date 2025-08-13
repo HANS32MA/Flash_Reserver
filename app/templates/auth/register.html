@@ -1,0 +1,205 @@
+{% extends "base.html" %}
+
+{% block title %}Registro - Flash Reserver{% endblock %}
+
+{% block extra_head %}
+
+{% endblock %}
+
+{% block content %}
+<div class="auth-page">
+    <div class="login-container">
+        <div class="auth-card">
+            <div class="card-header text-center py-4">
+                <h3 class="mb-0"><i class="fas fa-user-plus"></i> Registrar Nueva Cuenta</h3>
+                <div class="login-title-border"></div>
+            </div>
+            <div class="card-body p-4">
+                <form method="POST" id="registerForm" class="login-form">
+            {{ form.hidden_tag() }}
+            
+            <div class="form-group mb-4">
+                <label for="{{ form.nombre.id }}" class="form-label">
+                    <i class="fas fa-user me-2"></i> Nombre Completo
+                </label>
+                {{ form.nombre(class="form-control", placeholder="Ingresa tu nombre completo", required=True) }}
+                {% if form.nombre.errors %}
+                    <div class="invalid-feedback d-block mt-2">
+                        {% for error in form.nombre.errors %}{{ error }}{% endfor %}
+                    </div>
+                {% endif %}
+            </div>
+
+            <div class="row">
+                <div class="col-md-6">
+                    <div class="form-group mb-4">
+                        <label for="{{ form.email.id }}" class="form-label">
+                            <i class="fas fa-envelope me-2"></i> Email
+                        </label>
+                        {{ form.email(class="form-control", placeholder="tu@email.com", required=True) }}
+                        {% if form.email.errors %}
+                            <div class="invalid-feedback d-block mt-2">
+                                {% for error in form.email.errors %}{{ error }}{% endfor %}
+                            </div>
+                        {% endif %}
+                    </div>
+                </div>
+                <div class="col-md-6">
+                    <div class="form-group mb-4">
+                        <label for="{{ form.telefono.id }}" class="form-label">
+                            <i class="fas fa-phone me-2"></i> Teléfono
+                        </label>
+                        {{ form.telefono(class="form-control", placeholder="1234567890", required=True) }}
+                        {% if form.telefono.errors %}
+                            <div class="invalid-feedback d-block mt-2">
+                                {% for error in form.telefono.errors %}{{ error }}{% endfor %}
+                            </div>
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+
+            <div class="row">
+                <div class="col-md-6">
+                    <div class="form-group mb-4">
+                        <label for="{{ form.password.id }}" class="form-label">
+                            <i class="fas fa-lock me-2"></i> Contraseña
+                        </label>
+                        {{ form.password(class="form-control", placeholder="Mínimo 6 caracteres", required=True) }}
+                        {% if form.password.errors %}
+                            <div class="invalid-feedback d-block mt-2">
+                                {% for error in form.password.errors %}{{ error }}{% endfor %}
+                            </div>
+                        {% endif %}
+                    </div>
+                </div>
+                <div class="col-md-6">
+                    <div class="form-group mb-4">
+                        <label for="{{ form.confirm_password.id }}" class="form-label">
+                            <i class="fas fa-lock me-2"></i> Confirmar Contraseña
+                        </label>
+                        {{ form.confirm_password(class="form-control", placeholder="Repite tu contraseña", required=True) }}
+                        {% if form.confirm_password.errors %}
+                            <div class="invalid-feedback d-block mt-2">
+                                {% for error in form.confirm_password.errors %}{{ error }}{% endfor %}
+                            </div>
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+
+            <div class="mb-4">
+                <div class="info-toggle">
+                    <i class="fas fa-info-circle text-info me-2" id="infoIcon" style="cursor:pointer;"></i>
+                    <span>Información importante</span>
+                </div>
+                <div class="collapse-container" id="infoSection">
+                    <div class="alert alert-info mt-3 mb-0">
+                        <h6 class="mb-2"><i class="fas fa-info-circle"></i> Información importante</h6>
+                        <ul class="mb-0 small">
+                            <li>Al registrarte, tu cuenta será de tipo <strong>Cliente</strong></li>
+                            <li>Podrás hacer reservas de canchas inmediatamente</li>
+                            <li>Tus datos están protegidos y seguros</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+
+            <div class="d-grid gap-2">
+                <button type="submit" class="login-btn">
+                    <i class="fas fa-user-plus me-2"></i> REGISTRARSE
+                </button>
+            </div>
+        </form>
+            </div>
+            <div class="card-footer text-center py-3">
+                <p class="mb-0">
+                    ¿Ya tienes cuenta?
+                    <a href="{{ url_for('auth.login') }}" class="create-account">
+                        <i class="fas fa-sign-in-alt me-1"></i> Iniciar Sesión
+                    </a>
+                </p>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    const form = document.getElementById('registerForm');
+    const password = document.getElementById('{{ form.password.id }}');
+    const confirmPassword = document.getElementById('{{ form.confirm_password.id }}');
+    const infoIcon = document.getElementById('infoIcon');
+    const infoSection = document.getElementById('infoSection');
+    let isOpen = false;
+
+    // Inicializar sección de información
+    infoSection.style.maxHeight = '0';
+    infoSection.style.opacity = '0';
+    infoSection.style.transition = 'max-height 0.5s ease, opacity 0.5s ease';
+    infoSection.style.overflow = 'hidden';
+
+    infoIcon.addEventListener('click', function() {
+        if (isOpen) {
+            infoSection.style.maxHeight = '0';
+            infoSection.style.opacity = '0';
+            infoIcon.style.transform = 'rotate(0deg)';
+        } else {
+            infoSection.style.maxHeight = infoSection.scrollHeight + 'px';
+            infoSection.style.opacity = '1';
+            infoIcon.style.transform = 'rotate(20deg)';
+        }
+        isOpen = !isOpen;
+    });
+
+    function validatePassword() {
+        if (password.value !== confirmPassword.value) {
+            confirmPassword.setCustomValidity('Las contraseñas no coinciden');
+            confirmPassword.classList.add('is-invalid');
+        } else {
+            confirmPassword.setCustomValidity('');
+            confirmPassword.classList.remove('is-invalid');
+        }
+    }
+    
+    password.addEventListener('input', validatePassword);
+    confirmPassword.addEventListener('input', validatePassword);
+
+    form.addEventListener('submit', function(e) {
+        const requiredFields = form.querySelectorAll('[required]');
+        let isValid = true;
+        
+        requiredFields.forEach(field => {
+            if (!field.value.trim()) {
+                field.classList.add('is-invalid');
+                isValid = false;
+            } else {
+                field.classList.remove('is-invalid');
+            }
+        });
+        
+        if (!isValid) {
+            e.preventDefault();
+            // Mostrar mensaje de error más elegante
+            const errorAlert = document.createElement('div');
+            errorAlert.className = 'alert alert-danger mt-3';
+            errorAlert.innerHTML = '<i class="fas fa-exclamation-circle me-2"></i>Por favor completa todos los campos requeridos';
+            form.prepend(errorAlert);
+            
+            // Desaparecer después de 5 segundos
+            setTimeout(() => {
+                errorAlert.style.transition = 'opacity 0.5s ease';
+                errorAlert.style.opacity = '0';
+                setTimeout(() => errorAlert.remove(), 500);
+            }, 5000);
+        }
+    });
+
+    form.querySelectorAll('input').forEach(input => {
+        input.addEventListener('input', function() {
+            this.classList.remove('is-invalid');
+        });
+    });
+});
+</script>
+{% endblock %}

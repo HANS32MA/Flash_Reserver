@@ -1,0 +1,151 @@
+{% extends "base.html" %}
+
+{% block title %}Gestión de Categorías{% endblock %}
+
+{% block head %}
+<!-- SweetAlert2 CSS -->
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.min.css">
+{% endblock %}
+
+{% block content %}
+<div class="container-fluid">
+    <div class="row">
+        <div class="col-12">
+            <div class="d-flex justify-content-between align-items-center mb-4">
+                <div class="d-flex align-items-center gap-3">
+                                <a href="{{ url_for('admin.dashboard') }}" class="btn admin-back-btn">
+                <i class="fas fa-arrow-left me-2"></i>Regresar
+            </a>
+                </div>
+                
+                <a href="{{ url_for('admin.nueva_categoria') }}" class="btn btn-primary">
+                    <i class="fas fa-plus me-2"></i>Nueva Categoría
+                </a>
+            </div>
+            {% with messages = get_flashed_messages(with_categories=true) %}
+                {% if messages %}
+                    {% for category, message in messages %}
+                        <div class="alert alert-{{ 'danger' if category == 'error' else category }} alert-dismissible fade show" role="alert">
+                            {{ message }}
+                            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+                        </div>
+                    {% endfor %}
+                {% endif %}
+            {% endwith %}
+            <div class="card shadow-sm">
+                <div class="card-body">
+                    {% if categorias %}
+                        <div class="row">
+                            {% for categoria in categorias %}
+                            <div class="col-md-6 col-lg-4 mb-4">
+                                <div class="card h-100 border-0 shadow-sm">
+                                    <div class="card-body d-flex flex-column">
+                                        <div class="d-flex justify-content-between align-items-start mb-3">
+                                            <div>
+                                                <h5 class="card-title mb-1">{{ categoria.Nombre }}</h5>
+                                                <p class="text-muted small mb-0">
+                                                    ID: {{ categoria.Id }}
+                                                </p>
+                                            </div>
+                                            <div class="dropdown">
+                                                <button class="btn btn-sm btn-outline-secondary dropdown-toggle" 
+                                                        type="button" 
+                                                        data-bs-toggle="dropdown">
+                                                    <i class="fas fa-ellipsis-v"></i>
+                                                </button>
+                                                <ul class="dropdown-menu">
+                                                    <li>
+                                                        <a class="dropdown-item" href="{{ url_for('admin.editar_categoria', categoria_id=categoria.Id) }}">
+                                                            <i class="fas fa-edit me-2"></i>Editar
+                                                        </a>
+                                                    </li>
+                                                    <li>
+                                                        <button type="button" 
+                                                                class="dropdown-item text-danger" 
+                                                                style="border: none; background: none; width: 100%; text-align: left;"
+                                                                onclick="confirmarEliminacionCategoria({{ categoria.Id }}, '{{ categoria.Nombre }}')">
+                                                            <i class="fas fa-trash me-2"></i>Eliminar
+                                                        </button>
+                                                    </li>
+                                                </ul>
+                                            </div>
+                                        </div>
+                                        <p class="card-text text-muted">
+                                            {% if categoria.Descripcion %}
+                                                {{ categoria.Descripcion }}
+                                            {% else %}
+                                                <em>Sin descripción</em>
+                                            {% endif %}
+                                        </p>
+                                        <div class="mt-auto d-flex justify-content-between align-items-center">
+                                            <span class="badge bg-info">
+                                                <i class="fas fa-futbol me-1"></i>
+                                                {{ categoria.canchas|length if categoria.canchas else 0 }} cancha(s)
+                                            </span>
+                                            <small class="text-muted ms-auto">
+                                                <i class="far fa-calendar-alt me-1"></i>
+                                                {{ categoria.FechaCreacion.strftime('%d/%m/%Y %H:%M') if categoria.FechaCreacion else 'N/A' }}
+                                            </small>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            {% endfor %}
+                        </div>
+                    {% else %}
+                        <div class="text-center py-5">
+                            <i class="fas fa-tags fa-3x text-muted mb-3"></i>
+                            <h5 class="text-muted">No hay categorías registradas</h5>
+                            <p class="text-muted">Comienza agregando la primera categoría al sistema.</p>
+                            <a href="{{ url_for('admin.nueva_categoria') }}" class="btn btn-primary">
+                                <i class="fas fa-plus me-2"></i>Agregar Categoría
+                            </a>
+                        </div>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<!-- SweetAlert2 JS -->
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
+<script>
+// Función para confirmar eliminación de categoría con SweetAlert2
+window.confirmarEliminacionCategoria = function(categoriaId, nombre) {
+    console.log('Función eliminación categoría llamada:', categoriaId, nombre);
+    
+    // Verificar si SweetAlert2 está disponible
+    if (typeof Swal === 'undefined') {
+        console.error('SweetAlert2 no está cargado');
+        alert('Error: SweetAlert2 no está disponible');
+        return;
+    }
+    
+    Swal.fire({
+        title: '¿Eliminar categoría?',
+        text: `¿Estás seguro de que quieres eliminar la categoría "${nombre}"?\n\nEsta acción no se puede deshacer.`,
+        icon: 'warning',
+        showCancelButton: true,
+        confirmButtonColor: '#dc3545',
+        cancelButtonColor: '#6c757d',
+        confirmButtonText: 'Sí, eliminar',
+        cancelButtonText: 'Cancelar'
+    }).then((result) => {
+        console.log('Resultado eliminación categoría:', result);
+        if (result.isConfirmed) {
+            console.log('Confirmado eliminación categoría, enviando formulario...');
+            // Crear y enviar formulario
+            const form = document.createElement('form');
+            form.method = 'POST';
+            form.action = `/admin/categoria/eliminar/${categoriaId}`;
+            document.body.appendChild(form);
+            form.submit();
+        }
+    });
+};
+</script>
+{% endblock %}

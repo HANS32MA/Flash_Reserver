@@ -1,0 +1,1274 @@
+{% extends "base.html" %}
+
+{% block title %}Reservar Cancha{% endblock %}
+
+{% block content %}
+<div class="container-fluid">
+    <div class="row">
+        <div class="col-md-8 mx-auto">
+            <div class="card">
+                <div class="card-header">
+                    <h3>Reservar Cancha</h3>
+                </div>
+                <div class="card-body">
+                    <!-- Información de la Cancha -->
+                    <div class="row mb-4">
+                        <div class="col-md-6">
+                            <h5>Información de la Cancha</h5>
+                            <p><strong>Nombre:</strong> {{ cancha.Nombre }}</p>
+                            <p><strong>Categoría:</strong> {{ cancha.categoria.Nombre }}</p>
+                            <p><strong>Tipo:</strong> {{ cancha.tipo_cancha.Nombre }}</p>
+                            <p><strong>Precio por hora:</strong> {{ format_currency(cancha.PrecioHora) }}</p>
+                        </div>
+                        <div class="col-md-6">
+                            <h5>Horarios Disponibles</h5>
+                            <p><strong>Horario de atención:</strong> 6:00 AM - 10:00 PM</p>
+                            <p><strong>Duración mínima:</strong> 1 hora</p>
+                            <p><strong>Duración máxima:</strong> 4 horas</p>
+                        </div>
+                    </div>
+
+                    <!-- ALERTA - Se creará dinámicamente solo cuando sea necesaria -->
+                    <div id="contenedor-alerta"></div>
+
+                    <!-- Formulario de Reserva -->
+                    <form id="formReserva" method="POST">
+                        <div class="row">
+                            <div class="col-md-6">
+                                <div class="mb-3">
+                                    <label for="fecha" class="form-label">Fecha de Reserva</label>
+                                    <input type="date" class="form-control" id="fecha" name="fecha" 
+                                           min="{{ today }}" required>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="mb-3">
+                                    <label for="duracion" class="form-label">Duración (horas)</label>
+                                    <select class="form-select" id="duracion" name="duracion" required>
+                                        <option value="">Selecciona una duración</option>
+                                        <option value="1">1 hora</option>
+                                        <option value="2">2 horas</option>
+                                        <option value="3">3 horas</option>
+                                        <option value="4">4 horas</option>
+                                    </select>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="row">
+                            <div class="col-md-6">
+                                <div class="mb-3">
+                                    <label for="hora_inicio" class="form-label">Hora de Inicio</label>
+                                    <select class="form-select" id="hora_inicio" name="hora_inicio" required>
+                                        <option value="">Selecciona una hora</option>
+                                        {% for hora in range(6, 22) %}
+                                        <option value="{{ '%02d:00' % hora }}">{{ '%02d:00' % hora }}</option>
+                                        {% endfor %}
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="mb-3">
+                                    <label for="hora_fin" class="form-label">Hora de Fin</label>
+                                    <input type="time" class="form-control" id="hora_fin" name="hora_fin" readonly>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Vista visual de disponibilidad -->
+                        <div class="mb-3">
+                            <div class="d-flex justify-content-between align-items-center mb-2">
+                                <button type="button" class="btn btn-info btn-sm" data-bs-toggle="modal" data-bs-target="#modalDisponibilidad">
+                                    <i class="fas fa-calendar-alt me-1"></i> Ver Disponibilidad del Mes
+                                </button>
+                            </div>
+                        </div>
+
+                        <div class="mb-3">
+                            <label for="observaciones" class="form-label">Observaciones (opcional)</label>
+                            <textarea class="form-control" id="observaciones" name="observaciones" 
+                                      rows="3"></textarea>
+                        </div>
+
+                        <!-- Resumen -->
+                        <div class="card bg-light mb-3">
+                            <div class="card-body">
+                                <h6>Resumen de la Reserva</h6>
+                                <div id="resumen-reserva">
+                                    <p class="text-muted">Selecciona una fecha para comenzar</p>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="d-flex justify-content-between">
+                            <div>
+                                <a href="{{ url_for('client.ver_canchas') }}" class="btn btn-secondary">Cancelar</a>
+                            </div>
+                            <button type="submit" class="btn btn-success">Confirmar Reserva</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Modal de Disponibilidad del Mes -->
+<div class="modal fade" id="modalDisponibilidad" tabindex="-1" aria-labelledby="modalDisponibilidadLabel" aria-hidden="true">
+    <div class="modal-dialog modal-fullscreen-lg-down modal-xl">
+        <div class="modal-content">
+            <div class="modal-header bg-primary text-white border-bottom">
+                <h5 class="modal-title" id="modalDisponibilidadLabel">
+                    <i class="fas fa-calendar-alt me-2"></i>Calendario de Disponibilidad
+                </h5>
+                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body p-0">
+                <div class="row g-0 h-100">
+                    <!-- Panel de Filtros (Lateral Izquierdo) -->
+                    <div class="col-md-3 border-end">
+                        <div class="p-3">
+                            <!-- Filtro de Mes -->
+                            <div class="mb-3">
+                                <label for="filtroMes" class="form-label fw-bold text-primary">Mes</label>
+                                <select class="form-select form-select-sm" id="filtroMes">
+                                    <option value="">Todos los meses</option>
+                                </select>
+                            </div>
+                            
+                            <!-- Filtro de Cancha -->
+                            <div class="mb-3">
+                                <label for="filtroCancha" class="form-label fw-bold text-primary">Cancha</label>
+                                <select class="form-select form-select-sm" id="filtroCancha">
+                                    <option value="">Todas las canchas</option>
+                                    {% for cancha in canchas %}
+                                        <option value="{{ cancha.Id }}">{{ cancha.Nombre }}</option>
+                                    {% endfor %}
+                                </select>
+                            </div>
+
+                            <!-- Filtro de Estado -->
+                            <div class="mb-3">
+                                <label for="filtroEstado" class="form-label fw-bold text-primary">Estado</label>
+                                <select class="form-select form-select-sm" id="filtroEstado">
+                                    <option value="">Todos</option>
+                                    <option value="disponible">Disponible</option>
+                                    <option value="ocupado">Ocupado</option>
+                                </select>
+                            </div>
+                            
+                            <!-- Leyenda -->
+                            <div class="mt-4">
+                                <h6 class="text-primary mb-2">
+                                    <i class="fas fa-info-circle me-2"></i>Leyenda
+                                </h6>
+                                <div class="d-flex flex-column gap-2">
+                                    <div class="d-flex align-items-center">
+                                        <span class="badge bg-success me-2" style="width: 20px; height: 20px;"></span>
+                                        <small>Disponible</small>
+                                    </div>
+                                    <div class="d-flex align-items-center">
+                                        <span class="badge bg-danger me-2" style="width: 20px; height: 20px;"></span>
+                                        <small>Ocupado</small>
+                                    </div>
+                                    <div class="d-flex align-items-center">
+                                        <span class="badge bg-secondary me-2" style="width: 20px; height: 20px;"></span>
+                                        <small>Fuera de Horario</small>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <!-- Estadísticas Rápidas -->
+                            <div class="mt-4 p-3 bg-light rounded border">
+                                <h6 class="text-primary mb-2">
+                                    <i class="fas fa-chart-bar me-2"></i>Estadísticas
+                                </h6>
+                                <div id="estadisticasRapidas">
+                                    <div class="text-center text-muted">
+                                        <small>Cargando...</small>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Contenido Principal (Derecha) -->
+                    <div class="col-md-9">
+                        <div class="d-flex flex-column h-100">
+                            <!-- Barra de Herramientas -->
+                            <div class="p-3 border-bottom bg-light">
+                                <div class="d-flex justify-content-between align-items-center">
+                                    <div>
+                                        <span class="badge bg-primary me-2" id="totalResultados">0</span>
+                                        <small class="text-muted">resultados encontrados</small>
+                                    </div>
+                                    <div class="d-flex gap-2">
+                                        <button type="button" class="btn btn-outline-primary btn-sm" onclick="refrescarDisponibilidad()">
+                                            <i class="fas fa-sync-alt me-1"></i>Actualizar
+                                        </button>
+                                        <button type="button" class="btn btn-outline-secondary btn-sm" onclick="scrollToTop()">
+                                            <i class="fas fa-arrow-up me-1"></i>Arriba
+                                        </button>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <!-- Contenido con Scroll -->
+                            <div class="flex-grow-1 overflow-auto" style="max-height: 60vh;">
+                                <div class="p-3">
+                                    <!-- Vista de Calendario Compacto -->
+                                    <div id="vistaCalendario" class="d-none">
+                                        <!-- Se mostrará cuando se implemente vista de calendario -->
+                                    </div>
+                                    
+                                    <!-- Vista de Lista -->
+                                    <div id="vistaLista">
+                                        <div class="table-responsive">
+                                            <table class="table table-hover table-sm">
+                                                <thead class="table-dark sticky-top">
+                                                    <tr>
+                                                        <th style="width: 25%;">Cancha</th>
+                                                        <th style="width: 15%;">Día</th>
+                                                        <th style="width: 15%;">Hora</th>
+                                                        <th style="width: 15%;">Estado</th>
+                                                        <th style="width: 30%;">Cliente</th>
+                                                    </tr>
+                                                </thead>
+                                                <tbody id="tablaDisponibilidad">
+                                                    <tr>
+                                                        <td colspan="5" class="text-center text-muted py-4">
+                                                            <i class="fas fa-spinner fa-spin me-2"></i>Cargando disponibilidad...
+                                                        </td>
+                                                    </tr>
+                                                </tbody>
+                                            </table>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <!-- Barra de Navegación Inferior -->
+                            <div class="p-2 border-top bg-light">
+                                <div class="d-flex justify-content-between align-items-center">
+                                    <small class="text-muted">
+                                        <i class="fas fa-clock me-1"></i>Última actualización: <span id="ultimaActualizacion" class="fw-bold">-</span>
+                                    </small>
+                                    <div class="btn-group btn-group-sm">
+                                        <button type="button" class="btn btn-outline-primary" onclick="cambiarVista('lista')">
+                                            <i class="fas fa-list me-1"></i>Lista
+                                        </button>
+                                        <button type="button" class="btn btn-outline-primary" onclick="cambiarVista('calendario')">
+                                            <i class="fas fa-calendar me-1"></i>Calendario
+                                        </button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+/* Estilos personalizados para el modal de disponibilidad */
+.modal-fullscreen-lg-down .modal-body {
+    max-height: 80vh;
+}
+
+.sticky-top {
+    position: sticky;
+    top: 0;
+    z-index: 1020;
+}
+
+.table-hover tbody tr:hover {
+    background-color: rgba(0, 123, 255, 0.05);
+}
+
+.badge {
+    font-size: 0.75rem;
+}
+
+.progress {
+    background-color: rgba(0, 0, 0, 0.1);
+}
+
+.overflow-auto::-webkit-scrollbar {
+    width: 8px;
+}
+
+.overflow-auto::-webkit-scrollbar-track {
+    background: #f1f1f1;
+    border-radius: 4px;
+}
+
+.overflow-auto::-webkit-scrollbar-thumb {
+    background: #c1c1c1;
+    border-radius: 4px;
+}
+
+.overflow-auto::-webkit-scrollbar-thumb:hover {
+    background: #a8a8a8;
+}
+
+/* Animaciones suaves */
+.fade-in {
+    animation: fadeIn 0.3s ease-in;
+}
+
+@keyframes fadeIn {
+    from { opacity: 0; transform: translateY(10px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+
+/* Responsive para móviles */
+@media (max-width: 768px) {
+    .modal-fullscreen-lg-down {
+        margin: 0;
+        max-width: 100%;
+        height: 100%;
+    }
+    
+    .col-md-3 {
+        border-right: none !important;
+        border-bottom: 1px solid #dee2e6;
+    }
+}
+
+/* ===== TEMA OSCURO ===== */
+[data-bs-theme="dark"] .modal-content {
+    background-color: #1a1a1a;
+    border-color: #333;
+}
+
+[data-bs-theme="dark"] .modal-header {
+    background-color: #2c3e50 !important;
+    border-bottom-color: #333;
+}
+
+[data-bs-theme="dark"] .modal-header .modal-title {
+    color: #ecf0f1 !important;
+}
+
+[data-bs-theme="dark"] .btn-close-white {
+    filter: invert(1) grayscale(100%) brightness(200%);
+}
+
+[data-bs-theme="dark"] .border-end {
+    border-color: #333 !important;
+}
+
+[data-bs-theme="dark"] .border-bottom {
+    border-color: #333 !important;
+}
+
+[data-bs-theme="dark"] .border-top {
+    border-color: #333 !important;
+}
+
+[data-bs-theme="dark"] .bg-light {
+    background-color: #2c2c2c !important;
+}
+
+[data-bs-theme="dark"] .text-primary {
+    color: #3498db !important;
+}
+
+[data-bs-theme="dark"] .text-muted {
+    color: #95a5a6 !important;
+}
+
+[data-bs-theme="dark"] .table {
+    color: #ecf0f1;
+}
+
+[data-bs-theme="dark"] .table-dark {
+    background-color: #34495e !important;
+    color: #ecf0f1;
+}
+
+[data-bs-theme="dark"] .table-hover tbody tr:hover {
+    background-color: rgba(52, 152, 219, 0.1);
+}
+
+[data-bs-theme="dark"] .form-select {
+    background-color: #2c2c2c;
+    border-color: #555;
+    color: #ecf0f1;
+}
+
+[data-bs-theme="dark"] .form-select:focus {
+    background-color: #2c2c2c;
+    border-color: #3498db;
+    color: #ecf0f1;
+}
+
+[data-bs-theme="dark"] .form-label {
+    color: #ecf0f1;
+}
+
+[data-bs-theme="dark"] .btn-outline-primary {
+    color: #3498db;
+    border-color: #3498db;
+}
+
+[data-bs-theme="dark"] .btn-outline-primary:hover {
+    background-color: #3498db;
+    border-color: #3498db;
+    color: #fff;
+}
+
+[data-bs-theme="dark"] .btn-outline-secondary {
+    color: #95a5a6;
+    border-color: #95a5a6;
+}
+
+[data-bs-theme="dark"] .btn-outline-secondary:hover {
+    background-color: #95a5a6;
+    border-color: #95a5a6;
+    color: #2c2c2c;
+}
+
+[data-bs-theme="dark"] .progress {
+    background-color: rgba(255, 255, 255, 0.1);
+}
+
+[data-bs-theme="dark"] .overflow-auto::-webkit-scrollbar-track {
+    background: #2c2c2c;
+}
+
+[data-bs-theme="dark"] .overflow-auto::-webkit-scrollbar-thumb {
+    background: #555;
+}
+
+[data-bs-theme="dark"] .overflow-auto::-webkit-scrollbar-thumb:hover {
+    background: #777;
+}
+
+/* Badges específicos para tema oscuro */
+[data-bs-theme="dark"] .badge.bg-success {
+    background-color: #27ae60 !important;
+}
+
+[data-bs-theme="dark"] .badge.bg-danger {
+    background-color: #e74c3c !important;
+}
+
+[data-bs-theme="dark"] .badge.bg-warning {
+    background-color: #f39c12 !important;
+    color: #2c2c2c !important;
+}
+
+[data-bs-theme="dark"] .badge.bg-secondary {
+    background-color: #7f8c8d !important;
+}
+
+[data-bs-theme="dark"] .badge.bg-primary {
+    background-color: #3498db !important;
+}
+
+/* Estadísticas para tema oscuro */
+[data-bs-theme="dark"] .bg-success {
+    background-color: #27ae60 !important;
+}
+
+[data-bs-theme="dark"] .bg-danger {
+    background-color: #e74c3c !important;
+}
+
+[data-bs-theme="dark"] .progress-bar.bg-success {
+    background-color: #27ae60 !important;
+}
+
+/* Iconos para tema oscuro */
+[data-bs-theme="dark"] .text-primary {
+    color: #3498db !important;
+}
+
+[data-bs-theme="dark"] .text-info {
+    color: #17a2b8 !important;
+}
+
+[data-bs-theme="dark"] .text-muted {
+    color: #95a5a6 !important;
+}
+
+/* Estados de carga para tema oscuro */
+[data-bs-theme="dark"] .text-center.text-muted {
+    color: #95a5a6 !important;
+}
+
+[data-bs-theme="dark"] .text-center.text-muted h6 {
+    color: #ecf0f1 !important;
+}
+
+/* Responsive para tema oscuro en móviles */
+@media (max-width: 768px) {
+    [data-bs-theme="dark"] .col-md-3 {
+        border-bottom-color: #333 !important;
+    }
+}
+
+/* Estilos para las tarjetas del calendario en tema oscuro */
+[data-bs-theme="dark"] .card {
+    background-color: #2c2c2c;
+    border-color: #333;
+}
+
+[data-bs-theme="dark"] .card-header {
+    background-color: #34495e !important;
+    border-bottom-color: #333;
+}
+
+[data-bs-theme="dark"] .card-header h6 {
+    color: #ecf0f1 !important;
+}
+
+[data-bs-theme="dark"] .table-sm th {
+    background-color: #34495e !important;
+    color: #ecf0f1;
+    border-color: #333;
+}
+
+[data-bs-theme="dark"] .table-sm td {
+    border-color: #333;
+}
+
+[data-bs-theme="dark"] .table-sm tbody tr:hover {
+    background-color: rgba(52, 152, 219, 0.1);
+}
+</style>
+
+<script>
+console.log('🚀 Script iniciado - DOMContentLoaded');
+document.addEventListener('DOMContentLoaded', function () {
+    const canchaId = {{ cancha.Id }};
+    const form = document.getElementById('formReserva');
+    const fechaInput = document.getElementById('fecha');
+    const horaInicioSelect = document.getElementById('hora_inicio');
+    const duracionSelect = document.getElementById('duracion');
+    const horaFinInput = document.getElementById('hora_fin');
+    const resumenDiv = document.getElementById('resumen-reserva');
+    const contenedorAlerta = document.getElementById('contenedor-alerta');
+    let alerta = null; // La alerta se creará dinámicamente
+
+    function calcularHoraFin() {
+        const horaInicio = horaInicioSelect.value;
+        const duracion = parseInt(duracionSelect.value);
+
+        if (horaInicio && duracion) {
+            const [h, m] = horaInicio.split(':');
+            const fin = new Date();
+            fin.setHours(parseInt(h) + duracion, parseInt(m));
+            const horaFin = fin.toTimeString().slice(0, 5);
+            horaFinInput.value = horaFin;
+            return horaFin;
+        }
+        return null;
+    }
+
+    // Función para cargar disponibilidad inicial sin mostrar alertas
+    async function cargarDisponibilidadInicial() {
+        console.log('🟡 Función cargarDisponibilidadInicial ejecutada');
+        // Asegurar que la alerta esté oculta
+        alerta.style.display = 'none';
+        
+        // No hacer nada si no hay fecha seleccionada
+        // Esto evita que se ejecute automáticamente al cargar la página
+        return;
+    }
+    
+    // Función para cargar disponibilidad básica cuando se selecciona fecha
+    async function cargarDisponibilidadBasica() {
+        console.log('🟢 Función cargarDisponibilidadBasica ejecutada');
+        const fecha = fechaInput.value;
+        if (!fecha) return;
+        
+        // Eliminar alerta si existe
+        eliminarAlerta();
+        
+        // Actualizar resumen básico
+        resumenDiv.innerHTML = `
+            <p><strong>Fecha:</strong> ${fecha}</p>
+            <p><strong>Selecciona hora y duración para ver el resumen completo</strong></p>
+        `;
+        
+        // Cargar horarios disponibles para deshabilitar opciones ocupadas
+        try {
+            const resp = await fetch(`/client/api/horarios-disponibles/${canchaId}?fecha=${fecha}`);
+            
+            if (!resp.ok) {
+                console.error('Error en horarios disponibles:', resp.status, resp.statusText);
+                return;
+            }
+            
+            const data = await resp.json();
+            const ocupados = data.horarios_ocupados || [];
+
+            // Deshabilitar hora de inicio si cae dentro de bloque ocupado
+            Array.from(horaInicioSelect.options).forEach(opt => {
+                if (!opt.value) return;
+                const inicio = opt.value;
+                const finTmp = (() => {
+                    const [h,m] = inicio.split(':');
+                    const d = new Date();
+                    d.setHours(parseInt(h)+parseInt(duracionSelect.value), parseInt(m));
+                    return d.toTimeString().slice(0,5);
+                })();
+                const ocupado = ocupados.some(r => (inicio < r.fin && finTmp > r.inicio));
+                opt.disabled = ocupado;
+                opt.title = ocupado ? 'Ocupado' : '';
+            });
+        } catch (error) {
+            console.error('Error cargando disponibilidad:', error);
+        }
+    }
+
+    async function validarDisponibilidad(e) {
+        console.log('🔵 Función validarDisponibilidad ejecutada', e ? e.type : 'sin evento');
+        const fecha = fechaInput.value;
+        const horaInicio = horaInicioSelect.value;
+        const horaFin = calcularHoraFin();
+
+        // Ocultar alerta al inicio de la validación
+        alerta.style.display = 'none';
+        
+        if (!fecha || !horaInicio || !horaFin) {
+            return; // No validar si no hay selección completa
+        }
+
+        // Solo validar cuando se envía el formulario
+        if (e && e.type === 'submit') {
+            try {
+                const resp = await fetch(`/client/api/horarios-disponibles/${canchaId}?fecha=${fecha}`);
+                
+                if (!resp.ok) {
+                    console.error('Error en horarios disponibles:', resp.status, resp.statusText);
+                    return;
+                }
+                
+                const data = await resp.json();
+                const ocupados = data.horarios_ocupados || [];
+
+                const enConflicto = ocupados.some(reserva =>
+                    (horaInicio < reserva.fin && horaFin > reserva.inicio)
+                );
+
+                if (enConflicto) {
+                    crearAlerta();
+                    e.preventDefault();
+                    return false;
+                }
+            } catch (error) {
+                console.error('Error validando disponibilidad:', error);
+            }
+        }
+
+        // Actualizar resumen completo
+        const precio = {{ cancha.PrecioHora }};
+        const total = precio * parseInt(duracionSelect.value);
+        resumenDiv.innerHTML = `
+            <p><strong>Fecha:</strong> ${fecha}</p>
+            <p><strong>Horario:</strong> ${horaInicio} - ${horaFin}</p>
+            <p><strong>Total:</strong> COP ${total.toLocaleString('es-CO')}</p>
+        `;
+    }
+
+    // Eventos - Solo validar cuando el usuario realmente interactúe
+    fechaInput.addEventListener('change', function() {
+        // Solo cargar disponibilidad básica al cambiar fecha
+        if (fechaInput.value) {
+            cargarDisponibilidadBasica();
+        }
+    });
+    
+    horaInicioSelect.addEventListener('change', function() {
+        // Solo validar si hay fecha y hora seleccionada
+        if (fechaInput.value && horaInicioSelect.value) {
+            validarDisponibilidad();
+        }
+    });
+    
+    duracionSelect.addEventListener('change', function() {
+        // Solo validar si hay fecha y hora seleccionada
+        if (fechaInput.value && horaInicioSelect.value) {
+            validarDisponibilidad();
+        }
+    });
+    
+    form.addEventListener('submit', validarDisponibilidad);
+
+    // Función para crear la alerta
+    function crearAlerta() {
+        if (alerta) return; // Si ya existe, no crear otra
+        
+        alerta = document.createElement('div');
+        alerta.id = 'alerta';
+        alerta.className = 'alert alert-danger';
+        alerta.setAttribute('role', 'alert');
+        alerta.innerHTML = `
+            <i class="fas fa-exclamation-circle me-2"></i>
+            La cancha no está disponible en ese horario.
+            <button type="button" class="btn-close float-end" onclick="eliminarAlerta()"></button>
+        `;
+        
+        contenedorAlerta.appendChild(alerta);
+        console.log('🟢 Alerta creada dinámicamente');
+    }
+    
+    // Función para eliminar la alerta
+    function eliminarAlerta() {
+        if (alerta && alerta.parentNode) {
+            alerta.parentNode.removeChild(alerta);
+            alerta = null;
+            console.log('🔴 Alerta eliminada completamente del DOM');
+        }
+    }
+    
+    // Función para ocultar alerta (ahora elimina la alerta)
+    function ocultarAlerta() {
+        console.log('🔴 Función ocultarAlerta ejecutada');
+        eliminarAlerta();
+    }
+    
+    // SOLO ocultar la alerta al cargar la página - NO ejecutar nada más
+    ocultarAlerta();
+    
+    // TEMPORALMENTE DESHABILITADO - Solo para debug
+    // cargarDisponibilidadInicial();
+    
+    // Event listener adicional para asegurar que la alerta esté oculta
+    document.addEventListener('DOMContentLoaded', function() {
+        ocultarAlerta();
+    });
+    
+    // También ocultar la alerta cuando se carga la ventana
+    window.addEventListener('load', function() {
+        ocultarAlerta();
+    });
+    
+    // Y ocultar la alerta cada vez que se hace focus en la página
+    window.addEventListener('focus', function() {
+        ocultarAlerta();
+    });
+    
+
+
+    // ===== FUNCIONES DEL MODAL DE DISPONIBILIDAD =====
+    
+    // Cargar disponibilidad cuando se abre el modal
+    const modalDisponibilidad = document.getElementById('modalDisponibilidad');
+    if (modalDisponibilidad) {
+        modalDisponibilidad.addEventListener('show.bs.modal', function () {
+            cargarDisponibilidadMensual();
+            cargarFiltros();
+        });
+    }
+
+    // Función para cargar los filtros
+    async function cargarFiltros() {
+        // Cargar meses disponibles desde la API
+        try {
+            const response = await fetch('/client/api/disponibilidad-mensual');
+            if (response.ok) {
+                const data = await response.json();
+                if (data.success && data.disponibilidad) {
+                    const meses = new Set();
+                    
+                    // Extraer todos los meses únicos de las fechas disponibles
+                    data.disponibilidad.forEach(item => {
+                        if (item.fecha) {
+                            const mes = item.fecha.substring(0, 7); // Formato: YYYY-MM
+                            meses.add(mes);
+                        }
+                    });
+                    
+                    // Convertir a array y ordenar cronológicamente
+                    const mesesArray = Array.from(meses).sort();
+                    
+                    const filtroMes = document.getElementById('filtroMes');
+                    if (filtroMes) {
+                        filtroMes.innerHTML = '<option value="">Todos los meses</option>';
+                        mesesArray.forEach(mes => {
+                            const [year, month] = mes.split('-');
+                            const fecha = new Date(parseInt(year), parseInt(month) - 1, 1);
+                            const mesTexto = fecha.toLocaleDateString('es-CO', { month: 'long', year: 'numeric' });
+                            filtroMes.innerHTML += `<option value="${mes}">${mesTexto}</option>`;
+                        });
+                    }
+                }
+            }
+        } catch (error) {
+            console.error('Error cargando meses:', error);
+            // Fallback: mostrar meses del año actual
+            const filtroMes = document.getElementById('filtroMes');
+            if (filtroMes) {
+                const fechaActual = new Date();
+                const meses = [];
+                
+                for (let i = 0; i < 12; i++) {
+                    const fecha = new Date(fechaActual.getFullYear(), i, 1);
+                    const mesTexto = fecha.toLocaleDateString('es-CO', { month: 'long', year: 'numeric' });
+                    const mesValor = fecha.getFullYear() + '-' + String(i + 1).padStart(2, '0');
+                    meses.push({ texto: mesTexto, valor: mesValor });
+                }
+                
+                filtroMes.innerHTML = '<option value="">Todos los meses</option>';
+                meses.forEach(mes => {
+                    filtroMes.innerHTML += `<option value="${mes.valor}">${mes.texto}</option>`;
+                });
+            }
+        }
+
+        // Cargar canchas disponibles
+        fetch('/client/api/canchas')
+            .then(res => {
+                if (!res.ok) {
+                    throw new Error('Error al cargar canchas');
+                }
+                return res.json();
+            })
+            .then(data => {
+                if (data.success && data.canchas) {
+                    const filtroCancha = document.getElementById('filtroCancha');
+                    if (filtroCancha) {
+                        filtroCancha.innerHTML = '<option value="">Todas las canchas</option>';
+                        data.canchas.forEach(cancha => {
+                            filtroCancha.innerHTML += `<option value="${cancha.id}">${cancha.nombre}</option>`;
+                        });
+                    }
+                } else {
+                    throw new Error('Formato de respuesta inválido');
+                }
+            })
+            .catch(error => {
+                console.error('Error cargando canchas:', error);
+                const filtroCancha = document.getElementById('filtroCancha');
+                if (filtroCancha) {
+                    filtroCancha.innerHTML = '<option value="">Error al cargar canchas</option>';
+                }
+            });
+    }
+
+    // Función para cargar la disponibilidad mensual
+    async function cargarDisponibilidadMensual() {
+        const tabla = document.getElementById('tablaDisponibilidad');
+        if (!tabla) return;
+        
+        tabla.innerHTML = '<tr><td colspan="5" class="text-center text-muted py-4"><i class="fas fa-spinner fa-spin me-2"></i>Cargando disponibilidad...</td></tr>';
+
+        try {
+            const response = await fetch('/client/api/disponibilidad-mensual');
+            
+            if (!response.ok) {
+                throw new Error(`HTTP error! status: ${response.status}`);
+            }
+            
+            const data = await response.json();
+            
+            if (data.success) {
+                window.disponibilidadGlobal = data.disponibilidad;
+                renderizarTablaDisponibilidad(data.disponibilidad);
+                
+                // Si la vista de calendario está activa, actualizarla también
+                const vistaCalendario = document.getElementById('vistaCalendario');
+                if (vistaCalendario && !vistaCalendario.classList.contains('d-none')) {
+                    renderizarVistaCalendario();
+                }
+            } else {
+                tabla.innerHTML = '<tr><td colspan="5" class="text-center text-danger py-4"><i class="fas fa-exclamation-triangle fa-2x mb-3 d-block"></i><h6>Error al cargar datos</h6><small>' + (data.error || 'Error desconocido') + '</small></td></tr>';
+            }
+        } catch (error) {
+            console.error('Error cargando disponibilidad:', error);
+            tabla.innerHTML = '<tr><td colspan="5" class="text-center text-danger py-4"><i class="fas fa-exclamation-triangle fa-2x mb-3 d-block"></i><h6>Error de conexión</h6><small>Verifica tu conexión a internet e intenta nuevamente</small></td></tr>';
+        }
+    }
+
+    // Función para renderizar la tabla de disponibilidad
+    function renderizarTablaDisponibilidad(disponibilidad) {
+        const tabla = document.getElementById('tablaDisponibilidad');
+        const filtroMes = document.getElementById('filtroMes');
+        const filtroCancha = document.getElementById('filtroCancha');
+        const filtroEstado = document.getElementById('filtroEstado');
+        
+        if (!tabla) return;
+
+        let html = '';
+        let contador = 0;
+        let estadisticas = {
+            disponible: 0,
+            ocupado: 0,
+            parcial: 0,
+            fuera: 0
+        };
+        
+        // Aplicar filtros y contar estadísticas
+        const datosFiltrados = disponibilidad.filter(item => {
+            if (filtroMes && filtroMes.value && !item.fecha.startsWith(filtroMes.value)) return false;
+            if (filtroCancha && filtroCancha.value && item.cancha_id != filtroCancha.value) return false;
+            if (filtroEstado && filtroEstado.value && item.estado !== filtroEstado.value) return false;
+            return true;
+        });
+        
+        datosFiltrados.forEach(item => {
+            contador++;
+            estadisticas[item.estado]++;
+        });
+
+        // Si no hay datos después de aplicar filtros
+        if (contador === 0) {
+            let mensaje = '';
+            if (filtroMes && filtroMes.value || filtroCancha && filtroCancha.value || filtroEstado && filtroEstado.value) {
+                mensaje = `
+                    <tr>
+                        <td colspan="5" class="text-center text-muted py-5">
+                            <i class="fas fa-search fa-3x mb-3 d-block text-muted"></i>
+                            <h6>No se encontraron resultados</h6>
+                            <small class="text-muted">
+                                No hay disponibilidad para los filtros seleccionados.<br>
+                                Intenta cambiar los filtros o seleccionar "Todos los meses" y "Todas las canchas".
+                            </small>
+                        </td>
+                    </tr>
+                `;
+            } else {
+                mensaje = `
+                    <tr>
+                        <td colspan="5" class="text-center text-muted py-5">
+                            <i class="fas fa-calendar-times fa-3x mb-3 d-block text-muted"></i>
+                            <h6>No hay datos de disponibilidad</h6>
+                            <small class="text-muted">
+                                No se han registrado reservas aún.<br>
+                                Las canchas aparecerán aquí una vez que se hagan las primeras reservas.
+                            </small>
+                        </td>
+                    </tr>
+                `;
+            }
+            tabla.innerHTML = mensaje;
+            return;
+        }
+
+        // Renderizar datos filtrados
+        datosFiltrados.forEach(item => {
+            const estadoClass = item.estado === 'disponible' ? 'success' : 
+                              item.estado === 'ocupado' ? 'danger' : 
+                              item.estado === 'parcial' ? 'warning' : 'secondary';
+            
+            const estadoTexto = item.estado === 'disponible' ? 'Disponible' : 
+                              item.estado === 'ocupado' ? 'Ocupado' : 
+                              item.estado === 'parcial' ? 'Parcial' : 'Fuera de Horario';
+
+            html += `
+                <tr class="align-middle">
+                    <td>
+                        <div class="d-flex align-items-center">
+                            <i class="fas fa-futbol text-primary me-2"></i>
+                            <div>
+                                <strong>${item.cancha_nombre}</strong>
+                                <br><small class="text-muted">ID: ${item.cancha_id}</small>
+                            </div>
+                        </div>
+                    </td>
+                    <td>
+                        <div class="text-center">
+                            <div class="fw-bold">${item.fecha_formateada}</div>
+                            <small class="text-muted">${new Date(item.fecha).toLocaleDateString('es-CO', {weekday: 'short'})}</small>
+                        </div>
+                    </td>
+                    <td>
+                        <div class="text-center">
+                            <div class="fw-bold">${item.hora_inicio}</div>
+                            <small class="text-muted">a ${item.hora_fin}</small>
+                        </div>
+                    </td>
+                    <td class="text-center">
+                        <span class="badge bg-${estadoClass} px-3 py-2">${estadoTexto}</span>
+                    </td>
+                    <td>
+                        ${item.cliente ? 
+                            `<div class="d-flex align-items-center">
+                                <i class="fas fa-user text-info me-2"></i>
+                                <span>${item.cliente}</span>
+                            </div>` : 
+                            '<span class="text-muted">-</span>'
+                        }
+                    </td>
+                </tr>
+            `;
+        });
+
+        if (html === '') {
+            html = `
+                <tr>
+                    <td colspan="5" class="text-center text-muted py-5">
+                        <i class="fas fa-search fa-2x mb-3 d-block text-primary"></i>
+                        <h6 class="fw-bold">No hay datos disponibles</h6>
+                        <small>Intenta cambiar los filtros o actualizar los datos</small>
+                    </td>
+                </tr>
+            `;
+        }
+
+        tabla.innerHTML = html;
+        
+        // Actualizar contadores
+        const totalResultados = document.getElementById('totalResultados');
+        if (totalResultados) {
+            totalResultados.textContent = contador;
+        }
+        actualizarEstadisticas(estadisticas);
+        actualizarUltimaActualizacion();
+    }
+
+    // Función para actualizar vistas cuando cambien los filtros
+    function actualizarVistasConFiltros() {
+        if (window.disponibilidadGlobal) {
+            renderizarTablaDisponibilidad(window.disponibilidadGlobal);
+            
+            // Si la vista de calendario está activa, actualizarla también
+            const vistaCalendario = document.getElementById('vistaCalendario');
+            if (vistaCalendario && !vistaCalendario.classList.contains('d-none')) {
+                renderizarVistaCalendario();
+            }
+        }
+    }
+
+    // Eventos para los filtros
+    const filtroMes = document.getElementById('filtroMes');
+    const filtroCancha = document.getElementById('filtroCancha');
+    const filtroEstado = document.getElementById('filtroEstado');
+    
+    if (filtroMes) {
+        filtroMes.addEventListener('change', actualizarVistasConFiltros);
+    }
+    if (filtroCancha) {
+        filtroCancha.addEventListener('change', actualizarVistasConFiltros);
+    }
+    if (filtroEstado) {
+        filtroEstado.addEventListener('change', actualizarVistasConFiltros);
+    }
+
+    // Función para refrescar disponibilidad
+    window.refrescarDisponibilidad = function() {
+        const tabla = document.getElementById('tablaDisponibilidad');
+        if (tabla) {
+            tabla.innerHTML = '<tr><td colspan="5" class="text-center text-muted py-4"><i class="fas fa-spinner fa-spin me-2"></i>Actualizando disponibilidad...</td></tr>';
+        }
+        cargarDisponibilidadMensual();
+    }
+
+    // Función para actualizar estadísticas
+    function actualizarEstadisticas(estadisticas) {
+        const contenedor = document.getElementById('estadisticasRapidas');
+        if (!contenedor) return;
+        
+        const total = estadisticas.disponible + estadisticas.ocupado + estadisticas.parcial + estadisticas.fuera;
+        
+        if (total === 0) {
+            contenedor.innerHTML = '<div class="text-center text-muted"><small>Sin datos</small></div>';
+            return;
+        }
+
+        const porcentajeDisponible = total > 0 ? Math.round((estadisticas.disponible / total) * 100) : 0;
+        
+        contenedor.innerHTML = `
+            <div class="row text-center g-2">
+                <div class="col-6">
+                    <div class="bg-success text-white rounded p-2 border">
+                        <div class="fw-bold">${estadisticas.disponible}</div>
+                        <small>Disponible</small>
+                    </div>
+                </div>
+                <div class="col-6">
+                    <div class="bg-danger text-white rounded p-2 border">
+                        <div class="fw-bold">${estadisticas.ocupado}</div>
+                        <small>Ocupado</small>
+                    </div>
+                </div>
+                <div class="col-12 mt-2">
+                    <div class="progress" style="height: 8px;">
+                        <div class="progress-bar bg-success" style="width: ${porcentajeDisponible}%"></div>
+                    </div>
+                    <small class="text-muted fw-bold">${porcentajeDisponible}% disponible</small>
+                </div>
+            </div>
+        `;
+    }
+
+    // Función para actualizar última actualización
+    function actualizarUltimaActualizacion() {
+        const ultimaActualizacion = document.getElementById('ultimaActualizacion');
+        if (!ultimaActualizacion) return;
+        
+        const ahora = new Date();
+        const hora = ahora.toLocaleTimeString('es-CO', { 
+            hour: '2-digit', 
+            minute: '2-digit' 
+        });
+        ultimaActualizacion.textContent = hora;
+    }
+
+    // Función para scroll al top
+    window.scrollToTop = function() {
+        const contenedor = document.querySelector('.overflow-auto');
+        if (contenedor) {
+            contenedor.scrollTo({ top: 0, behavior: 'smooth' });
+        }
+    }
+
+    // Función para cambiar vista
+    window.cambiarVista = function(tipo) {
+        const vistaLista = document.getElementById('vistaLista');
+        const vistaCalendario = document.getElementById('vistaCalendario');
+        
+        if (!vistaLista || !vistaCalendario) return;
+        
+        if (tipo === 'lista') {
+            vistaLista.classList.remove('d-none');
+            vistaCalendario.classList.add('d-none');
+        } else if (tipo === 'calendario') {
+            vistaLista.classList.add('d-none');
+            vistaCalendario.classList.remove('d-none');
+            renderizarVistaCalendario();
+        }
+    }
+
+    // Función para renderizar vista de calendario
+    function renderizarVistaCalendario() {
+        const vistaCalendario = document.getElementById('vistaCalendario');
+        const filtroMes = document.getElementById('filtroMes');
+        const filtroCancha = document.getElementById('filtroCancha');
+        const filtroEstado = document.getElementById('filtroEstado');
+        
+        if (!vistaCalendario) return;
+
+        // Filtrar datos según los filtros actuales
+        let datosFiltrados = window.disponibilidadGlobal || [];
+        
+        if (filtroMes && filtroMes.value) {
+            datosFiltrados = datosFiltrados.filter(item => item.fecha.startsWith(filtroMes.value));
+        }
+        if (filtroCancha && filtroCancha.value) {
+            datosFiltrados = datosFiltrados.filter(item => item.cancha_id == filtroCancha.value);
+        }
+        if (filtroEstado && filtroEstado.value) {
+            datosFiltrados = datosFiltrados.filter(item => item.estado === filtroEstado.value);
+        }
+
+        // Agrupar por cancha y fecha
+        const agrupado = {};
+        datosFiltrados.forEach(item => {
+            if (!agrupado[item.cancha_nombre]) {
+                agrupado[item.cancha_nombre] = {};
+            }
+            if (!agrupado[item.cancha_nombre][item.fecha]) {
+                agrupado[item.cancha_nombre][item.fecha] = [];
+            }
+            agrupado[item.cancha_nombre][item.fecha].push(item);
+        });
+
+        let html = '';
+        
+        if (Object.keys(agrupado).length === 0) {
+            html = `
+                <div class="text-center text-muted py-5">
+                    <i class="fas fa-calendar fa-3x mb-3 text-primary"></i>
+                    <h5 class="fw-bold">No hay datos disponibles</h5>
+                    <p>Intenta cambiar los filtros o actualizar los datos</p>
+                </div>
+            `;
+        } else {
+            html = '<div class="row g-3">';
+            
+            Object.keys(agrupado).forEach(cancha => {
+                html += `
+                    <div class="col-12">
+                        <div class="card border">
+                            <div class="card-header bg-primary text-white">
+                                <h6 class="mb-0">
+                                    <i class="fas fa-futbol me-2"></i>${cancha}
+                                </h6>
+                            </div>
+                            <div class="card-body p-0">
+                                <div class="table-responsive">
+                                    <table class="table table-sm mb-0">
+                                        <thead class="table-dark">
+                                            <tr>
+                                                <th style="width: 120px;">Fecha</th>
+                                                <th style="width: 80px;">Día</th>
+                                                <th>Horarios</th>
+                                                <th style="width: 100px;">Estado</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                `;
+                
+                const fechas = Object.keys(agrupado[cancha]).sort();
+                fechas.forEach(fecha => {
+                    const slots = agrupado[cancha][fecha];
+                    const fechaObj = new Date(fecha);
+                    const diaSemana = fechaObj.toLocaleDateString('es-CO', { weekday: 'short' });
+                    const fechaFormateada = fechaObj.toLocaleDateString('es-CO', { day: '2-digit', month: '2-digit' });
+                    
+                    // Agrupar slots por estado
+                    const slotsDisponibles = slots.filter(s => s.estado === 'disponible');
+                    const slotsOcupados = slots.filter(s => s.estado === 'ocupado');
+                    const slotsParciales = slots.filter(s => s.estado === 'parcial');
+                    
+                    let estadoGeneral = 'disponible';
+                    let estadoClass = 'success';
+                    let estadoTexto = 'Disponible';
+                    
+                    if (slotsOcupados.length > slotsDisponibles.length) {
+                        estadoGeneral = 'ocupado';
+                        estadoClass = 'danger';
+                        estadoTexto = 'Ocupado';
+                    } else if (slotsParciales.length > 0) {
+                        estadoGeneral = 'parcial';
+                        estadoClass = 'warning';
+                        estadoTexto = 'Parcial';
+                    }
+                    
+                    // Crear resumen de horarios
+                    const horariosResumen = [];
+                    if (slotsDisponibles.length > 0) {
+                        horariosResumen.push(`<span class="badge bg-success me-1">${slotsDisponibles.length} libre</span>`);
+                    }
+                    if (slotsOcupados.length > 0) {
+                        horariosResumen.push(`<span class="badge bg-danger me-1">${slotsOcupados.length} ocupado</span>`);
+                    }
+                    if (slotsParciales.length > 0) {
+                        horariosResumen.push(`<span class="badge bg-warning me-1">${slotsParciales.length} parcial</span>`);
+                    }
+                    
+                    html += `
+                        <tr>
+                            <td class="fw-bold">${fechaFormateada}</td>
+                            <td><small class="text-muted">${diaSemana}</small></td>
+                            <td>${horariosResumen.join('')}</td>
+                            <td><span class="badge bg-${estadoClass}">${estadoTexto}</span></td>
+                        </tr>
+                    `;
+                });
+                
+                html += `
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                `;
+            });
+            
+            html += '</div>';
+        }
+        
+        vistaCalendario.innerHTML = html;
+    }
+});
+</script>
+{% endblock %}

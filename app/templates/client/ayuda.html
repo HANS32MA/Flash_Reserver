@@ -1,0 +1,481 @@
+{% extends "base.html" %}
+
+{% block title %}Centro de Ayuda - Flash Reserver{% endblock %}
+
+{% block content %}
+<div class="container-fluid">
+    <div class="row">
+        <div class="col-12">
+            <h1 class="text-center mb-4">
+                <i class="fas fa-question-circle text-primary"></i> Centro de Ayuda
+            </h1>
+            <p class="text-center text-muted mb-5">
+                ¿Necesitas ayuda con tu reserva? Contáctanos de las siguientes maneras:
+            </p>
+        </div>
+    </div>
+
+    <!-- Sección de WhatsApp Directo -->
+    <div class="row mb-5">
+        <div class="col-md-6">
+            <div class="card h-100 border-0 shadow-sm">
+                <div class="card-body text-center p-4">
+                    <div class="mb-3">
+                        <i class="fab fa-whatsapp text-success" style="font-size: 3rem;"></i>
+                    </div>
+                    <h4 class="card-title mb-3">Contacto Directo WhatsApp</h4>
+                    <p class="card-text text-muted mb-4">
+                        Comunícate directamente con nuestro administrador a través de WhatsApp para una respuesta inmediata.
+                    </p>
+                    <a href="https://wa.me/573001234567?text=Hola,%20necesito%20ayuda%20con%20mi%20reserva%20en%20Flash%20Reserver" 
+                       target="_blank" 
+                       class="btn btn-success btn-lg">
+                        <img src="https://upload.wikimedia.org/wikipedia/commons/6/6b/WhatsApp.svg" alt="WhatsApp" class="whatsapp-icon me-2">Contactar por WhatsApp
+                    </a>
+                </div>
+            </div>
+        </div>
+
+        <!-- Sección de Mensajes Internos -->
+        <div class="col-md-6">
+            <div class="card h-100 border-0 shadow-sm">
+                <div class="card-body text-center p-4">
+                    <div class="mb-3">
+                        <i class="fas fa-envelope text-primary" style="font-size: 3rem;"></i>
+                    </div>
+                    <h4 class="card-title mb-3">Chat con Soporte</h4>
+                    <p class="card-text text-muted mb-4">
+                        Envía mensajes y recibe respuestas en tiempo real de nuestro equipo de soporte.
+                    </p>
+                    <button type="button" 
+                            class="btn btn-primary btn-lg" 
+                            data-bs-toggle="modal" 
+                            data-bs-target="#chatModal">
+                        <i class="fas fa-comments me-2"></i>Abrir Chat
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Sección de Preguntas Frecuentes -->
+    <div class="row">
+        <div class="col-12">
+            <div class="card border-0 shadow-sm">
+                <div class="card-header bg-primary text-white">
+                    <h5 class="mb-0">
+                        <i class="fas fa-question-circle me-2"></i>Preguntas Frecuentes
+                    </h5>
+                </div>
+                <div class="card-body">
+                    <div class="accordion" id="faqAccordion">
+                        <!-- FAQ 1 -->
+                        <div class="accordion-item">
+                            <h2 class="accordion-header" id="faq1">
+                                <button class="accordion-button" type="button" data-bs-toggle="collapse" data-bs-target="#collapse1">
+                                    ¿Cómo puedo reservar una cancha?
+                                </button>
+                            </h2>
+                            <div id="collapse1" class="accordion-collapse collapse show" data-bs-parent="#faqAccordion">
+                                <div class="accordion-body">
+                                    Para reservar una cancha, navega a la sección "Canchas", selecciona la cancha que desees, 
+                                    elige la fecha y hora, y confirma tu reserva. Recibirás una confirmación por correo electrónico.
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- FAQ 2 -->
+                        <div class="accordion-item">
+                            <h2 class="accordion-header" id="faq2">
+                                <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapse2">
+                                    ¿Puedo cancelar mi reserva?
+                                </button>
+                            </h2>
+                            <div id="collapse2" class="accordion-collapse collapse" data-bs-parent="#faqAccordion">
+                                <div class="accordion-body">
+                                    Sí, puedes cancelar tu reserva hasta 24 horas antes de la fecha programada. 
+                                    Ve a "Mis Reservas" y selecciona la opción de cancelar.
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- FAQ 3 -->
+                        <div class="accordion-item">
+                            <h2 class="accordion-header" id="faq3">
+                                <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapse3">
+                                    ¿Qué métodos de pago aceptan?
+                                </button>
+                            </h2>
+                            <div id="collapse3" class="accordion-collapse collapse" data-bs-parent="#faqAccordion">
+                                <div class="accordion-body">
+                                    Aceptamos pagos en efectivo al momento de usar la cancha, transferencias bancarias 
+                                    y pagos con tarjeta de crédito/débito.
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- FAQ 4 -->
+                        <div class="accordion-item">
+                            <h2 class="accordion-header" id="faq4">
+                                <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapse4">
+                                    ¿Qué pasa si llueve el día de mi reserva?
+                                </button>
+                            </h2>
+                            <div id="collapse4" class="accordion-collapse collapse" data-bs-parent="#faqAccordion">
+                                <div class="accordion-body">
+                                    En caso de lluvia, puedes reprogramar tu reserva sin costo adicional o solicitar 
+                                    un reembolso completo. Contáctanos para más información.
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- FAQ 5 -->
+                        <div class="accordion-item">
+                            <h2 class="accordion-header" id="faq5">
+                                <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapse5">
+                                    ¿Puedo ver mis reservas anteriores?
+                                </button>
+                            </h2>
+                            <div id="collapse5" class="accordion-collapse collapse" data-bs-parent="#faqAccordion">
+                                <div class="accordion-body">
+                                    Sí, puedes ver todas tus reservas (activas, completadas y canceladas) en la sección "Mis Reservas" 
+                                    de tu perfil de usuario.
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- FAQ 6 -->
+                        <div class="accordion-item">
+                            <h2 class="accordion-header" id="faq6">
+                                <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapse6">
+                                    ¿Puedo hacer comentarios sobre las canchas?
+                                </button>
+                            </h2>
+                            <div id="collapse6" class="accordion-collapse collapse" data-bs-parent="#faqAccordion">
+                                <div class="accordion-body">
+                                    Sí, puedes dejar comentarios y calificaciones en cada cancha después de usarla. 
+                                    Esto ayuda a otros usuarios a tomar decisiones informadas.
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Sección de Información de Contacto -->
+    <div class="row mt-5">
+        <div class="col-12">
+            <div class="card border-0 shadow-sm">
+                <div class="card-header bg-info text-white">
+                    <h5 class="mb-0">
+                        <i class="fas fa-info-circle me-2"></i>Información de Contacto
+                    </h5>
+                </div>
+                <div class="card-body">
+                    <div class="row">
+                        <div class="col-md-4 text-center mb-3">
+                            <i class="fas fa-phone text-primary fa-2x mb-2"></i>
+                            <h6>Teléfono</h6>
+                            <p class="text-muted">+57 300 123 4567</p>
+                        </div>
+                        <div class="col-md-4 text-center mb-3">
+                            <i class="fas fa-envelope text-primary fa-2x mb-2"></i>
+                            <h6>Email</h6>
+                            <p class="text-muted">soporte@flashreserver.com</p>
+                        </div>
+                        <div class="col-md-4 text-center mb-3">
+                            <i class="fas fa-clock text-primary fa-2x mb-2"></i>
+                            <h6>Horarios de Atención</h6>
+                            <p class="text-muted">Lun - Dom: 6:00 AM - 10:00 PM</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Modal para enviar mensaje interno -->
+<div class="modal fade" id="mensajeModal" tabindex="-1" aria-labelledby="mensajeModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="mensajeModalLabel">
+                    <i class="fas fa-envelope me-2"></i>Enviar Mensaje de Ayuda
+                </h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <form id="mensajeForm">
+                    <div class="mb-3">
+                        <label for="asunto" class="form-label">Asunto *</label>
+                        <input type="text" class="form-control" id="asunto" name="asunto" required 
+                               placeholder="Ej: Problema con mi reserva">
+                    </div>
+                    <div class="mb-3">
+                        <label for="mensaje" class="form-label">Mensaje *</label>
+                        <textarea class="form-control" id="mensaje" name="mensaje" rows="6" required
+                                  placeholder="Describe tu problema o consulta aquí..."></textarea>
+                    </div>
+                    <div class="alert alert-info">
+                        <i class="fas fa-info-circle me-2"></i>
+                        <strong>Nota:</strong> Nuestro equipo responderá tu mensaje en las próximas 24 horas.
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">
+                    <i class="fas fa-times me-2"></i>Cancelar
+                </button>
+                <button type="button" class="btn btn-primary" id="enviarMensaje">
+                    <i class="fas fa-paper-plane me-2"></i>Enviar Mensaje
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Modal de confirmación -->
+<div class="modal fade" id="confirmacionModal" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">
+                    <i class="fas fa-check-circle text-success me-2"></i>Mensaje Enviado
+                </h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <p>Tu mensaje ha sido enviado correctamente. Recibirás una respuesta en las próximas 24 horas.</p>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-primary" data-bs-dismiss="modal">Aceptar</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Modal del Chat -->
+<div class="modal fade" id="chatModal" tabindex="-1" aria-labelledby="chatModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="chatModalLabel">
+                    <i class="fas fa-comments me-2"></i>Chat con Soporte
+                </h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <!-- Chat Container -->
+                <div class="chat-container">
+                    <!-- Chat Messages -->
+                    <div class="chat-messages" id="chatMessages">
+                        <!-- Los mensajes se cargarán aquí dinámicamente -->
+                    </div>
+                    
+                    <!-- Chat Input -->
+                    <div class="chat-input-container">
+                        <div class="input-group">
+                            <input type="text" 
+                                   class="form-control" 
+                                   id="chatInput" 
+                                   placeholder="Escribe tu mensaje aquí..."
+                                   maxlength="500">
+                            <button class="btn btn-primary" type="button" id="sendChatBtn">
+                                <i class="fas fa-paper-plane"></i>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    const mensajeForm = document.getElementById('mensajeForm');
+    const enviarBtn = document.getElementById('enviarMensaje');
+    const confirmacionModal = new bootstrap.Modal(document.getElementById('confirmacionModal'));
+    
+    // Variables del chat
+    const chatModal = document.getElementById('chatModal');
+    const chatMessages = document.getElementById('chatMessages');
+    const chatInput = document.getElementById('chatInput');
+    const sendChatBtn = document.getElementById('sendChatBtn');
+    let chatInterval;
+
+    // Función para cargar mensajes del chat
+    function cargarMensajesChat() {
+        fetch('/client/chat/mensajes')
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    mostrarMensajesChat(data.mensajes);
+                }
+            })
+            .catch(error => {
+                console.error('Error cargando mensajes:', error);
+            });
+    }
+
+    // Función para mostrar mensajes en el chat
+    function mostrarMensajesChat(mensajes) {
+        chatMessages.innerHTML = '';
+        
+        mensajes.forEach(mensaje => {
+            // Mensaje del usuario
+            const userMessage = document.createElement('div');
+            userMessage.className = 'message user-message';
+            userMessage.innerHTML = `
+                <div class="message-header">
+                    <small class="text-muted">Tú - ${mensaje.fecha}</small>
+                </div>
+                <div class="message-content">
+                    <p>${mensaje.mensaje}</p>
+                </div>
+            `;
+            chatMessages.appendChild(userMessage);
+
+            // Respuesta del admin (si existe)
+            if (mensaje.respuesta) {
+                const adminMessage = document.createElement('div');
+                adminMessage.className = 'message admin-message';
+                adminMessage.innerHTML = `
+                    <div class="message-header">
+                        <small class="text-muted">Soporte - ${mensaje.fecha_respuesta}</small>
+                    </div>
+                    <div class="message-content">
+                        <p>${mensaje.respuesta}</p>
+                    </div>
+                `;
+                chatMessages.appendChild(adminMessage);
+            }
+        });
+
+        // Scroll al final
+        chatMessages.scrollTop = chatMessages.scrollHeight;
+    }
+
+    // Función para enviar mensaje de chat
+    function enviarMensajeChat() {
+        const mensaje = chatInput.value.trim();
+        
+        if (!mensaje) {
+            return;
+        }
+
+        // Mostrar loading en el botón
+        sendChatBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i>';
+        sendChatBtn.disabled = true;
+
+        fetch('/client/chat/mensaje', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({
+                mensaje: mensaje
+            })
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.success) {
+                chatInput.value = '';
+                // Recargar mensajes después de enviar
+                setTimeout(cargarMensajesChat, 500);
+            } else {
+                alert('Error al enviar el mensaje: ' + data.error);
+            }
+        })
+        .catch(error => {
+            console.error('Error:', error);
+            alert('Error al enviar el mensaje. Por favor, intenta nuevamente.');
+        })
+        .finally(() => {
+            // Restaurar botón
+            sendChatBtn.innerHTML = '<i class="fas fa-paper-plane"></i>';
+            sendChatBtn.disabled = false;
+        });
+    }
+
+    // Event listeners para el chat
+    sendChatBtn.addEventListener('click', enviarMensajeChat);
+    
+    chatInput.addEventListener('keypress', function(e) {
+        if (e.key === 'Enter') {
+            enviarMensajeChat();
+        }
+    });
+
+    // Cargar mensajes cuando se abre el modal del chat
+    chatModal.addEventListener('show.bs.modal', function() {
+        cargarMensajesChat();
+        // Iniciar actualización automática cada 3 segundos
+        chatInterval = setInterval(cargarMensajesChat, 3000);
+    });
+
+    // Limpiar intervalo cuando se cierra el modal
+    chatModal.addEventListener('hidden.bs.modal', function() {
+        if (chatInterval) {
+            clearInterval(chatInterval);
+        }
+    });
+
+    // Event listener para el formulario de mensaje original
+    enviarBtn.addEventListener('click', function() {
+        const asunto = document.getElementById('asunto').value.trim();
+        const mensaje = document.getElementById('mensaje').value.trim();
+
+        if (!asunto || !mensaje) {
+            alert('Por favor, completa todos los campos requeridos.');
+            return;
+        }
+
+        // Mostrar loading
+        enviarBtn.innerHTML = '<i class="fas fa-spinner fa-spin me-2"></i>Enviando...';
+        enviarBtn.disabled = true;
+
+        // Enviar mensaje
+        fetch('/client/enviar-mensaje', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({
+                asunto: asunto,
+                mensaje: mensaje
+            })
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.success) {
+                // Cerrar modal de mensaje
+                bootstrap.Modal.getInstance(document.getElementById('mensajeModal')).hide();
+                
+                // Mostrar confirmación
+                confirmacionModal.show();
+                
+                // Limpiar formulario
+                mensajeForm.reset();
+            } else {
+                alert('Error al enviar el mensaje: ' + data.error);
+            }
+        })
+        .catch(error => {
+            console.error('Error:', error);
+            alert('Error al enviar el mensaje. Por favor, intenta nuevamente.');
+        })
+        .finally(() => {
+            // Restaurar botón
+            enviarBtn.innerHTML = '<i class="fas fa-paper-plane me-2"></i>Enviar Mensaje';
+            enviarBtn.disabled = false;
+        });
+    });
+});
+</script>
+{% endblock %} 
