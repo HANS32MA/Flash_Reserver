@@ -330,10 +330,10 @@ flask db upgrade
 
 7. **Ejecutar la aplicación**
 ```bash
-flask run
+   python app.py
 ```
 
-La aplicación estará disponible en `http://localhost:5000`
+La aplicación estará disponible en `http://127.0.0.1:5000`
 
 ### Configurar inicio de sesión con Google (OAuth 2.0)
 
