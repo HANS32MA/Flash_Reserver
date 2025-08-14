@@ -319,55 +319,7 @@
 
     <!-- Botón de Ayuda Flotante (solo para clientes) -->
     {% if current_user.is_authenticated and current_user.rol.Nombre == 'Cliente' %}
-    <div class="help-button-container">
-        <button class="btn btn-primary help-button" data-bs-toggle="modal" data-bs-target="#helpModal">
-            <i class="fas fa-question-circle"></i>
-            <span class="help-text">Ayuda</span>
-        </button>
-    </div>
-
-    <!-- Modal de Ayuda -->
-    <div class="modal fade" id="helpModal" tabindex="-1" aria-labelledby="helpModalLabel" aria-hidden="true">
-        <div class="modal-dialog">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h5 class="modal-title" id="helpModalLabel">
-                        <i class="fas fa-headset me-2"></i>Centro de Ayuda
-                    </h5>
-                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                </div>
-                <div class="modal-body">
-                    <div class="row">
-                        <div class="col-md-6 mb-3">
-                            <div class="card h-100">
-                                <div class="card-body text-center">
-                                    <i class="fab fa-whatsapp fa-3x text-success mb-3"></i>
-                                    <h6>Contacto Directo</h6>
-                                    <p class="small">Habla directamente con nuestro administrador por WhatsApp</p>
-                                    <a href="https://wa.me/+573001234567?text=Hola, necesito ayuda con Flash Reserver" 
-                                       target="_blank" class="btn btn-success btn-sm">
-                                        <i class="fab fa-whatsapp me-2"></i>WhatsApp
-                                    </a>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="col-md-6 mb-3">
-                            <div class="card h-100">
-                                <div class="card-body text-center">
-                                    <i class="fas fa-envelope fa-3x text-primary mb-3"></i>
-                                    <h6>Mensaje Interno</h6>
-                                    <p class="small">Envía un mensaje que será revisado por el administrador</p>
-                                    <button type="button" class="btn btn-primary btn-sm" onclick="abrirMensajeInterno()">
-                                        <i class="fas fa-envelope me-2"></i>Enviar Mensaje
-                                    </button>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div>
+    <!-- Botón rectangular eliminado - solo se mantiene el botón circular flotante -->
 
     <!-- Modal de Mensaje Interno -->
     <div class="modal fade" id="mensajeModal" tabindex="-1" aria-labelledby="mensajeModalLabel" aria-hidden="true">

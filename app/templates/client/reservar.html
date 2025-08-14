@@ -569,17 +569,53 @@ document.addEventListener('DOMContentLoaded', function () {
         return null;
     }
 
-    // Función para cargar disponibilidad inicial sin mostrar alertas
-    async function cargarDisponibilidadInicial() {
-        console.log('🟡 Función cargarDisponibilidadInicial ejecutada');
-        // Asegurar que la alerta esté oculta
-        alerta.style.display = 'none';
+    // Función para actualizar el resumen de la reserva
+    function actualizarResumen() {
+        const fecha = fechaInput.value;
+        const horaInicio = horaInicioSelect.value;
+        const duracion = parseInt(duracionSelect.value);
+        const horaFin = calcularHoraFin();
+        const precio = {{ cancha.PrecioHora }};
         
-        // No hacer nada si no hay fecha seleccionada
-        // Esto evita que se ejecute automáticamente al cargar la página
-        return;
+        if (!fecha) {
+            resumenDiv.innerHTML = `
+                <p class="text-muted">Selecciona una fecha para comenzar</p>
+            `;
+            return;
+        }
+        
+        if (!horaInicio || !duracion) {
+            resumenDiv.innerHTML = `
+                <p><strong>Fecha:</strong> ${fecha}</p>
+                <p class="text-muted">Selecciona hora y duración para ver el resumen completo</p>
+            `;
+            return;
+        }
+        
+        const total = precio * duracion;
+        const precioFormateado = precio.toLocaleString('es-CO');
+        const totalFormateado = total.toLocaleString('es-CO');
+        
+        resumenDiv.innerHTML = `
+            <div class="row">
+                <div class="col-12">
+                    <p><strong>Fecha:</strong> ${fecha}</p>
+                    <p><strong>Horario:</strong> ${horaInicio} - ${horaFin}</p>
+                    <p><strong>Duración:</strong> ${duracion} hora${duracion > 1 ? 's' : ''}</p>
+                    <hr>
+                    <div class="d-flex justify-content-between align-items-center">
+                        <span><strong>Precio por hora:</strong></span>
+                        <span class="text-primary">COP ${precioFormateado}</span>
+                    </div>
+                    <div class="d-flex justify-content-between align-items-center">
+                        <span><strong>Total:</strong></span>
+                        <span class="text-success fw-bold fs-5">COP ${totalFormateado}</span>
+                    </div>
+                </div>
+            </div>
+        `;
     }
-    
+
     // Función para cargar disponibilidad básica cuando se selecciona fecha
     async function cargarDisponibilidadBasica() {
         console.log('🟢 Función cargarDisponibilidadBasica ejecutada');
@@ -590,10 +626,7 @@ document.addEventListener('DOMContentLoaded', function () {
         eliminarAlerta();
         
         // Actualizar resumen básico
-        resumenDiv.innerHTML = `
-            <p><strong>Fecha:</strong> ${fecha}</p>
-            <p><strong>Selecciona hora y duración para ver el resumen completo</strong></p>
-        `;
+        actualizarResumen();
         
         // Cargar horarios disponibles para deshabilitar opciones ocupadas
         try {
@@ -651,12 +684,11 @@ document.addEventListener('DOMContentLoaded', function () {
                 
                 const data = await resp.json();
                 const ocupados = data.horarios_ocupados || [];
-
-                const enConflicto = ocupados.some(reserva =>
-                    (horaInicio < reserva.fin && horaFin > reserva.inicio)
-                );
-
-                if (enConflicto) {
+                
+                // Verificar si el horario seleccionado está ocupado
+                const ocupado = ocupados.some(r => (horaInicio < r.fin && horaFin > r.inicio));
+                
+                if (ocupado) {
                     crearAlerta();
                     e.preventDefault();
                     return false;
@@ -667,13 +699,7 @@ document.addEventListener('DOMContentLoaded', function () {
         }
 
         // Actualizar resumen completo
-        const precio = {{ cancha.PrecioHora }};
-        const total = precio * parseInt(duracionSelect.value);
-        resumenDiv.innerHTML = `
-            <p><strong>Fecha:</strong> ${fecha}</p>
-            <p><strong>Horario:</strong> ${horaInicio} - ${horaFin}</p>
-            <p><strong>Total:</strong> COP ${total.toLocaleString('es-CO')}</p>
-        `;
+        actualizarResumen();
     }
 
     // Eventos - Solo validar cuando el usuario realmente interactúe
@@ -685,6 +711,8 @@ document.addEventListener('DOMContentLoaded', function () {
     });
     
     horaInicioSelect.addEventListener('change', function() {
+        // Actualizar resumen cuando cambie la hora de inicio
+        actualizarResumen();
         // Solo validar si hay fecha y hora seleccionada
         if (fechaInput.value && horaInicioSelect.value) {
             validarDisponibilidad();
@@ -692,6 +720,8 @@ document.addEventListener('DOMContentLoaded', function () {
     });
     
     duracionSelect.addEventListener('change', function() {
+        // Actualizar resumen cuando cambie la duración
+        actualizarResumen();
         // Solo validar si hay fecha y hora seleccionada
         if (fechaInput.value && horaInicioSelect.value) {
             validarDisponibilidad();

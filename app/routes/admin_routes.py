@@ -2234,3 +2234,4 @@ def eliminar_cuenta():
         db.session.rollback()
         flash(f'Error al eliminar cuenta: {str(e)}', 'error')
         return redirect(url_for('admin.configuracion'))
+
