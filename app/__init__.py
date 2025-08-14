@@ -2,14 +2,16 @@ from flask import Flask
 from flask_sqlalchemy import SQLAlchemy
 from flask_login import LoginManager
 from flask_mail import Mail
-# from flask_migrate import Migrate  # 👈 Comentado temporalmente
+from flask_migrate import Migrate  # 👈 Habilitado para migraciones
 import os
 from flask import send_file
+from authlib.integrations.flask_client import OAuth
 
 db = SQLAlchemy()
 login_manager = LoginManager()
 mail = Mail()
-# migrate = Migrate()  # 👈 Comentado temporalmente
+migrate = Migrate()  # 👈 Habilitado para migraciones
+oauth = OAuth()
 
 def create_app(config_class='config.Config'):
     app = Flask(__name__)
@@ -20,10 +22,20 @@ def create_app(config_class='config.Config'):
     
     # Inicializar extensiones
     db.init_app(app)
-    # migrate.init_app(app, db)  # 👈 Comentado temporalmente
+    migrate.init_app(app, db)  # 👈 Habilitado para migraciones
     login_manager.init_app(app)
     login_manager.login_view = 'auth.login'
     mail.init_app(app)
+    oauth.init_app(app)
+
+    # Registrar proveedor Google OAuth (usando OpenID metadata oficial)
+    oauth.register(
+        name='google',
+        client_id=app.config.get('GOOGLE_CLIENT_ID'),
+        client_secret=app.config.get('GOOGLE_CLIENT_SECRET'),
+        server_metadata_url='https://accounts.google.com/.well-known/openid-configuration',
+        client_kwargs={'scope': 'openid email profile'}
+    )
     
     # Configurar user_loader
     from app.models.usuario import Usuario
@@ -131,6 +143,19 @@ def create_app(config_class='config.Config'):
     # Configuración específica para producción
     if hasattr(config_class, 'init_app'):
         config_class.init_app(app)
+    
+    # Inicializar servicios
+    from app.services.notificacion_service import notificacion_service
+    from app.services.recordatorio_service import recordatorio_service
+    
+    # Inicializar recordatorios automáticamente
+    with app.app_context():
+        try:
+            recordatorio_service.programar_recordatorios_existentes()
+            recordatorio_service.limpiar_recordatorios_antiguos()
+            print("✅ Sistema de recordatorios automáticos inicializado")
+        except Exception as e:
+            print(f"⚠️ Error inicializando recordatorios: {e}")
     
     return app
     

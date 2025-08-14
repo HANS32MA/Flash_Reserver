@@ -4,204 +4,208 @@
 
 {% block content %}
 <div class="container-fluid my-5">
-    <div class="row justify-content-center">
-        <div class="col-md-8">
-            <div class="card shadow-sm">
-                <div class="card-header bg-primary text-white">
-                    <h5 class="mb-0"><i class="fas fa-edit me-2"></i>Crear Nuevo Post</h5>
-                </div>
-                <div class="card-body">
-                    <form method="POST" enctype="multipart/form-data">
-                        <div class="mb-3">
-                            <label for="titulo" class="form-label">
-                                <i class="fas fa-heading me-1"></i>Título del Post
-                            </label>
-                            <input type="text" class="form-control" id="titulo" name="titulo" 
-                                   required maxlength="200" placeholder="Escribe un título atractivo...">
-                            <div class="form-text">Máximo 200 caracteres</div>
-                        </div>
+	<div class="row justify-content-center">
+		<div class="col-md-8">
+			<div class="card shadow-sm">
+				<div class="card-header bg-primary text-white">
+					<h5 class="mb-0"><i class="fas fa-edit me-2"></i>Crear Nuevo Post</h5>
+				</div>
+				<div class="card-body">
+					<form method="POST" enctype="multipart/form-data">
+						<div class="mb-3">
+							<label for="titulo" class="form-label">
+								<i class="fas fa-heading me-1"></i>Título del Post
+							</label>
+							<input type="text" class="form-control" id="titulo" name="titulo" 
+								   required maxlength="200" placeholder="Escribe un título atractivo...">
+							<div class="form-text">Máximo 200 caracteres</div>
+						</div>
 
-                        <div class="mb-3">
-                            <label for="categoria" class="form-label">
-                                <i class="fas fa-tags me-1"></i>Categoría
-                            </label>
-                            <select class="form-select" id="categoria" name="categoria" required>
-                                <option value="">Selecciona una categoría</option>
-                                {% for categoria in categorias %}
-                                <option value="{{ categoria }}">{{ categoria }}</option>
-                                {% endfor %}
-                            </select>
-                        </div>
+						<div class="mb-3">
+							<label for="categoria" class="form-label">
+								<i class="fas fa-tags me-1"></i>Categoría
+							</label>
+							<select class="form-select" id="categoria" name="categoria" required>
+								<option value="">Selecciona una categoría</option>
+								{% for categoria in categorias %}
+								<option value="{{ categoria }}">{{ categoria }}</option>
+								{% endfor %}
+							</select>
+						</div>
 
-                        <div class="mb-3">
-                            <label for="contenido" class="form-label">
-                                <i class="fas fa-align-left me-1"></i>Contenido
-                            </label>
-                            <textarea class="form-control" id="contenido" name="contenido" 
-                                      rows="8" required placeholder="Comparte tus pensamientos, experiencias, consejos..."></textarea>
-                            <div class="form-text">Sé respetuoso y constructivo con la comunidad</div>
-                        </div>
+						<div class="mb-3">
+							<label for="contenido" class="form-label">
+								<i class="fas fa-align-left me-1"></i>Contenido
+							</label>
+							<textarea class="form-control" id="contenido" name="contenido" 
+								  rows="8" required placeholder="Comparte tus pensamientos, experiencias, consejos..."></textarea>
+							<div class="form-text">Sé respetuoso y constructivo con la comunidad</div>
+						</div>
 
-                        <div class="mb-3">
-                            <label for="imagen" class="form-label">
-                                <i class="fas fa-image me-1"></i>Imagen (Opcional)
-                            </label>
-                            <input type="file" class="form-control" id="imagen" name="imagen" 
-                                   accept="image/*">
-                            <div class="form-text">Formatos: JPG, PNG, GIF. Máximo 5MB</div>
-                            <!-- Vista previa de imagen -->
-                            <div id="vistaPreviaImagen" class="mt-2" style="display: none;">
-                                <div class="card border-primary vista-previa-card">
-                                    <div class="text-center p-2 position-relative">
-                                        <span class="multimedia-badge imagen">
-                                            <i class="fas fa-image me-1"></i>Imagen
-                                        </span>
-                                        <img id="imagenPrevia" src="" class="foro-imagen" 
-                                             alt="Vista previa" style="max-height: 200px; object-fit: cover;">
-                                    </div>
-                                    <div class="card-body text-center">
-                                        <small class="text-muted">Vista previa de la imagen</small>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
+						<div class="mb-3">
+							<label for="imagen" class="form-label">
+								<i class="fas fa-image me-1"></i>Imagen (Opcional)
+							</label>
+							<input type="file" class="form-control" id="imagen" name="imagen" 
+								   accept="image/*">
+							<div class="form-text">Formatos: JPG, PNG, GIF. Máximo 5MB</div>
+							<!-- Vista previa de imagen -->
+							<div id="vistaPreviaImagen" class="mt-2" style="display: none;">
+								<div class="card border-primary vista-previa-card">
+									<div class="text-center p-2 position-relative">
+										<span class="multimedia-badge imagen">
+											<i class="fas fa-image me-1"></i>Imagen
+										</span>
+										<img id="imagenPrevia" src="" class="foro-imagen" 
+											 alt="Vista previa" style="max-height: 200px; object-fit: cover;">
+									</div>
+									<div class="card-body text-center">
+										<small class="text-muted">Vista previa de la imagen</small>
+									</div>
+								</div>
+							</div>
+						</div>
 
-                        <div class="mb-3">
-                            <label for="video" class="form-label">
-                                <i class="fas fa-video me-1"></i>Video (Opcional)
-                            </label>
-                            <input type="file" class="form-control" id="video" name="video" 
-                                   accept="video/*">
-                            <div class="form-text">Formatos: MP4, AVI, MOV. Máximo 50MB</div>
-                            <!-- Vista previa de video -->
-                            <div id="vistaPreviaVideo" class="mt-2" style="display: none;">
-                                <div class="card border-success vista-previa-card">
-                                    <div class="text-center p-2 position-relative">
-                                        <span class="multimedia-badge video">
-                                            <i class="fas fa-video me-1"></i>Video
-                                        </span>
-                                        <video id="videoPrevio" class="foro-video" controls 
-                                               style="max-height: 200px;">
-                                            <source src="" type="video/mp4">
-                                            Tu navegador no soporta el elemento video.
-                                        </video>
-                                    </div>
-                                    <div class="card-body text-center">
-                                        <small class="text-muted">Vista previa del video</small>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
+						<div class="mb-3">
+							<label for="video" class="form-label">
+								<i class="fas fa-video me-1"></i>Video (Opcional)
+							</label>
+							<input type="file" class="form-control" id="video" name="video" 
+								   accept="video/*">
+							<div class="form-text">Formatos: MP4, AVI, MOV. Máximo 50MB</div>
+							<!-- Vista previa de video -->
+							<div id="vistaPreviaVideo" class="mt-2" style="display: none;">
+								<div class="card border-success vista-previa-card">
+									<div class="text-center p-2 position-relative">
+										<span class="multimedia-badge video">
+											<i class="fas fa-video me-1"></i>Video
+										</span>
+										<video id="videoPrevio" class="foro-video" controls 
+											   style="max-height: 200px;">
+											<source src="" type="video/mp4">
+											Tu navegador no soporta el elemento video.
+										</video>
+									</div>
+									<div class="card-body text-center">
+										<small class="text-muted">Vista previa del video</small>
+									</div>
+								</div>
+							</div>
+						</div>
 
-                        <div class="d-flex justify-content-between">
-                            <a href="{{ url_for('foro.index') }}" class="btn btn-outline-secondary">
-                                <i class="fas fa-arrow-left me-2"></i>Cancelar
-                            </a>
-                            <button type="submit" class="btn btn-primary">
-                                <i class="fas fa-paper-plane me-2"></i>Publicar Post
-                            </button>
-                        </div>
-                    </form>
-                </div>
-            </div>
+						<div class="d-flex justify-content-between">
+							<a href="{{ url_for('foro.index') }}" class="btn btn-outline-secondary">
+								<i class="fas fa-arrow-left me-2"></i>Cancelar
+							</a>
+							<button type="submit" class="btn btn-primary">
+								<i class="fas fa-paper-plane me-2"></i>Publicar Post
+							</button>
+						</div>
+					</form>
+				</div>
+			</div>
 
-            <!-- Consejos para crear buenos posts -->
-            <div class="card shadow-sm mt-4">
-                <div class="card-header bg-light">
-                    <h6 class="mb-0"><i class="fas fa-lightbulb me-2"></i>Consejos para crear buenos posts</h6>
-                </div>
-                <div class="card-body">
-                    <ul class="list-unstyled mb-0">
-                        <li class="mb-2"><i class="fas fa-check text-success me-2"></i>Sé claro y específico en tu título</li>
-                        <li class="mb-2"><i class="fas fa-check text-success me-2"></i>Comparte experiencias personales y consejos útiles</li>
-                        <li class="mb-2"><i class="fas fa-check text-success me-2"></i>Usa imágenes para hacer tu post más atractivo</li>
-                        <li class="mb-2"><i class="fas fa-check text-success me-2"></i>Responde a los comentarios de otros usuarios</li>
-                        <li class="mb-0"><i class="fas fa-check text-success me-2"></i>Mantén un tono respetuoso y constructivo</li>
-                    </ul>
-                </div>
-            </div>
-        </div>
-    </div>
+			<!-- Consejos: ahora se muestran como modal al entrar -->
+		</div>
+	</div>
 </div>
 
 <script>
 document.addEventListener('DOMContentLoaded', function() {
-    // Validación del formulario
-    const form = document.querySelector('form');
-    const titulo = document.getElementById('titulo');
-    const contenido = document.getElementById('contenido');
-    const imagen = document.getElementById('imagen');
-    const video = document.getElementById('video');
-    
-    
-    // Validar tamaño de imagen
-    imagen.addEventListener('change', function() {
-        const file = this.files[0];
-        if (file) {
-            const maxSize = 10 * 1024 * 1024; // 10MB
-            if (file.size > maxSize) {
-                showError('Imagen Demasiado Grande', 'La imagen excede el tamaño máximo de 10MB. Por favor, selecciona una imagen más pequeña.');
-                this.value = '';
-                document.getElementById('vistaPreviaImagen').style.display = 'none';
-                return;
-            }
-            
-            // Mostrar vista previa
-            const reader = new FileReader();
-            reader.onload = function(e) {
-                document.getElementById('imagenPrevia').src = e.target.result;
-                document.getElementById('vistaPreviaImagen').style.display = 'block';
-            };
-            reader.readAsDataURL(file);
-        } else {
-            document.getElementById('vistaPreviaImagen').style.display = 'none';
+	// Validación del formulario
+	const form = document.querySelector('form');
+	const titulo = document.getElementById('titulo');
+	const contenido = document.getElementById('contenido');
+	const imagen = document.getElementById('imagen');
+	const video = document.getElementById('video');
+	
+	
+	// Validar tamaño de imagen
+	imagen.addEventListener('change', function() {
+		const file = this.files[0];
+		if (file) {
+			const maxSize = 10 * 1024 * 1024; // 10MB
+			if (file.size > maxSize) {
+				showError('Imagen Demasiado Grande', 'La imagen excede el tamaño máximo de 10MB. Por favor, selecciona una imagen más pequeña.');
+				this.value = '';
+				document.getElementById('vistaPreviaImagen').style.display = 'none';
+				return;
+			}
+			
+			// Mostrar vista previa
+			const reader = new FileReader();
+			reader.onload = function(e) {
+				document.getElementById('imagenPrevia').src = e.target.result;
+				document.getElementById('vistaPreviaImagen').style.display = 'block';
+			};
+			reader.readAsDataURL(file);
+		} else {
+			document.getElementById('vistaPreviaImagen').style.display = 'none';
+		}
+	});
+	
+	// Validar tamaño de video
+	video.addEventListener('change', function() {
+		const file = this.files[0];
+		if (file) {
+			const maxSize = 100 * 1024 * 1024; // 100MB
+			if (file.size > maxSize) {
+				showError('Video Demasiado Grande', 'El video excede el tamaño máximo de 100MB. Por favor, selecciona un video más pequeño.');
+				this.value = '';
+				document.getElementById('vistaPreviaVideo').style.display = 'none';
+				return;
+			}
+			
+			// Mostrar vista previa
+			const reader = new FileReader();
+			reader.onload = function(e) {
+				document.getElementById('videoPrevio').querySelector('source').src = e.target.result;
+				document.getElementById('videoPrevio').load();
+				document.getElementById('vistaPreviaVideo').style.display = 'block';
+			};
+			reader.readAsDataURL(file);
+		} else {
+			document.getElementById('vistaPreviaVideo').style.display = 'none';
+		}
+	});
+	
+	// Validar longitud del título
+	titulo.addEventListener('input', function() {
+		const maxLength = 200;
+		const currentLength = this.value.length;
+		const remaining = maxLength - currentLength;
+		
+		if (remaining < 0) {
+			this.value = this.value.substring(0, maxLength);
+		}
+	});
+	
+	// Validar contenido mínimo
+	form.addEventListener('submit', function(e) {
+		if (contenido.value.trim().length < 10) {
+			e.preventDefault();
+			showWarning('Contenido Muy Corto', 'El contenido debe tener al menos 10 caracteres para ser publicado.');
+			contenido.focus();
+		}
+	});
+
+    // Mostrar consejos como alerta modal cada vez que se entra a la página
+    const mostrarConsejos = () => {
+        if (typeof customAlerts !== 'undefined') {
+            customAlerts.info(
+                'Consejos para crear buenos posts',
+                '<ul style="text-align:left; margin:0; padding-left:18px;">'
+                +'<li>✔ Sé claro y específico en tu título</li>'
+                +'<li>✔ Comparte experiencias personales y consejos útiles</li>'
+                +'<li>✔ Usa imágenes para hacer tu post más atractivo</li>'
+                +'<li>✔ Responde a los comentarios de otros usuarios</li>'
+                +'<li>✔ Mantén un tono respetuoso y constructivo</li>'
+                +'</ul>',
+                0
+            );
         }
-    });
-    
-    // Validar tamaño de video
-    video.addEventListener('change', function() {
-        const file = this.files[0];
-        if (file) {
-            const maxSize = 100 * 1024 * 1024; // 100MB
-            if (file.size > maxSize) {
-                showError('Video Demasiado Grande', 'El video excede el tamaño máximo de 100MB. Por favor, selecciona un video más pequeño.');
-                this.value = '';
-                document.getElementById('vistaPreviaVideo').style.display = 'none';
-                return;
-            }
-            
-            // Mostrar vista previa
-            const reader = new FileReader();
-            reader.onload = function(e) {
-                document.getElementById('videoPrevio').querySelector('source').src = e.target.result;
-                document.getElementById('videoPrevio').load();
-                document.getElementById('vistaPreviaVideo').style.display = 'block';
-            };
-            reader.readAsDataURL(file);
-        } else {
-            document.getElementById('vistaPreviaVideo').style.display = 'none';
-        }
-    });
-    
-    // Validar longitud del título
-    titulo.addEventListener('input', function() {
-        const maxLength = 200;
-        const currentLength = this.value.length;
-        const remaining = maxLength - currentLength;
-        
-        if (remaining < 0) {
-            this.value = this.value.substring(0, maxLength);
-        }
-    });
-    
-    // Validar contenido mínimo
-    form.addEventListener('submit', function(e) {
-        if (contenido.value.trim().length < 10) {
-            e.preventDefault();
-            showWarning('Contenido Muy Corto', 'El contenido debe tener al menos 10 caracteres para ser publicado.');
-            contenido.focus();
-        }
-    });
+    };
+    mostrarConsejos();
 });
 </script>
 {% endblock %} 

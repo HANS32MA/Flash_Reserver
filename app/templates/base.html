@@ -132,6 +132,9 @@
                             </a>
                         </li>
                         {% endif %}
+                        
+
+
                         <li class="nav-item dropdown">
                             <a class="nav-link dropdown-toggle d-flex align-items-center" href="#" id="navbarDropdown"
                                role="button" data-bs-toggle="dropdown" aria-expanded="false">
@@ -185,7 +188,7 @@
                             </li>
                             <li><hr class="dropdown-divider"></li>
                             <li>
-                                <a class="dropdown-item" href="{{ url_for('auth.logout') }}">
+                                <a class="dropdown-item" href="#" onclick="confirmarCerrarSesion()">
                                     <i class="fas fa-sign-out-alt me-2"></i>Cerrar Sesión
                                 </a>
                             </li>
@@ -315,7 +318,7 @@
     {% endif %}
 
     <!-- Botón de Ayuda Flotante (solo para clientes) -->
-    {% if current_user.is_authenticated and current_user.Rol == 'Cliente' %}
+    {% if current_user.is_authenticated and current_user.rol.Nombre == 'Cliente' %}
     <div class="help-button-container">
         <button class="btn btn-primary help-button" data-bs-toggle="modal" data-bs-target="#helpModal">
             <i class="fas fa-question-circle"></i>
@@ -591,6 +594,12 @@
     </div>
     {% endif %}
     
+    <!-- SweetAlert2 CSS -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.min.css">
+    
+    <!-- SweetAlert2 JS -->
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    
     <script>
         // Navbar sticky con efectos de scroll
         document.addEventListener('DOMContentLoaded', function() {
@@ -605,6 +614,38 @@
                 });
             }
         });
+        
+        // Función para confirmar cerrar sesión con SweetAlert2
+        function confirmarCerrarSesion() {
+            // Verificar si SweetAlert2 está disponible
+            if (typeof Swal === 'undefined') {
+                console.error('SweetAlert2 no está cargado');
+                alert('Error: SweetAlert2 no está disponible');
+                return;
+            }
+            
+            Swal.fire({
+                title: '¿Estás seguro?',
+                text: '¿Estás seguro de cerrar sesión?',
+                icon: 'question',
+                showCancelButton: true,
+                confirmButtonColor: '#d33',
+                cancelButtonColor: '#3085d6',
+                confirmButtonText: 'Sí, cerrar sesión',
+                cancelButtonText: 'Cancelar',
+                reverseButtons: true,
+                customClass: {
+                    popup: 'swal2-popup-custom',
+                    confirmButton: 'swal2-confirm-button-custom',
+                    cancelButton: 'swal2-cancel-button-custom'
+                }
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    // Redirigir a la ruta de logout
+                    window.location.href = "{{ url_for('auth.logout') }}";
+                }
+            });
+        }
     </script>
 </body>
 </html>

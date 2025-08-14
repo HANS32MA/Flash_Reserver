@@ -1,0 +1,255 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Recordatorio URGENTE - En 2 Horas - Flash Reserver</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { 
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; 
+            line-height: 1.6; 
+            color: #333; 
+            background: linear-gradient(135deg, #dc3545 0%, #c82333 100%);
+            min-height: 100vh;
+            padding: 20px 0;
+        }
+        .email-container { 
+            max-width: 600px; 
+            margin: 0 auto; 
+            background: #ffffff; 
+            border-radius: 20px; 
+            box-shadow: 0 20px 40px rgba(0,0,0,0.1);
+            overflow: hidden;
+        }
+        .header { 
+            background: linear-gradient(135deg, #dc3545 0%, #c82333 100%);
+            color: white; 
+            padding: 40px 30px; 
+            text-align: center; 
+            position: relative;
+        }
+        .header h1 { 
+            margin: 0; 
+            font-size: 32px; 
+            font-weight: 700;
+        }
+        .header .subtitle { 
+            margin-top: 10px; 
+            font-size: 18px;
+            opacity: 0.9;
+        }
+        .header .icon { 
+            font-size: 48px; 
+            margin-bottom: 20px;
+        }
+        .content { 
+            padding: 40px 30px; 
+            background: #ffffff; 
+        }
+        .greeting {
+            text-align: center;
+            margin-bottom: 30px;
+            padding: 20px;
+            background: linear-gradient(135deg, #f8d7da 0%, #f5c6cb 100%);
+            border-radius: 15px;
+            border-left: 5px solid #dc3545;
+        }
+        .greeting h2 { 
+            color: #721c24; 
+            margin-bottom: 10px;
+            font-size: 24px;
+        }
+        .reserva-details { 
+            background: linear-gradient(135deg, #f8d7da 0%, #f5c6cb 100%);
+            border: 2px solid #f5c6cb;
+            border-radius: 20px; 
+            padding: 30px; 
+            margin: 30px 0;
+            box-shadow: 0 10px 30px rgba(220, 53, 69, 0.1);
+        }
+        .reserva-details h3 { 
+            color: #721c24; 
+            margin-bottom: 25px;
+            font-size: 20px;
+            text-align: center;
+        }
+        .detail-row { 
+            display: flex; 
+            justify-content: space-between; 
+            align-items: center;
+            margin: 15px 0; 
+            padding: 15px; 
+            background: white;
+            border-radius: 12px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+        }
+        .detail-label { 
+            font-weight: 600; 
+            color: #555;
+        }
+        .detail-value { 
+            color: #dc3545; 
+            font-weight: 600;
+            font-size: 16px;
+        }
+        .urgent-section { 
+            background: linear-gradient(135deg, #fff3cd 0%, #ffeaa7 100%);
+            border: 2px solid #ffd43b;
+            border-radius: 20px; 
+            padding: 25px; 
+            margin: 25px 0;
+            animation: pulse 2s infinite;
+        }
+        @keyframes pulse {
+            0% { transform: scale(1); }
+            50% { transform: scale(1.02); }
+            100% { transform: scale(1); }
+        }
+        .urgent-section h4 { 
+            color: #856404; 
+            margin-bottom: 20px;
+            font-size: 18px;
+            text-align: center;
+        }
+        .urgent-section ul {
+            list-style: none;
+            padding: 0;
+        }
+        .urgent-section li {
+            padding: 8px 0;
+            border-bottom: 1px solid rgba(133, 100, 4, 0.1);
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        .btn-container {
+            text-align: center;
+            margin: 40px 0;
+        }
+        .btn { 
+            display: inline-block; 
+            padding: 16px 32px; 
+            background: linear-gradient(135deg, #dc3545 0%, #c82333 100%);
+            color: white; 
+            text-decoration: none; 
+            border-radius: 50px; 
+            font-weight: 600;
+            font-size: 16px;
+            transition: all 0.3s ease;
+            box-shadow: 0 8px 25px rgba(220, 53, 69, 0.3);
+            margin: 0 10px;
+        }
+        .btn:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 12px 35px rgba(220, 53, 69, 0.4);
+        }
+        .btn-secondary {
+            background: linear-gradient(135deg, #6c757d 0%, #545b62 100%);
+            box-shadow: 0 8px 25px rgba(108, 117, 125, 0.3);
+        }
+        .footer { 
+            text-align: center; 
+            padding: 30px; 
+            background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
+            color: #666; 
+            font-size: 14px;
+        }
+        @media (max-width: 600px) {
+            .email-container { margin: 10px; border-radius: 15px; }
+            .header { padding: 30px 20px; }
+            .content { padding: 30px 20px; }
+            .detail-row { flex-direction: column; text-align: center; gap: 10px; }
+            .btn { display: block; margin: 10px 0; }
+        }
+    </style>
+</head>
+<body>
+    <div class="email-container">
+        <div class="header">
+            <div class="icon">🚨</div>
+            <h1>Flash Reserver</h1>
+            <div class="subtitle">Recordatorio URGENTE - En 2 Horas</div>
+        </div>
+        
+        <div class="content">
+            <div class="greeting">
+                <h2>¡Hola {{ usuario.Nombre }}!</h2>
+                <p>{{ mensaje }}</p>
+            </div>
+            
+            {% if datos_adicionales %}
+            <div class="reserva-details">
+                <h3>🚨 Tu Reserva es en 2 HORAS</h3>
+                {% if datos_adicionales.reserva_id %}
+                <div class="detail-row">
+                    <span class="detail-label">🆔 ID de Reserva</span>
+                    <span class="detail-value">#{{ datos_adicionales.reserva_id }}</span>
+                </div>
+                {% endif %}
+                {% if datos_adicionales.fecha %}
+                <div class="detail-row">
+                    <span class="detail-label">📅 Fecha de Reserva</span>
+                    <span class="detail-value">{{ datos_adicionales.fecha }}</span>
+                </div>
+                {% endif %}
+                {% if datos_adicionales.hora %}
+                <div class="detail-row">
+                    <span class="detail-label">🕐 Hora de Reserva</span>
+                    <span class="detail-value">{{ datos_adicionales.hora }}</span>
+                </div>
+                {% endif %}
+                {% if datos_adicionales.cancha_nombre %}
+                <div class="detail-row">
+                    <span class="detail-label">⚽ Cancha Reservada</span>
+                    <span class="detail-value">{{ datos_adicionales.cancha_nombre }}</span>
+                </div>
+                {% endif %}
+                <div class="detail-row">
+                    <span class="detail-label">⏰ Tiempo Restante</span>
+                    <span class="detail-value">{{ datos_adicionales.tiempo_restante }}</span>
+                </div>
+            </div>
+            
+            <div class="urgent-section">
+                <h4>⚡ ACCIÓN INMEDIATA REQUERIDA</h4>
+                <ul>
+                    <li>🚗 <strong>Prepara tu transporte</strong> ahora mismo</li>
+                    <li>🏃 <strong>Revisa tu implemento deportivo</strong> ya</li>
+                    <li>💧 <strong>Llena tu botella de agua</strong> antes de salir</li>
+                    <li>📱 <strong>Confirma tu asistencia</strong> si es necesario</li>
+                    <li>⏰ <strong>Sal con tiempo suficiente</strong> para llegar 10 min antes</li>
+                </ul>
+            </div>
+            {% endif %}
+            
+            <div class="btn-container">
+                <a href="http://127.0.0.1:5000/client/mis-reservas" class="btn">
+                    📋 Ver Mis Reservas
+                </a>
+                <a href="http://127.0.0.1:5000/client/canchas" class="btn btn-secondary">
+                    🏟️ Hacer Otra Reserva
+                </a>
+            </div>
+            
+            <div style="text-align: center; margin: 30px 0; padding: 20px; background: #f8d7da; border-radius: 15px;">
+                <h4 style="color: #721c24; margin-bottom: 15px;">❌ ¿No puedes asistir?</h4>
+                <p style="color: #666; margin-bottom: 20px;">
+                    <strong>URGENTE:</strong> Si necesitas cancelar, hazlo AHORA MISMO. Solo tienes 2 horas antes de tu reserva.
+                </p>
+                <a href="http://127.0.0.1:5000/client/mis-reservas" style="color: #dc3545; text-decoration: none; font-weight: 600;">
+                    🚫 Cancelar Reserva AHORA
+                </a>
+            </div>
+        </div>
+        
+        <div class="footer">
+            <h5>📞 Contacto y Soporte</h5>
+            <p>📧 soporte@flashreserver.com | 📱 +1 (555) 123-4567</p>
+            <p style="margin-top: 20px; font-size: 12px; color: #adb5bd;">
+                Este es un email automático de recordatorio URGENTE generado por Flash Reserver.
+            </p>
+        </div>
+    </div>
+</body>
+</html>

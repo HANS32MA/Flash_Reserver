@@ -113,7 +113,7 @@
                             <p class="mb-1"><strong>ID:</strong> {{ cancha.Id }}</p>
                             <p class="mb-1"><strong>Reservas Activas:</strong> {{ cancha.reservas|length }}</p>
                             <p class="mb-0"><strong>Fecha de Creación:</strong> 
-                                {{ cancha.FechaCreacion.strftime('%d/%m/%Y') if cancha.FechaCreacion else 'N/A' }}
+                                {{ cancha.Fecha.strftime('%d/%m/%Y') if cancha.Fecha else 'N/A' }}
                             </p>
                         </div>
 

@@ -27,3 +27,8 @@ class Usuario(UserMixin, db.Model):
     def estado_badge_class(self):
         """Retorna la clase CSS para el badge del estado"""
         return "success" if self.Estado else "danger"
+    
+    @property
+    def Imagen(self):
+        """Alias para FotoPerfil para compatibilidad con el código existente"""
+        return self.FotoPerfil

@@ -220,6 +220,32 @@ document.addEventListener('DOMContentLoaded', function() {
         
         modal.show();
     };
+
+    // Mostrar consejos automáticamente una vez por sesión
+    const mostrarConsejosEditar = () => {
+        if (typeof customAlerts !== 'undefined') {
+            customAlerts.info(
+                'Consejos para editar buenos posts',
+                '<ul style="text-align:left; margin:0; padding-left:18px;">'
+                +'<li>✔ Mejora el título para que sea claro y específico</li>'
+                +'<li>✔ Agrega detalles útiles o ejemplos</li>'
+                +'<li>✔ Incluye imágenes si ayudan a entender mejor</li>'
+                +'<li>✔ Responde y da contexto a los comentarios recibidos</li>'
+                +'<li>✔ Mantén un tono respetuoso y constructivo</li>'
+                +'</ul>',
+                0
+            );
+        }
+    };
+    try {
+        const key = 'foro_consejos_editar_mostrados';
+        if (sessionStorage.getItem(key) !== '1') {
+            mostrarConsejosEditar();
+            sessionStorage.setItem(key, '1');
+        }
+    } catch (e) {
+        mostrarConsejosEditar();
+    }
 });
 </script>
 {% endblock %}

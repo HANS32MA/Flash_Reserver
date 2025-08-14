@@ -225,12 +225,6 @@ function confirmarCancelacion(reservaId, nombreCancha) {
                 // Enviar formulario
                 form.submit();
             },
-            function() {
-                // Usuario canceló
-                if (typeof showInfo === 'function') {
-                    showInfo('Operación Cancelada', 'La cancelación ha sido cancelada.');
-                }
-            }
         );
     } else {
         // Fallback si el sistema de alertas no está disponible

@@ -6,15 +6,15 @@
 <div class="container-fluid">
     <!-- Filtros con título integrado -->
     <div class="card shadow-sm mb-4 filter-section filtro-estetico">
-        <div class="card-header bg-white border-0 pb-0">
+        <div class="card-header hero-canchas-header border-0">
             <div class="row align-items-center">
                 <div class="col-md-12 text-center">
-                    <h2 class="mb-0 text-dark">
-                        <i class="fas fa-futbol me-2 text-primary"></i>
+                    <h2 class="mb-0 text-white hero-title">
+                        <i class="fas fa-futbol me-2 text-info"></i>
                         Canchas Disponibles
                     </h2>
-                    <p class="text-muted mb-0 mt-1">Encuentra la cancha perfecta para tu deporte favorito</p>
-                    <h6 class="mb-0 text-muted mt-2">
+                    <p class="mb-0 mt-1 hero-subtitle">Encuentra la cancha perfecta para tu deporte favorito</p>
+                    <h6 class="mb-0 mt-2 hero-subtitle">
                         <i class="fas fa-filter me-1"></i>Filtros de Búsqueda
                     </h6>
                 </div>
@@ -83,7 +83,7 @@
         {% for item in canchas_con_disponibilidad %}
         {% set cancha = item.cancha %}
         <div class="col-lg-3 col-md-4 col-sm-6 mb-3 cancha-item">
-            <div class="card shadow-sm">
+            <div class="card shadow-sm h-100">
                 <!-- Imagen de la cancha -->
                 <div class="card-img-top-container" style="height: 120px; overflow: hidden; position: relative;">
                     {% if cancha.Imagen %}
@@ -103,9 +103,9 @@
                     <div class="position-absolute top-0 end-0 m-2">
                         {% if item.completamente_ocupada %}
                             <span class="badge bg-danger">Completa</span>
-                        {% elif item.porcentaje_ocupacion < 20 %}
+                        {% elif item.porcentaje_disponibilidad > 80 %}
                             <span class="badge bg-success">Muy Libre</span>
-                        {% elif item.porcentaje_ocupacion < 50 %}
+                        {% elif item.porcentaje_disponibilidad > 50 %}
                             <span class="badge bg-warning">Moderada</span>
                         {% else %}
                             <span class="badge bg-info">Ocupada</span>
@@ -113,7 +113,7 @@
                     </div>
                 </div>
                 
-                <div class="card-header bg-transparent border-0 d-flex justify-content-between align-items-center">
+                <div class="card-header cancha-card-header d-flex justify-content-between align-items-center">
                     <h5 class="mb-0 text-primary">{{ cancha.Nombre }}</h5>
                     <div class="d-flex gap-1">
                         <a href="{{ url_for('client.ver_cancha', cancha_id=cancha.Id) }}" 
@@ -133,7 +133,7 @@
                     </div>
                 </div>
                 
-                <div class="card-body p-2 d-flex flex-column">
+                <div class="card-body cancha-card-body p-2 d-flex flex-column">
                     <div class="row">
                         <div class="col-12">
                             {% if cancha.Descripcion %}
@@ -144,8 +144,8 @@
                             <p class="mb-1"><strong><i class="fas fa-dollar-sign text-success me-1"></i>Precio:</strong> ${{ "{:,.0f}".format(cancha.PrecioHora) }}</p>
                             <p class="mb-1">
                                 <strong>
-                                    <i class="fas fa-circle {% if item.completamente_ocupada %}text-danger{% elif item.porcentaje_ocupacion < 20 %}text-success{% elif item.porcentaje_ocupacion < 50 %}text-warning{% else %}text-info{% endif %} me-1"></i>Disponibilidad:
-                                </strong> {{ "%.1f"|format(item.porcentaje_ocupacion) }}%
+                                    <i class="fas fa-circle {% if item.completamente_ocupada %}text-danger{% elif item.porcentaje_disponibilidad > 80 %}text-success{% elif item.porcentaje_disponibilidad > 50 %}text-warning{% else %}text-info{% endif %} me-1"></i>Disponibilidad:
+                                </strong> {{ "%.1f"|format(item.porcentaje_disponibilidad) }}%
                             </p>
                             {% if cancha.Direccion %}
                             <p class="mb-1"><strong><i class="fas fa-map-marker-alt text-info me-1"></i>Dirección:</strong> <small class="text-muted">{{ cancha.Direccion[:40] }}{% if cancha.Direccion|length > 40 %}...{% endif %}</small></p>
@@ -329,6 +329,67 @@
     right: 10px;
     z-index: 10;
 }
+.cancha-card-header {
+    background-color: #0b3a6f;
+    border: 0;
+    color: #ffffff;
+    padding-top: 0.5rem;
+    padding-bottom: 0.5rem;
+}
+
+.cancha-card-header h5 { color: #e0ecff !important; }
+
+.cancha-card-body {
+    background-color: #f1f5f9; /* claro: slate-100 */
+    border-top: 1px solid #e2e8f0;
+    border-bottom-left-radius: 10px;
+    border-bottom-right-radius: 10px;
+    color: #000 !important;
+}
+
+.cancha-card-body p,
+.cancha-card-body strong,
+.cancha-card-body small { color: #000 !important; }
+.cancha-card-body .text-muted { color: #000 !important; }
+
+.dark-mode .cancha-card-body {
+    background-color: #1f2937; /* oscuro: slate-800 */
+    border-top-color: #374151;
+    color: #e5e7eb !important;
+}
+
+.dark-mode .cancha-card-body p,
+.dark-mode .cancha-card-body strong,
+.dark-mode .cancha-card-body small { color: #e5e7eb !important; }
+.dark-mode .cancha-card-body .text-muted { color: #d1d5db !important; }
+
+.dark-mode .cancha-card-header {
+    background-color: #0b3a6f;
+    color: #eaf2ff;
+}
+</style>
+<style>
+/* Hero con imagen de fondo */
+.hero-canchas-header {
+    position: relative;
+    background: url('https://images.unsplash.com/photo-1461896836934-ffe607ba8211?auto=format&fit=crop&w=1600&q=80') center/cover no-repeat !important;
+    padding: 1.5rem 1rem;
+    min-height: 140px;
+    border-top-left-radius: 10px;
+    border-top-right-radius: 10px;
+}
+.hero-canchas-header::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+    background: rgba(0,0,0,0.45);
+    border-top-left-radius: 10px;
+    border-top-right-radius: 10px;
+}
+.hero-canchas-header > .row { position: relative; z-index: 1; }
+.hero-title { text-shadow: 0 1px 2px rgba(0,0,0,0.6); }
+.hero-subtitle { color: rgba(255,255,255,0.9) !important; }
+.dark-mode .hero-canchas-header::before { background: rgba(0,0,0,0.55); }
 </style>
 {% endblock %}
 

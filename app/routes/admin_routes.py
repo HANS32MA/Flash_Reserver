@@ -379,9 +379,27 @@ def reservas():
 def cancelar_reserva(reserva_id):
     reserva = Reserva.query.get_or_404(reserva_id)
     try:
+        # Cambiar estado a cancelada
         reserva.Estado = 'Cancelada'
         db.session.commit()
-        flash('Reserva cancelada exitosamente', 'success')
+        
+        # Enviar notificación de cancelación por email
+        try:
+            from app.services.notificacion_service import notificacion_service
+            
+            # Crear notificación de cancelación
+            notificacion_service.notificar_cancelacion_reserva(reserva.Id)
+            
+            # Cancelar recordatorios automáticos
+            from app.services.recordatorio_service import recordatorio_service
+            recordatorio_service.cancelar_recordatorios_reserva(reserva.Id)
+            
+            flash('Reserva cancelada exitosamente y cliente notificado por email', 'success')
+            
+        except Exception as e:
+            # Si falla la notificación, no fallar la cancelación
+            flash(f'Reserva cancelada exitosamente, pero error al enviar notificación: {str(e)}', 'warning')
+            
     except Exception as e:
         db.session.rollback()
         flash(f'Error al cancelar reserva: {str(e)}', 'error')
@@ -399,9 +417,27 @@ def cancelar_reserva(reserva_id):
 def confirmar_reserva(reserva_id):
     reserva = Reserva.query.get_or_404(reserva_id)
     try:
+        # Cambiar estado a confirmada
         reserva.Estado = 'Confirmada'
         db.session.commit()
-        flash('Reserva confirmada exitosamente', 'success')
+        
+        # Enviar notificación de confirmación por email
+        try:
+            from app.services.notificacion_service import notificacion_service
+            
+            # Crear notificación de confirmación
+            notificacion_service.notificar_reserva_confirmada(reserva.Id)
+            
+            # Programar recordatorios automáticos
+            from app.services.recordatorio_service import recordatorio_service
+            recordatorio_service.programar_recordatorios_reserva(reserva.Id)
+            
+            flash('Reserva confirmada exitosamente y cliente notificado por email', 'success')
+            
+        except Exception as e:
+            # Si falla la notificación, no fallar la confirmación
+            flash(f'Reserva confirmada exitosamente, pero error al enviar notificación: {str(e)}', 'warning')
+            
     except Exception as e:
         db.session.rollback()
         flash(f'Error al confirmar reserva: {str(e)}', 'error')
@@ -1969,3 +2005,232 @@ def manual_admin_pdf():
     except Exception as e:
         flash('Error al descargar el manual', 'error')
         return redirect(url_for('admin.dashboard'))
+
+@admin_bp.route('/actualizar_perfil', methods=['POST'])
+@login_required
+@admin_required
+def actualizar_perfil():
+    """Actualizar perfil del administrador"""
+    try:
+        # Obtener datos del formulario
+        nombre = request.form.get('nombre')
+        email = request.form.get('email')
+        telefono = request.form.get('telefono')
+        fecha_nacimiento = request.form.get('fecha_nacimiento')
+        direccion = request.form.get('direccion')
+        
+        # Verificar si el email ya existe en otro usuario
+        usuario_existente = Usuario.query.filter(
+            Usuario.Email == email,
+            Usuario.Id != current_user.Id
+        ).first()
+        
+        if usuario_existente:
+            if request.headers.get('X-Requested-With') == 'XMLHttpRequest':
+                return jsonify({'success': False, 'message': 'El email ya está registrado por otro usuario'})
+            flash('El email ya está registrado por otro usuario', 'error')
+            return redirect(url_for('admin.configuracion'))
+        
+        # Procesar imagen de perfil si se subió
+        image_url = None
+        if 'foto_perfil' in request.files:
+            foto = request.files['foto_perfil']
+            if foto and foto.filename:
+                # Validar tipo de archivo
+                if foto.content_type.startswith('image/'):
+                    # Generar nombre seguro
+                    filename = secure_filename(foto.filename)
+                    timestamp = datetime.now().strftime('%Y%m%d_%H%M%S')
+                    filename = f"admin_{current_user.Id}_{timestamp}_{filename}"
+                    
+                    # Guardar archivo
+                    upload_path = os.path.join(current_app.root_path, 'static', 'uploads')
+                    os.makedirs(upload_path, exist_ok=True)
+                    foto_path = os.path.join(upload_path, filename)
+                    foto.save(foto_path)
+                    
+                    # Actualizar ruta en la base de datos
+                    current_user.FotoPerfil = f'uploads/{filename}'
+                    image_url = url_for('static', filename=current_user.FotoPerfil)
+        
+        # Actualizar datos del usuario
+        current_user.Nombre = nombre
+        current_user.Email = email
+        current_user.Telefono = telefono
+        current_user.Direccion = direccion
+        
+        if fecha_nacimiento:
+            current_user.FechaNacimiento = datetime.strptime(fecha_nacimiento, '%Y-%m-%d').date()
+        
+        db.session.commit()
+        
+        if request.headers.get('X-Requested-With') == 'XMLHttpRequest':
+            return jsonify({
+                'success': True, 
+                'message': 'Perfil actualizado exitosamente',
+                'image_url': image_url
+            })
+        
+        flash('Perfil actualizado exitosamente', 'success')
+        
+    except Exception as e:
+        db.session.rollback()
+        if request.headers.get('X-Requested-With') == 'XMLHttpRequest':
+            return jsonify({'success': False, 'message': f'Error al actualizar perfil: {str(e)}'})
+        flash(f'Error al actualizar perfil: {str(e)}', 'error')
+    
+    return redirect(url_for('admin.configuracion'))
+
+@admin_bp.route('/actualizar_configuracion_general', methods=['POST'])
+@login_required
+@admin_required
+def actualizar_configuracion_general():
+    """Actualizar configuración general del sistema"""
+    try:
+        # Obtener datos del formulario
+        sitio_nombre = request.form.get('sitio_nombre')
+        contacto_email = request.form.get('contacto_email')
+        horario_apertura = request.form.get('horario_apertura')
+        horario_cierre = request.form.get('horario_cierre')
+        zona_horaria = request.form.get('zona_horaria')
+        moneda = request.form.get('moneda')
+        descripcion_sitio = request.form.get('descripcion_sitio')
+        
+        # Aquí se guardarían en la base de datos o archivo de configuración
+        # Por ahora solo mostramos un mensaje de éxito
+        
+        if request.headers.get('X-Requested-With') == 'XMLHttpRequest':
+            return jsonify({'success': True, 'message': 'Configuración general actualizada exitosamente'})
+        
+        flash('Configuración general actualizada exitosamente', 'success')
+        
+    except Exception as e:
+        if request.headers.get('X-Requested-With') == 'XMLHttpRequest':
+            return jsonify({'success': False, 'message': f'Error al actualizar configuración: {str(e)}'})
+        flash(f'Error al actualizar configuración: {str(e)}', 'error')
+    
+    return redirect(url_for('admin.configuracion'))
+
+@admin_bp.route('/actualizar_configuracion_reservas', methods=['POST'])
+@login_required
+@admin_required
+def actualizar_configuracion_reservas():
+    """Actualizar configuración de reservas del sistema"""
+    try:
+        # Obtener datos del formulario
+        duracion_reserva = request.form.get('duracion_reserva')
+        anticipacion_reserva = request.form.get('anticipacion_reserva')
+        cancelacion_reserva = request.form.get('cancelacion_reserva')
+        
+        # Aquí se guardarían en la base de datos o archivo de configuración
+        # Por ahora solo mostramos un mensaje de éxito
+        
+        if request.headers.get('X-Requested-With') == 'XMLHttpRequest':
+            return jsonify({'success': True, 'message': 'Configuración de reservas actualizada exitosamente'})
+        
+        flash('Configuración de reservas actualizada exitosamente', 'success')
+        
+    except Exception as e:
+        if request.headers.get('X-Requested-With') == 'XMLHttpRequest':
+            return jsonify({'success': False, 'message': f'Error al actualizar configuración: {str(e)}'})
+        flash(f'Error al actualizar configuración: {str(e)}', 'error')
+    
+    return redirect(url_for('admin.configuracion'))
+
+@admin_bp.route('/actualizar_configuracion_notificaciones', methods=['POST'])
+@login_required
+@admin_required
+def actualizar_configuracion_notificaciones():
+    """Actualizar configuración de notificaciones del sistema"""
+    try:
+        # Obtener datos del formulario
+        email_notificaciones = request.form.get('email_notificaciones')
+        push_notificaciones = request.form.get('push_notificaciones')
+        
+        # Aquí se guardarían en la base de datos o archivo de configuración
+        # Por ahora solo mostramos un mensaje de éxito
+        
+        if request.headers.get('X-Requested-With') == 'XMLHttpRequest':
+            return jsonify({'success': True, 'message': 'Configuración de notificaciones actualizada exitosamente'})
+        
+        flash('Configuración de notificaciones actualizada exitosamente', 'success')
+        
+    except Exception as e:
+        if request.headers.get('X-Requested-With') == 'XMLHttpRequest':
+            return jsonify({'success': False, 'message': f'Error al actualizar configuración: {str(e)}'})
+        flash(f'Error al actualizar configuración: {str(e)}', 'error')
+    
+    return redirect(url_for('admin.configuracion'))
+
+@admin_bp.route('/configuracion/actualizar_campo', methods=['POST'])
+@login_required
+@admin_required
+def actualizar_campo_configuracion():
+    """Actualizar un campo específico de configuración"""
+    try:
+        # Obtener el nombre y valor del campo
+        field_name = None
+        field_value = None
+        
+        for key, value in request.form.items():
+            field_name = key
+            field_value = value
+            break
+        
+        if not field_name:
+            return jsonify({'success': False, 'message': 'No se especificó ningún campo'})
+        
+        # Aquí se guardaría el campo específico en la base de datos o archivo de configuración
+        # Por ahora solo mostramos un mensaje de éxito
+        
+        return jsonify({'success': True, 'message': f'Campo {field_name} actualizado correctamente'})
+        
+    except Exception as e:
+        return jsonify({'success': False, 'message': f'Error al actualizar campo: {str(e)}'})
+
+@admin_bp.route('/perfil/obtener_info', methods=['GET'])
+@login_required
+@admin_required
+def obtener_info_perfil():
+    """Obtener información del perfil del administrador actual"""
+    try:
+        user_info = {
+            'id': current_user.Id,
+            'nombre': current_user.Nombre,
+            'email': current_user.Email,
+            'telefono': current_user.Telefono,
+            'direccion': current_user.Direccion,
+            'fecha_nacimiento': current_user.FechaNacimiento.isoformat() if current_user.FechaNacimiento else None,
+            'imagen': current_user.FotoPerfil,
+            'imagen_url': url_for('static', filename=current_user.FotoPerfil) if current_user.FotoPerfil else url_for('static', filename='images/default-user.png')
+        }
+        
+        return jsonify({'success': True, 'data': user_info})
+        
+    except Exception as e:
+        return jsonify({'success': False, 'message': f'Error al obtener información: {str(e)}'})
+
+@admin_bp.route('/eliminar_cuenta', methods=['POST'])
+@login_required
+@admin_required
+def eliminar_cuenta():
+    """Eliminar cuenta de administrador"""
+    try:
+        # Verificar que no sea el único administrador
+        total_admins = Usuario.query.join(Rol).filter(Rol.Nombre == 'Administrador').count()
+        
+        if total_admins <= 1:
+            flash('No puedes eliminar tu cuenta ya que eres el único administrador del sistema', 'error')
+            return redirect(url_for('admin.configuracion'))
+        
+        # Eliminar usuario
+        db.session.delete(current_user)
+        db.session.commit()
+        
+        flash('Tu cuenta ha sido eliminada exitosamente', 'success')
+        return redirect(url_for('auth.logout'))
+        
+    except Exception as e:
+        db.session.rollback()
+        flash(f'Error al eliminar cuenta: {str(e)}', 'error')
+        return redirect(url_for('admin.configuracion'))

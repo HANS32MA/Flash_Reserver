@@ -41,7 +41,7 @@
         <div class="col-12">
             <div class="d-flex justify-content-between align-items-center mb-4">
                 <h1 class="h3 mb-0">
-                    <i class="fas fa-user me-2"></i>Detalles de Usuario
+                    <i class="fas fa-user me-2"></i>
                 </h1>
                 <div>
                     <a href="{{ url_for('admin.editar_usuario', usuario_id=usuario.Id) }}" class="btn btn-warning me-2">
@@ -187,13 +187,16 @@
                         <div class="card-header">
                             <h5 class="mb-0">
                                 <i class="fas fa-list me-2"></i>Historial de Reservas
+                                {% if reservas|length > 5 %}
+                                <span class="badge bg-info ms-2">{{ reservas|length }} reservas totales</span>
+                                {% endif %}
                             </h5>
                         </div>
-                        <div class="card-body">
+                        <div class="card-body p-0">
                             {% if reservas %}
-                                <div class="table-responsive">
-                                    <table class="table table-hover">
-                                        <thead class="table-dark">
+                                <div class="table-responsive" style="max-height: 400px; overflow-y: auto;">
+                                    <table class="table table-hover mb-0">
+                                        <thead class="table-dark sticky-top">
                                             <tr>
                                                 <th>ID</th>
                                                 <th>Cancha</th>
@@ -206,7 +209,7 @@
                                             </tr>
                                         </thead>
                                         <tbody>
-                                            {% for reserva in reservas %}
+                                            {% for reserva in reservas[:5] %}
                                             <tr>
                                                 <td>{{ reserva.Id }}</td>
                                                 <td>
@@ -241,9 +244,57 @@
                                                 </td>
                                             </tr>
                                             {% endfor %}
+                                            
+                                            {% if reservas|length > 5 %}
+                                            <!-- Reservas adicionales (ocultas por defecto) -->
+                                            {% for reserva in reservas[5:] %}
+                                            <tr class="reserva-oculta" style="display: none;">
+                                                <td>{{ reserva.Id }}</td>
+                                                <td>
+                                                    <strong>{{ reserva.cancha.Nombre }}</strong><br>
+                                                    <small class="text-muted">{{ reserva.cancha.tipo_cancha_rel.Nombre }}</small>
+                                                </td>
+                                                <td>{{ reserva.Fecha.strftime('%d/%m/%Y') }}</td>
+                                                <td>{{ reserva.HoraInicio.strftime('%H:%M') }}</td>
+                                                <td>{{ reserva.duracion_horas }} hora(s)</td>
+                                                <td>{{ format_currency(reserva.precio_total) }}</td>
+                                                <td>
+                                                    <span class="badge bg-{{ 'success' if reserva.Estado == 'Confirmada' else 'warning' if reserva.Estado == 'Pendiente' else 'danger' }}">
+                                                        {{ reserva.Estado }}
+                                                    </span>
+                                                </td>
+                                                <td>
+                                                    <div class="btn-group" role="group">
+                                                        <a href="{{ url_for('admin.ver_reserva', reserva_id=reserva.Id) }}" 
+                                                           class="btn btn-sm btn-outline-info" 
+                                                           title="Ver detalles">
+                                                            <i class="fas fa-eye"></i>
+                                                        </a>
+                                                        {% if reserva.Estado != 'Cancelada' %}
+                                                        <button type="button" 
+                                                                class="btn btn-sm btn-outline-danger" 
+                                                                title="Cancelar reserva"
+                                                                onclick="confirmarCancelacion({{ reserva.Id }})">
+                                                            <i class="fas fa-times"></i>
+                                                        </button>
+                                                        {% endif %}
+                                                    </div>
+                                                </td>
+                                            </tr>
+                                            {% endfor %}
+                                            {% endif %}
                                         </tbody>
                                     </table>
                                 </div>
+                                
+                                {% if reservas|length > 5 %}
+                                <div class="card-footer text-center">
+                                    <button type="button" class="btn btn-outline-primary btn-sm" onclick="toggleReservasOcultas()">
+                                        <i class="fas fa-chevron-down me-1"></i>
+                                        <span id="toggle-text">Ver más reservas ({{ reservas|length - 5 }} restantes)</span>
+                                    </button>
+                                </div>
+                                {% endif %}
                             {% else %}
                                 <div class="text-center py-4">
                                     <i class="fas fa-calendar-times fa-3x text-muted mb-3"></i>
@@ -299,6 +350,58 @@
 </div>
 {% endblock %}
 
+{% block styles %}
+<style>
+/* Estilos para la tabla con scroll */
+.table-responsive {
+    border-radius: 0.375rem;
+}
+
+.table-responsive::-webkit-scrollbar {
+    width: 8px;
+}
+
+.table-responsive::-webkit-scrollbar-track {
+    background: #f1f1f1;
+    border-radius: 4px;
+}
+
+.table-responsive::-webkit-scrollbar-thumb {
+    background: #888;
+    border-radius: 4px;
+}
+
+.table-responsive::-webkit-scrollbar-thumb:hover {
+    background: #555;
+}
+
+/* Estilos para el header sticky */
+.sticky-top {
+    position: sticky;
+    top: 0;
+    z-index: 1020;
+    background-color: #343a40;
+}
+
+/* Estilos para el botón toggle */
+.btn-outline-primary:hover {
+    transform: translateY(-1px);
+    transition: transform 0.2s ease;
+}
+
+/* Animación para mostrar/ocultar reservas */
+.reserva-oculta {
+    transition: opacity 0.3s ease;
+}
+
+/* Estilos para el badge de total de reservas */
+.badge.bg-info {
+    font-size: 0.75rem;
+    padding: 0.25rem 0.5rem;
+}
+</style>
+{% endblock %}
+
 {% block scripts %}
 <script>
 function confirmarCancelacion(reservaId) {
@@ -329,5 +432,36 @@ document.addEventListener('DOMContentLoaded', function() {
         profileImage.title = 'Haz clic para ver en grande';
     }
 });
+
+// Función para mostrar/ocultar reservas adicionales
+function toggleReservasOcultas() {
+    const reservasOcultas = document.querySelectorAll('.reserva-oculta');
+    const toggleButton = document.querySelector('[onclick="toggleReservasOcultas()"]');
+    const toggleText = document.getElementById('toggle-text');
+    const toggleIcon = toggleButton.querySelector('i');
+    
+    let todasVisibles = true;
+    reservasOcultas.forEach(reserva => {
+        if (reserva.style.display === 'none') {
+            todasVisibles = false;
+        }
+    });
+    
+    if (todasVisibles) {
+        // Ocultar reservas adicionales
+        reservasOcultas.forEach(reserva => {
+            reserva.style.display = 'none';
+        });
+        toggleIcon.className = 'fas fa-chevron-down me-1';
+        toggleText.textContent = `Ver más reservas (${reservasOcultas.length} restantes)`;
+    } else {
+        // Mostrar reservas adicionales
+        reservasOcultas.forEach(reserva => {
+            reserva.style.display = 'table-row';
+        });
+        toggleIcon.className = 'fas fa-chevron-up me-1';
+        toggleText.textContent = 'Ocultar reservas adicionales';
+    }
+}
 </script>
 {% endblock %}

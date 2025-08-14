@@ -5,6 +5,8 @@ Flask-Login==0.6.3
 Flask-WTF==1.2.1
 Flask-Mail==0.9.1
 Flask-Migrate==4.0.5
+Flask-SocketIO==5.3.6
+Authlib==1.3.2
 
 # Dependencias de base de datos (ESENCIALES)
 WTForms==3.1.1
@@ -20,7 +22,7 @@ email-validator==2.2.0
 Jinja2==3.1.2
 MarkupSafe==2.1.3
 click==8.1.7
-blinker==1.7.0
+blinker==2.1.0
 
 # Generación de PDFs (ESENCIAL para reportes)
 pdfkit==1.0.0
@@ -35,6 +37,9 @@ alembic==1.12.1
 
 # Producción (ESENCIAL para deploy)
 gunicorn==21.2.0
+
+# Programación de tareas (ESENCIAL para notificaciones automáticas)
+APScheduler==3.10.4
 
 # ==========================================
 # DEPENDENCIAS OPCIONALES (descomenta si las necesitas)
@@ -55,12 +60,12 @@ gunicorn==21.2.0
 # bcrypt==4.1.2
 
 # Utilidades adicionales (OPCIONAL)
-# python-dateutil==2.8.2
-# pytz==2023.3
-# gevent==23.9.1
-# python-magic==0.4.27
-# structlog==23.2.0
-# requests==2.31.0
-# urllib3==2.1.0
-# six==1.16.0
-# xlrd==2.0.1 
+python-dateutil==2.8.2
+pytz==2023.3
+gevent==23.9.1
+python-magic==0.4.27
+structlog==23.2.0
+requests==2.31.0
+urllib3==2.1.0
+six==1.16.0
+xlrd==2.0.1 

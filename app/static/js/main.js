@@ -735,4 +735,9 @@ document.addEventListener('DOMContentLoaded', function() {
     // Aplicar preferencia al cargar sin parpadeo
     const prefersDark = localStorage.getItem('darkMode') === '1';
     window.setDarkMode(prefersDark);
+    
+
 });
+
+
+

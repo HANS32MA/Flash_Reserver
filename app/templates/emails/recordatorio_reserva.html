@@ -1,0 +1,248 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Recordatorio de Reserva - Flash Reserver</title>
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            line-height: 1.6;
+            color: #333;
+            margin: 0;
+            padding: 0;
+            background-color: #f4f4f4;
+        }
+        .container {
+            max-width: 600px;
+            margin: 20px auto;
+            background-color: #ffffff;
+            border-radius: 10px;
+            box-shadow: 0 0 20px rgba(0,0,0,0.1);
+            overflow: hidden;
+        }
+        .header {
+            background: linear-gradient(135deg, #ffc107 0%, #ff8f00 100%);
+            color: white;
+            padding: 30px 20px;
+            text-align: center;
+        }
+        .header h1 {
+            margin: 0;
+            font-size: 28px;
+            font-weight: 300;
+        }
+        .header .logo {
+            font-size: 48px;
+            margin-bottom: 10px;
+        }
+        .content {
+            padding: 40px 30px;
+            background-color: #ffffff;
+        }
+        .reminder-icon {
+            text-align: center;
+            font-size: 64px;
+            color: #ffc107;
+            margin-bottom: 20px;
+        }
+        .reserva-details {
+            background-color: #fff3cd;
+            border: 1px solid #ffeaa7;
+            border-radius: 8px;
+            padding: 25px;
+            margin: 25px 0;
+            border-left: 4px solid #ffc107;
+        }
+        .detail-row {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 15px;
+            padding-bottom: 10px;
+            border-bottom: 1px solid #ffeaa7;
+        }
+        .detail-row:last-child {
+            border-bottom: none;
+            margin-bottom: 0;
+        }
+        .detail-label {
+            font-weight: 600;
+            color: #856404;
+        }
+        .detail-value {
+            color: #d63384;
+            font-weight: 500;
+        }
+        .message {
+            font-size: 16px;
+            line-height: 1.8;
+            color: #495057;
+            margin-bottom: 25px;
+        }
+        .cta-button {
+            display: inline-block;
+            background: linear-gradient(135deg, #ffc107 0%, #ff8f00 100%);
+            color: white;
+            padding: 15px 30px;
+            text-decoration: none;
+            border-radius: 25px;
+            font-weight: 600;
+            text-align: center;
+            margin: 20px 0;
+            transition: transform 0.2s ease;
+        }
+        .cta-button:hover {
+            transform: translateY(-2px);
+        }
+        .footer {
+            background-color: #f8f9fa;
+            padding: 25px 30px;
+            text-align: center;
+            color: #6c757d;
+            font-size: 14px;
+        }
+        .countdown {
+            background: linear-gradient(135deg, #dc3545 0%, #c82333 100%);
+            color: white;
+            padding: 20px;
+            border-radius: 8px;
+            text-align: center;
+            margin: 20px 0;
+        }
+        .countdown h3 {
+            margin: 0 0 10px 0;
+            font-size: 20px;
+        }
+        .countdown .time {
+            font-size: 24px;
+            font-weight: bold;
+        }
+        .tips {
+            background-color: #e7f3ff;
+            border: 1px solid #b3d9ff;
+            border-radius: 8px;
+            padding: 20px;
+            margin: 20px 0;
+        }
+        .tips h4 {
+            color: #0056b3;
+            margin-top: 0;
+        }
+        .tips ul {
+            color: #0056b3;
+            margin: 10px 0;
+        }
+        .tips li {
+            margin-bottom: 8px;
+        }
+        @media (max-width: 600px) {
+            .container {
+                margin: 10px;
+                border-radius: 8px;
+            }
+            .content, .footer {
+                padding: 20px;
+            }
+            .header {
+                padding: 20px;
+            }
+            .header h1 {
+                font-size: 24px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <div class="logo">⏰</div>
+            <h1>Flash Reserver</h1>
+            <p>Recordatorio de Reserva</p>
+        </div>
+        
+        <div class="content">
+            <div class="reminder-icon">🔔</div>
+            
+            <h2 style="text-align: center; color: #ffc107; margin-bottom: 30px;">
+                ¡Recordatorio de tu Reserva!
+            </h2>
+            
+            <div class="message">
+                <p>Hola <strong>{{ usuario.nombre }}</strong>,</p>
+                <p>Te recordamos que tienes una reserva programada para mañana. Aquí están los detalles:</p>
+            </div>
+            
+            <div class="reserva-details">
+                <div class="detail-row">
+                    <span class="detail-label">ID de Reserva:</span>
+                    <span class="detail-value">#{{ datos.reserva_id }}</span>
+                </div>
+                <div class="detail-row">
+                    <span class="detail-label">Fecha:</span>
+                    <span class="detail-value">{{ datos.fecha }}</span>
+                </div>
+                <div class="detail-row">
+                    <span class="detail-label">Hora:</span>
+                    <span class="detail-value">{{ datos.hora }}</span>
+                </div>
+                <div class="detail-row">
+                    <span class="detail-label">Cancha:</span>
+                    <span class="detail-value">{{ datos.cancha_nombre if datos.cancha_nombre else 'Cancha Deportiva' }}</span>
+                </div>
+                <div class="detail-row">
+                    <span class="detail-label">Estado:</span>
+                    <span class="detail-value" style="color: #28a745;">Confirmada</span>
+                </div>
+            </div>
+            
+            <div class="countdown">
+                <h3>⏰ Tu reserva es mañana</h3>
+                <div class="time">{{ datos.fecha }} a las {{ datos.hora }}</div>
+            </div>
+            
+            <div style="text-align: center;">
+                <a href="{{ datos.url_plataforma }}" class="cta-button">
+                    Ver Detalles de Reserva
+                </a>
+            </div>
+            
+            <div class="tips">
+                <h4>📋 Preparativos para tu reserva:</h4>
+                <ul>
+                    <li>✅ Llega 10 minutos antes de tu hora reservada</li>
+                    <li>✅ Trae tu implemento deportivo</li>
+                    <li>✅ Lleva agua y ropa cómoda</li>
+                    <li>✅ Confirma tu asistencia</li>
+                </ul>
+            </div>
+            
+            <div class="message">
+                <p><strong>¿No puedes asistir?</strong></p>
+                <p>Si necesitas cancelar o reprogramar tu reserva, hazlo con al menos 2 horas de anticipación para evitar cargos adicionales.</p>
+            </div>
+            
+            <div style="text-align: center; margin: 25px 0;">
+                <a href="{{ datos.url_cancelar }}" style="color: #dc3545; text-decoration: none; font-weight: 600;">
+                    🚫 Cancelar Reserva
+                </a>
+                <span style="margin: 0 15px;">|</span>
+                <a href="{{ datos.url_reprogramar }}" style="color: #007bff; text-decoration: none; font-weight: 600;">
+                    🔄 Reprogramar
+                </a>
+            </div>
+        </div>
+        
+        <div class="footer">
+            <p><strong>¿Tienes alguna pregunta?</strong></p>
+            <p>Contacta con nuestro equipo de soporte:</p>
+            <p>📧 soporte@flashreserver.com<br>
+            📱 +1 (555) 123-4567</p>
+            
+            <p style="margin-top: 20px; font-size: 12px; color: #adb5bd;">
+                Este es un email automático generado por Flash Reserver.<br>
+                Por favor no respondas a este mensaje.
+            </p>
+        </div>
+    </div>
+</body>
+</html>

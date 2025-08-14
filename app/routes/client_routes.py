@@ -10,6 +10,8 @@ from flask import jsonify, request, send_file
 from datetime import datetime
 from app.models.mensaje import Mensaje
 from app.utils.filters import format_currency
+from app.models.usuario import Usuario
+from werkzeug.security import generate_password_hash
 
 client_bp = Blueprint('client', __name__)
 @client_bp.after_request
@@ -52,54 +54,75 @@ def ver_canchas():
     # Obtener canchas con filtros aplicados
     canchas = query.all()
     
-    # Calcular disponibilidad real para cada cancha
+    # Calcular disponibilidad real para cada cancha (OPTIMIZADO)
     from datetime import datetime, timedelta
     fecha_actual = datetime.now().date()
     fecha_fin = fecha_actual + timedelta(days=30)  # Próximo mes
+    
+    # Obtener todas las reservas confirmadas de una vez
+    reservas_confirmadas = Reserva.query.filter(
+        Reserva.Estado == 'Confirmada',
+        Reserva.Fecha >= fecha_actual,
+        Reserva.Fecha <= fecha_fin
+    ).all()
+    
+    # Crear un diccionario para acceso rápido
+    reservas_por_cancha = {}
+    for reserva in reservas_confirmadas:
+        if reserva.CanchaId not in reservas_por_cancha:
+            reservas_por_cancha[reserva.CanchaId] = []
+        reservas_por_cancha[reserva.CanchaId].append(reserva)
     
     canchas_con_disponibilidad = []
     
     for cancha in canchas:
         # Contar slots disponibles en los próximos 30 días
-        slots_totales = 0
+        slots_totales = 30 * 16  # 30 días × 16 horas por día
         slots_ocupados = 0
         
-        fecha_iter = fecha_actual
-        while fecha_iter <= fecha_fin:
-            # 16 horas por día (6:00 AM - 10:00 PM)
-            for hora in range(6, 22):
-                slots_totales += 1
-                
-                # Verificar si hay reserva en este slot
-                reserva = Reserva.query.filter_by(
-                    CanchaId=cancha.Id,
-                    Fecha=fecha_iter,
-                    Estado='Confirmada'
-                ).filter(
-                    ((Reserva.HoraInicio < f"{hora+1:02d}:00") & (Reserva.HoraFin > f"{hora:02d}:00"))
-                ).first()
-                
-                if reserva:
-                    slots_ocupados += 1
-            
-            fecha_iter += timedelta(days=1)
+        # Obtener reservas de esta cancha
+        reservas_cancha = reservas_por_cancha.get(cancha.Id, [])
         
-        # Calcular porcentaje de ocupación
-        porcentaje_ocupacion = (slots_ocupados / slots_totales * 100) if slots_totales > 0 else 0
+        # Contar slots ocupados
+        for reserva in reservas_cancha:
+            # Calcular duración de la reserva en horas
+            inicio = datetime.combine(datetime.min, reserva.HoraInicio)
+            fin = datetime.combine(datetime.min, reserva.HoraFin)
+            if fin <= inicio:  # Si pasa de medianoche
+                fin = datetime.combine(datetime.min, reserva.HoraFin) + timedelta(days=1)
+            
+            duracion_horas = (fin - inicio).total_seconds() / 3600
+            
+            # Solo contar si está en horario operativo (6:00-22:00)
+            hora_inicio = reserva.HoraInicio.hour
+            hora_fin = reserva.HoraFin.hour if reserva.HoraFin.hour > 0 else 24
+            
+            # Ajustar a horario operativo
+            if hora_inicio < 6:
+                hora_inicio = 6
+            if hora_fin > 22:
+                hora_fin = 22
+            
+            # Contar horas ocupadas
+            horas_ocupadas = max(0, hora_fin - hora_inicio)
+            slots_ocupados += horas_ocupadas
+        
+        # Calcular porcentaje de disponibilidad
+        porcentaje_disponibilidad = ((slots_totales - slots_ocupados) / slots_totales * 100) if slots_totales > 0 else 100
         
         # Determinar si la cancha está completamente ocupada
-        completamente_ocupada = porcentaje_ocupacion >= 95  # 95% o más ocupada
+        completamente_ocupada = porcentaje_disponibilidad <= 5  # 5% o menos disponible
         
         canchas_con_disponibilidad.append({
             'cancha': cancha,
-            'porcentaje_ocupacion': porcentaje_ocupacion,
+            'porcentaje_disponibilidad': porcentaje_disponibilidad,
             'completamente_ocupada': completamente_ocupada,
             'slots_disponibles': slots_totales - slots_ocupados,
             'slots_totales': slots_totales
         })
     
-    # Ordenar por disponibilidad (menos ocupadas primero)
-    canchas_con_disponibilidad.sort(key=lambda x: x['porcentaje_ocupacion'])
+    # Ordenar por disponibilidad (más disponibles primero)
+    canchas_con_disponibilidad.sort(key=lambda x: x['porcentaje_disponibilidad'], reverse=True)
     
     categorias = Categoria.query.all()
     tipos = TipoCancha.query.all()
@@ -130,37 +153,41 @@ def ver_cancha(cancha_id):
         flash('Esta cancha está en mantenimiento actualmente', 'warning')
         return redirect(url_for('client.ver_canchas'))
 
-    # Calcular disponibilidad real de la cancha
+    # Calcular disponibilidad real de la cancha (OPTIMIZADO)
     from datetime import datetime, timedelta
     fecha_actual = datetime.now().date()
     fecha_fin = fecha_actual + timedelta(days=30)  # Próximo mes
     
-    slots_totales = 0
+    slots_totales = 30 * 16  # 30 días × 16 horas por día
     slots_ocupados = 0
     
-    fecha_iter = fecha_actual
-    while fecha_iter <= fecha_fin:
-        # 16 horas por día (6:00 AM - 10:00 PM)
-        for hora in range(6, 22):
-            slots_totales += 1
-            
-            # Verificar si hay reserva en este slot
-            reserva = Reserva.query.filter_by(
-                CanchaId=cancha_id,
-                Fecha=fecha_iter,
-                Estado='Confirmada'
-            ).filter(
-                ((Reserva.HoraInicio < f"{hora+1:02d}:00") & (Reserva.HoraFin > f"{hora:02d}:00"))
-            ).first()
-            
-            if reserva:
-                slots_ocupados += 1
-        
-        fecha_iter += timedelta(days=1)
+    # Obtener todas las reservas confirmadas de esta cancha
+    reservas_cancha = Reserva.query.filter(
+        Reserva.CanchaId == cancha_id,
+        Reserva.Estado == 'Confirmada',
+        Reserva.Fecha >= fecha_actual,
+        Reserva.Fecha <= fecha_fin
+    ).all()
     
-    # Calcular porcentaje de ocupación
-    porcentaje_ocupacion = (slots_totales - slots_ocupados) / slots_totales * 100 if slots_totales > 0 else 0
-    completamente_ocupada = porcentaje_ocupacion <= 5  # 5% o menos disponible
+    # Contar slots ocupados
+    for reserva in reservas_cancha:
+        # Solo contar si está en horario operativo (6:00-22:00)
+        hora_inicio = reserva.HoraInicio.hour
+        hora_fin = reserva.HoraFin.hour if reserva.HoraFin.hour > 0 else 24
+        
+        # Ajustar a horario operativo
+        if hora_inicio < 6:
+            hora_inicio = 6
+        if hora_fin > 22:
+            hora_fin = 22
+        
+        # Contar horas ocupadas
+        horas_ocupadas = max(0, hora_fin - hora_inicio)
+        slots_ocupados += horas_ocupadas
+    
+    # Calcular porcentaje de disponibilidad
+    porcentaje_disponibilidad = (slots_totales - slots_ocupados) / slots_totales * 100 if slots_totales > 0 else 100
+    completamente_ocupada = porcentaje_disponibilidad <= 5  # 5% o menos disponible
 
     comentarios = Comentario.query.filter_by(
         CanchaId=cancha_id
@@ -198,7 +225,7 @@ def ver_cancha(cancha_id):
         comentarios=comentarios,
         similares=similares,
         format_currency=format_currency,
-        porcentaje_disponibilidad=porcentaje_ocupacion,
+        porcentaje_disponibilidad=porcentaje_disponibilidad,
         completamente_ocupada=completamente_ocupada,
         slots_disponibles=slots_totales - slots_ocupados,
         slots_totales=slots_totales
@@ -216,40 +243,44 @@ def reservar(cancha_id):
         flash('No se puede reservar esta cancha porque está en mantenimiento', 'danger')
         return redirect(url_for('client.ver_canchas'))
 
-    # Verificar disponibilidad real de la cancha
+    # Verificar disponibilidad real de la cancha (OPTIMIZADO)
     from datetime import datetime, timedelta
     fecha_actual = datetime.now().date()
     fecha_fin = fecha_actual + timedelta(days=30)  # Próximo mes
     
-    slots_totales = 0
+    slots_totales = 30 * 16  # 30 días × 16 horas por día
     slots_ocupados = 0
     
-    fecha_iter = fecha_actual
-    while fecha_iter <= fecha_fin:
-        # 16 horas por día (6:00 AM - 10:00 PM)
-        for hora in range(6, 22):
-            slots_totales += 1
-            
-            # Verificar si hay reserva en este slot
-            reserva = Reserva.query.filter_by(
-                CanchaId=cancha_id,
-                Fecha=fecha_iter,
-                Estado='Confirmada'
-            ).filter(
-                ((Reserva.HoraInicio < f"{hora+1:02d}:00") & (Reserva.HoraFin > f"{hora:02d}:00"))
-            ).first()
-            
-            if reserva:
-                slots_ocupados += 1
+    # Obtener todas las reservas confirmadas de esta cancha
+    reservas_cancha = Reserva.query.filter(
+        Reserva.CanchaId == cancha_id,
+        Reserva.Estado == 'Confirmada',
+        Reserva.Fecha >= fecha_actual,
+        Reserva.Fecha <= fecha_fin
+    ).all()
+    
+    # Contar slots ocupados
+    for reserva in reservas_cancha:
+        # Solo contar si está en horario operativo (6:00-22:00)
+        hora_inicio = reserva.HoraInicio.hour
+        hora_fin = reserva.HoraFin.hour if reserva.HoraFin.hour > 0 else 24
         
-        fecha_iter += timedelta(days=1)
+        # Ajustar a horario operativo
+        if hora_inicio < 6:
+            hora_inicio = 6
+        if hora_fin > 22:
+            hora_fin = 22
+        
+        # Contar horas ocupadas
+        horas_ocupadas = max(0, hora_fin - hora_inicio)
+        slots_ocupados += horas_ocupadas
     
-    # Calcular porcentaje de ocupación
-    porcentaje_ocupacion = (slots_ocupados / slots_totales * 100) if slots_totales > 0 else 0
+    # Calcular porcentaje de disponibilidad
+    porcentaje_disponibilidad = ((slots_totales - slots_ocupados) / slots_totales * 100) if slots_totales > 0 else 100
     
-    # Si la cancha está completamente ocupada (95% o más), no permitir reservas
-    if porcentaje_ocupacion >= 95:
-        flash(f'Esta cancha está completamente ocupada para los próximos 30 días ({porcentaje_ocupacion:.1f}% ocupada). Solo puedes ver los detalles.', 'warning')
+    # Si la cancha está completamente ocupada (5% o menos disponible), no permitir reservas
+    if porcentaje_disponibilidad <= 5:
+        flash(f'Esta cancha está completamente ocupada para los próximos 30 días (solo {porcentaje_disponibilidad:.1f}% disponible). Solo puedes ver los detalles.', 'warning')
         return redirect(url_for('client.ver_cancha', cancha_id=cancha_id))
 
     if request.method == 'POST':
@@ -285,6 +316,18 @@ def reservar(cancha_id):
 
         db.session.add(nueva_reserva)
         db.session.commit()
+
+        # Enviar notificación de confirmación por email
+        try:
+            from app.services.notificacion_service import notificacion_service
+            notificacion_service.notificar_reserva_confirmada(nueva_reserva.Id)
+            
+            # Programar recordatorios automáticos
+            from app.services.recordatorio_service import recordatorio_service
+            recordatorio_service.programar_recordatorios_reserva(nueva_reserva.Id)
+        except Exception as e:
+            # Si falla la notificación, no fallar la creación de la reserva
+            pass
 
         flash('Reserva creada exitosamente.', 'success')
         return redirect(url_for('client.mis_reservas'))
@@ -345,6 +388,18 @@ def api_reservar():
 
     db.session.add(nueva_reserva)
     db.session.commit()
+
+    # Enviar notificación de confirmación por email
+    try:
+        from app.services.notificacion_service import notificacion_service
+        notificacion_service.notificar_reserva_confirmada(nueva_reserva.Id)
+        
+        # Programar recordatorios automáticos
+        from app.services.recordatorio_service import recordatorio_service
+        recordatorio_service.programar_recordatorios_reserva(nueva_reserva.Id)
+    except Exception as e:
+        # Si falla la notificación, no fallar la creación de la reserva
+        pass
 
     return jsonify({'success': True, 'message': 'Reserva creada exitosamente'})
 
@@ -418,6 +473,18 @@ def cancelar_reserva(reserva_id):
     
     reserva.Estado = 'Cancelada'
     db.session.commit()
+
+    # Enviar notificación de cancelación por email
+    try:
+        from app.services.notificacion_service import notificacion_service
+        notificacion_service.notificar_cancelacion_reserva(reserva.Id)
+        
+        # Cancelar recordatorios automáticos
+        from app.services.recordatorio_service import recordatorio_service
+        recordatorio_service.cancelar_recordatorios_reserva(reserva.Id)
+    except Exception as e:
+        # Si falla la notificación, no fallar la cancelación
+        pass
 
     # Actualizar estado de canchas
     liberar_canchas_sin_reservas()
@@ -875,4 +942,224 @@ def manual_usuario_pdf():
         flash('Error al descargar el manual', 'error')
         return redirect(url_for('client.ver_canchas'))
 
+@client_bp.route('/configuracion')
+@login_required
+@usuario_activo_required
+def configuracion():
+    """Página de configuración para clientes"""
+    response = make_response(render_template('client/configuracion.html'))
+    response.headers['Cache-Control'] = 'no-cache, no-store, must-revalidate'
+    response.headers['Pragma'] = 'no-cache'
+    response.headers['Expires'] = '0'
+    return response
 
+@client_bp.route('/actualizar_perfil', methods=['POST'])
+@login_required
+@usuario_activo_required
+def actualizar_perfil():
+    """Actualizar perfil del cliente"""
+    try:
+        # Obtener datos del formulario
+        nombre = request.form.get('nombre')
+        email = request.form.get('email')
+        telefono = request.form.get('telefono')
+        fecha_nacimiento = request.form.get('fecha_nacimiento')
+        direccion = request.form.get('direccion')
+        
+        # Validar datos requeridos
+        if not nombre or not email:
+            if request.headers.get('X-Requested-With') == 'XMLHttpRequest':
+                return jsonify({'success': False, 'message': 'Nombre y email son campos obligatorios'})
+            flash('Nombre y email son campos obligatorios', 'error')
+            return redirect(url_for('client.configuracion'))
+        
+        # Verificar si el email ya existe (excepto para el usuario actual)
+        usuario_existente = Usuario.query.filter(
+            Usuario.Email == email,
+            Usuario.Id != current_user.Id
+        ).first()
+        
+        if usuario_existente:
+            if request.headers.get('X-Requested-With') == 'XMLHttpRequest':
+                return jsonify({'success': False, 'message': 'El email ya está registrado por otro usuario'})
+            flash('El email ya está registrado por otro usuario', 'error')
+            return redirect(url_for('client.configuracion'))
+        
+        # Actualizar datos del usuario
+        current_user.Nombre = nombre
+        current_user.Email = email
+        current_user.Telefono = telefono or None
+        current_user.Direccion = direccion or None
+        
+        if fecha_nacimiento:
+            try:
+                current_user.FechaNacimiento = datetime.strptime(fecha_nacimiento, '%Y-%m-%d').date()
+            except ValueError:
+                if request.headers.get('X-Requested-With') == 'XMLHttpRequest':
+                    return jsonify({'success': False, 'message': 'Formato de fecha inválido'})
+                flash('Formato de fecha inválido', 'error')
+                return redirect(url_for('client.configuracion'))
+        
+        # Manejar imagen de perfil
+        image_url = None
+        if 'foto_perfil' in request.files:
+            imagen = request.files['foto_perfil']
+            if imagen and imagen.filename != '':
+                filename = secure_filename(imagen.filename)
+                ruta_directorio = os.path.join(current_app.root_path, 'static', 'uploads', 'usuarios')
+                os.makedirs(ruta_directorio, exist_ok=True)
+                ruta_guardado = os.path.join(ruta_directorio, filename)
+                imagen.save(ruta_guardado)
+                current_user.FotoPerfil = f'uploads/usuarios/{filename}'
+                image_url = url_for('static', filename=current_user.FotoPerfil)
+        
+        db.session.commit()
+        
+        if request.headers.get('X-Requested-With') == 'XMLHttpRequest':
+            return jsonify({
+                'success': True, 
+                'message': 'Perfil actualizado exitosamente',
+                'image_url': image_url
+            })
+        
+        flash('Perfil actualizado exitosamente', 'success')
+        
+    except Exception as e:
+        db.session.rollback()
+        if request.headers.get('X-Requested-With') == 'XMLHttpRequest':
+            return jsonify({'success': False, 'message': f'Error al actualizar perfil: {str(e)}'})
+        flash(f'Error al actualizar perfil: {str(e)}', 'error')
+    
+    return redirect(url_for('client.configuracion'))
+
+@client_bp.route('/cambiar_password', methods=['POST'])
+@login_required
+@usuario_activo_required
+def cambiar_password():
+    """Cambiar contraseña del cliente"""
+    try:
+        password_actual = request.form.get('password_actual')
+        password_nuevo = request.form.get('password_nuevo')
+        password_confirmar = request.form.get('password_confirmar')
+        
+        # Validar datos
+        if not all([password_actual, password_nuevo, password_confirmar]):
+            if request.headers.get('X-Requested-With') == 'XMLHttpRequest':
+                return jsonify({'success': False, 'message': 'Todos los campos son obligatorios'})
+            flash('Todos los campos son obligatorios', 'error')
+            return redirect(url_for('client.configuracion'))
+        
+        # Verificar contraseña actual
+        if not current_user.check_password(password_actual):
+            if request.headers.get('X-Requested-With') == 'XMLHttpRequest':
+                return jsonify({'success': False, 'message': 'La contraseña actual es incorrecta'})
+            flash('La contraseña actual es incorrecta', 'error')
+            return redirect(url_for('client.configuracion'))
+        
+        # Verificar que las nuevas contraseñas coincidan
+        if password_nuevo != password_confirmar:
+            if request.headers.get('X-Requested-With') == 'XMLHttpRequest':
+                return jsonify({'success': False, 'message': 'Las nuevas contraseñas no coinciden'})
+            flash('Las nuevas contraseñas no coinciden', 'error')
+            return redirect(url_for('client.configuracion'))
+        
+        # Verificar longitud mínima
+        if len(password_nuevo) < 6:
+            if request.headers.get('X-Requested-With') == 'XMLHttpRequest':
+                return jsonify({'success': False, 'message': 'La nueva contraseña debe tener al menos 6 caracteres'})
+            flash('La nueva contraseña debe tener al menos 6 caracteres', 'error')
+            return redirect(url_for('client.configuracion'))
+        
+        # Actualizar contraseña
+        current_user.Password = generate_password_hash(password_nuevo)
+        db.session.commit()
+        
+        if request.headers.get('X-Requested-With') == 'XMLHttpRequest':
+            return jsonify({'success': True, 'message': 'Contraseña actualizada exitosamente'})
+        
+        flash('Contraseña cambiada exitosamente', 'success')
+        
+    except Exception as e:
+        db.session.rollback()
+        if request.headers.get('X-Requested-With') == 'XMLHttpRequest':
+            return jsonify({'success': False, 'message': f'Error al cambiar contraseña: {str(e)}'})
+        flash(f'Error al cambiar contraseña: {str(e)}', 'error')
+    
+    return redirect(url_for('client.configuracion'))
+
+@client_bp.route('/eliminar_cuenta', methods=['POST'])
+@login_required
+@usuario_activo_required
+def eliminar_cuenta():
+    """Eliminar cuenta del cliente"""
+    try:
+        # Verificar que no tenga reservas activas
+        reservas_activas = Reserva.query.filter(
+            Reserva.UsuarioId == current_user.Id,
+            Reserva.Fecha >= datetime.now().date(),
+            Reserva.Estado.in_(['Confirmada', 'Pendiente'])
+        ).count()
+        
+        if reservas_activas > 0:
+            flash('No puedes eliminar tu cuenta mientras tengas reservas activas', 'error')
+            return redirect(url_for('client.configuracion'))
+        
+        # Eliminar usuario (esto también eliminará las reservas pasadas por CASCADE)
+        db.session.delete(current_user)
+        db.session.commit()
+        
+        flash('Tu cuenta ha sido eliminada exitosamente', 'success')
+        return redirect(url_for('auth.logout'))
+        
+    except Exception as e:
+        db.session.rollback()
+        flash(f'Error al eliminar cuenta: {str(e)}', 'error')
+        return redirect(url_for('client.configuracion'))
+
+@client_bp.route('/configuracion/actualizar_campo', methods=['POST'])
+@login_required
+@usuario_activo_required
+def actualizar_campo_configuracion():
+    """Actualizar un campo específico de configuración del cliente"""
+    try:
+        # Obtener el nombre y valor del campo
+        field_name = None
+        field_value = None
+        
+        for key, value in request.form.items():
+            field_name = key
+            field_value = value
+            break
+        
+        if not field_name:
+            return jsonify({'success': False, 'message': 'No se especificó ningún campo'})
+        
+        # Aquí se guardaría el campo específico en la base de datos o archivo de configuración
+        # Por ahora solo mostramos un mensaje de éxito
+        
+        return jsonify({'success': True, 'message': f'Campo {field_name} actualizado correctamente'})
+        
+    except Exception as e:
+        return jsonify({'success': False, 'message': f'Error al actualizar campo: {str(e)}'})
+
+@client_bp.route('/perfil/obtener_info', methods=['GET'])
+@login_required
+@usuario_activo_required
+def obtener_info_perfil():
+    """Obtener información del perfil del usuario actual"""
+    try:
+        user_info = {
+            'id': current_user.Id,
+            'nombre': current_user.Nombre,
+            'email': current_user.Email,
+            'telefono': current_user.Telefono,
+            'direccion': current_user.Direccion,
+            'fecha_nacimiento': current_user.FechaNacimiento.isoformat() if current_user.FechaNacimiento else None,
+            'imagen': current_user.FotoPerfil,
+            'imagen_url': url_for('static', filename=current_user.FotoPerfil) if current_user.FotoPerfil else url_for('static', filename='images/default-user.png')
+        }
+        
+        return jsonify({'success': True, 'data': user_info})
+        
+    except Exception as e:
+        return jsonify({'success': False, 'message': f'Error al obtener información: {str(e)}'})

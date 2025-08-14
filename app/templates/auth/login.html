@@ -86,6 +86,10 @@
                         <button type="submit" class="login-btn">
                             <i class="fas fa-sign-in-alt me-2"></i> INICIAR SESIÓN
                         </button>
+                        <div class="text-center" style="color:#9ca3af; font-size:.9rem; margin-top:.25rem;">Otras formas de iniciar sesión</div>
+                        <a href="{{ url_for('auth.login_google') }}" class="login-btn google-btn" aria-label="Continuar con Google" title="Continuar con Google">
+                            <i class="fab fa-google"></i>
+                        </a>
                     </div>
                 </form>
             </div>

@@ -30,6 +30,10 @@ class Config:
     
     # Configuración de logging
     LOG_LEVEL = os.getenv('LOG_LEVEL', 'INFO')
+
+    # OAuth - Google
+    GOOGLE_CLIENT_ID = os.getenv('GOOGLE_CLIENT_ID')
+    GOOGLE_CLIENT_SECRET = os.getenv('GOOGLE_CLIENT_SECRET')
     
 
 

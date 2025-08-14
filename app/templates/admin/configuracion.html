@@ -3,9 +3,6 @@
 
 {% block content %}
 <div class="container-fluid">
-    <h2><i class="fas fa-cogs me-2"></i>Configuración del Sistema</h2>
-    <hr>
-
     {% with messages = get_flashed_messages(with_categories=true) %}
         {% if messages %}
             {% for category, message in messages %}
@@ -16,35 +13,494 @@
             {% endfor %}
         {% endif %}
     {% endwith %}
+    <div class="row">
+        <!-- Sidebar de navegación -->
+        <div class="col-lg-3 col-md-4 mb-4 configuracion-sidebar">
+            <div class="card shadow-sm">
+                <div class="card-header bg-primary text-white">
+                    <h5 class="mb-0"><i class="fas fa-cogs me-2"></i>Configuración del Sistema</h5>
+                </div>
+                <div class="list-group list-group-flush" id="configTabs" role="tablist">
+                    <a class="list-group-item list-group-item-action active" id="perfil-tab" data-bs-toggle="list" href="#perfil" role="tab">
+                        <i class="fas fa-user-circle me-2"></i>Perfil Personal
+                    </a>
+                    <a class="list-group-item list-group-item-action" id="general-tab" data-bs-toggle="list" href="#general" role="tab">
+                        <i class="fas fa-cog me-2"></i>Configuración General
+                    </a>
+                    <a class="list-group-item list-group-item-action" id="reservas-tab" data-bs-toggle="list" href="#reservas" role="tab">
+                        <i class="fas fa-calendar-check me-2"></i>Gestión de Reservas
+                    </a>
+                    <a class="list-group-item list-group-item-action" id="notificaciones-tab" data-bs-toggle="list" href="#notificaciones" role="tab">
+                        <i class="fas fa-bell me-2"></i>Notificaciones
+                    </a>
+                    <a class="list-group-item list-group-item-action" id="seguridad-tab" data-bs-toggle="list" href="#seguridad" role="tab">
+                        <i class="fas fa-shield-alt me-2"></i>Seguridad
+                    </a>
+                    <a class="list-group-item list-group-item-action" id="backup-tab" data-bs-toggle="list" href="#backup" role="tab">
+                        <i class="fas fa-database me-2"></i>Backup y Restauración
+                    </a>
+                    <a class="list-group-item list-group-item-action" id="integracion-tab" data-bs-toggle="list" href="#integracion" role="tab">
+                        <i class="fas fa-plug me-2"></i>Integraciones
+                    </a>
+                    <a class="list-group-item list-group-item-action" id="cuenta-tab" data-bs-toggle="list" href="#cuenta" role="tab">
+                        <i class="fas fa-trash-alt me-2"></i>Gestionar Cuenta
+                    </a>
+                </div>
+            </div>
+        </div>
 
-    <form method="POST">
+        <!-- Contenido principal -->
+        <div class="col-lg-9 col-md-8 configuracion-content">
+            <div class="tab-content" id="configTabContent">
+                <!-- Sección: Perfil Personal -->
+                <div class="tab-pane fade show active" id="perfil" role="tabpanel">
+                    <div class="card shadow-sm">
+                        <div class="card-header bg-primary text-white">
+                            <h5 class="mb-0"><i class="fas fa-user-circle me-2"></i>Perfil Personal</h5>
+                        </div>
+                        <div class="card-body">
+                            <form method="POST" action="{{ url_for('admin.actualizar_perfil') }}" enctype="multipart/form-data" class="configuracion-form">
+                                <div class="row">
+                                    <div class="col-md-3 text-center mb-4">
+                                        <div class="position-relative">
+                                            <img src="{{ url_for('static', filename=current_user.Imagen if current_user.Imagen else 'images/default-user.png') }}" 
+                                                 class="rounded-circle img-thumbnail configuracion-perfil-img" 
+                                                 style="width: 150px; height: 150px; object-fit: cover;" 
+                                                 alt="Foto de perfil"
+                                                 onerror="this.src='{{ url_for('static', filename='images/default-user.png') }}'">
+                                            <div class="position-absolute bottom-0 end-0">
+                                                <label for="foto_perfil" class="btn btn-sm btn-primary rounded-circle">
+                                                    <i class="fas fa-camera"></i>
+                                                </label>
+                                                <input type="file" id="foto_perfil" name="foto_perfil" class="d-none" accept="image/*">
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-9">
+                                        <div class="row">
+                                            <div class="col-md-6 mb-3">
+                                                <label for="nombre" class="form-label">Nombre Completo</label>
+                                                <input type="text" class="form-control" id="nombre" name="nombre" value="{{ current_user.Nombre }}" required>
+                                            </div>
+                                            <div class="col-md-6 mb-3">
+                                                <label for="email" class="form-label">Correo Electrónico</label>
+                                                <input type="email" class="form-control" id="email" name="email" value="{{ current_user.Email }}" required>
+                                            </div>
+                                            <div class="col-md-6 mb-3">
+                                                <label for="telefono" class="form-label">Teléfono</label>
+                                                <input type="tel" class="form-control" id="telefono" name="telefono" value="{{ current_user.Telefono or '' }}">
+                                            </div>
+                                            <div class="col-md-6 mb-3">
+                                                <label for="fecha_nacimiento" class="form-label">Fecha de Nacimiento</label>
+                                                <input type="date" class="form-control" id="fecha_nacimiento" name="fecha_nacimiento" value="{{ current_user.FechaNacimiento or '' }}">
+                                            </div>
+                                            <div class="col-12 mb-3">
+                                                <label for="direccion" class="form-label">Dirección</label>
+                                                <textarea class="form-control" id="direccion" name="direccion" rows="2">{{ current_user.Direccion or '' }}</textarea>
+                                            </div>
+                                        </div>
+                                        <button type="submit" class="btn btn-primary">
+                                            <i class="fas fa-save me-2"></i>Guardar Cambios
+                                        </button>
+                                    </div>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Sección: Configuración General -->
+                <div class="tab-pane fade" id="general" role="tabpanel">
+                    <div class="card shadow-sm">
+                        <div class="card-header bg-primary text-white">
+                            <h5 class="mb-0"><i class="fas fa-cog me-2"></i>Configuración General</h5>
+                        </div>
+                        <div class="card-body">
+                            <form method="POST" action="{{ url_for('admin.actualizar_configuracion_general') }}" class="configuracion-form">
         <div class="row">
             <div class="col-md-6 mb-3">
                 <label for="sitio_nombre" class="form-label">Nombre del Sistema</label>
-                <input type="text" class="form-control" name="sitio_nombre" id="sitio_nombre" value="Flash Reserver">
+                                        <input type="text" class="form-control" name="sitio_nombre" id="sitio_nombre" value="Flash Reserver" required>
             </div>
-
             <div class="col-md-6 mb-3">
                 <label for="contacto_email" class="form-label">Correo de Contacto</label>
-                <input type="email" class="form-control" name="contacto_email" id="contacto_email" value="admin@flashreserver.com">
+                                        <input type="email" class="form-control" name="contacto_email" id="contacto_email" value="admin@flashreserver.com" required>
             </div>
-
             <div class="col-md-6 mb-3">
                 <label for="horario_apertura" class="form-label">Horario de Apertura</label>
                 <input type="time" class="form-control" name="horario_apertura" id="horario_apertura" value="08:00">
             </div>
-
             <div class="col-md-6 mb-3">
                 <label for="horario_cierre" class="form-label">Horario de Cierre</label>
                 <input type="time" class="form-control" name="horario_cierre" id="horario_cierre" value="22:00">
+                                    </div>
+                                    <div class="col-md-6 mb-3">
+                                        <label for="zona_horaria" class="form-label">Zona Horaria</label>
+                                        <select class="form-select" name="zona_horaria" id="zona_horaria">
+                                            <option value="America/Bogota" selected>Colombia (GMT-5)</option>
+                                            <option value="America/New_York">Estados Unidos Este (GMT-5)</option>
+                                            <option value="Europe/Madrid">España (GMT+1)</option>
+                                        </select>
+                                    </div>
+                                    <div class="col-md-6 mb-3">
+                                        <label for="moneda" class="form-label">Moneda Principal</label>
+                                        <select class="form-select" name="moneda" id="moneda">
+                                            <option value="COP" selected>Peso Colombiano (COP)</option>
+                                            <option value="USD">Dólar Estadounidense (USD)</option>
+                                            <option value="EUR">Euro (EUR)</option>
+                                        </select>
+                                    </div>
+                                    <div class="col-12 mb-3">
+                                        <label for="descripcion_sitio" class="form-label">Descripción del Sitio</label>
+                                        <textarea class="form-control" name="descripcion_sitio" id="descripcion_sitio" rows="3">Sistema de reservas de canchas deportivas</textarea>
+                                    </div>
+                                </div>
+                                <button type="submit" class="btn btn-primary">
+                                    <i class="fas fa-save me-2"></i>Guardar Configuración
+                                </button>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Sección: Gestión de Reservas -->
+                <div class="tab-pane fade" id="reservas" role="tabpanel">
+                    <div class="card shadow-sm">
+                        <div class="card-header bg-success text-white">
+                            <h5 class="mb-0"><i class="fas fa-calendar-check me-2"></i>Gestión de Reservas</h5>
+                        </div>
+                        <div class="card-body">
+                            <div class="row">
+                                <div class="col-md-6">
+                                    <h6><i class="fas fa-clock me-2"></i>Configuración de Horarios</h6>
+                                    <div class="mb-3">
+                                        <label for="duracion_reserva" class="form-label">Duración Mínima de Reserva (horas)</label>
+                                        <input type="number" class="form-control" id="duracion_reserva" value="1" min="0.5" step="0.5">
+                                    </div>
+                                    <div class="mb-3">
+                                        <label for="anticipacion_reserva" class="form-label">Anticipación Mínima (horas)</label>
+                                        <input type="number" class="form-control" id="anticipacion_reserva" value="2" min="0">
+                                    </div>
+                                    <div class="mb-3">
+                                        <label for="cancelacion_reserva" class="form-label">Tiempo de Cancelación (horas)</label>
+                                        <input type="number" class="form-control" id="cancelacion_reserva" value="24" min="0">
+                                    </div>
+                                </div>
+                                <div class="col-md-6">
+                                    <h6><i class="fas fa-rules me-2"></i>Políticas de Reserva</h6>
+                                    <div class="form-check form-switch mb-2">
+                                        <input class="form-check-input" type="checkbox" id="reservas_multiples" checked>
+                                        <label class="form-check-label" for="reservas_multiples">
+                                            Permitir reservas múltiples por usuario
+                                        </label>
+                                    </div>
+                                    <div class="form-check form-switch mb-2">
+                                        <input class="form-check-input" type="checkbox" id="reservas_recurrentes" checked>
+                                        <label class="form-check-label" for="reservas_recurrentes">
+                                            Permitir reservas recurrentes
+                                        </label>
+                                    </div>
+                                    <div class="form-check form-switch mb-2">
+                                        <input class="form-check-input" type="checkbox" id="confirmacion_automatica">
+                                        <label class="form-check-label" for="confirmacion_automatica">
+                                            Confirmación automática de reservas
+                                        </label>
+                                    </div>
+                                    <div class="form-check form-switch mb-2">
+                                        <input class="form-check-input" type="checkbox" id="pago_requerido" checked>
+                                        <label class="form-check-label" for="pago_requerido">
+                                            Requerir pago para confirmar reserva
+                                        </label>
+                                    </div>
+                                </div>
+                            </div>
+                            <hr>
+                            <button class="btn btn-success">
+                                <i class="fas fa-save me-2"></i>Guardar Configuración
+                            </button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Sección: Notificaciones -->
+                <div class="tab-pane fade" id="notificaciones" role="tabpanel">
+                    <div class="card shadow-sm">
+                        <div class="card-header bg-info text-white">
+                            <h5 class="mb-0"><i class="fas fa-bell me-2"></i>Notificaciones</h5>
+                        </div>
+                        <div class="card-body">
+                            <div class="row">
+                                <div class="col-md-6">
+                                    <h6><i class="fas fa-envelope me-2"></i>Configuración de Email</h6>
+                                    <div class="mb-3">
+                                        <label for="smtp_host" class="form-label">Servidor SMTP</label>
+                                        <input type="text" class="form-control" id="smtp_host" value="smtp.gmail.com">
+                                    </div>
+                                    <div class="mb-3">
+                                        <label for="smtp_port" class="form-label">Puerto SMTP</label>
+                                        <input type="number" class="form-control" id="smtp_port" value="587">
+                                    </div>
+                                    <div class="mb-3">
+                                        <label for="smtp_user" class="form-label">Usuario SMTP</label>
+                                        <input type="email" class="form-control" id="smtp_user" value="noreply@flashreserver.com">
+                                    </div>
+                                    <div class="mb-3">
+                                        <label for="smtp_password" class="form-label">Contraseña SMTP</label>
+                                        <input type="password" class="form-control" id="smtp_password">
+                                    </div>
+                                </div>
+                                <div class="col-md-6">
+                                    <h6><i class="fas fa-bell me-2"></i>Tipos de Notificación</h6>
+                                    <div class="form-check mb-2">
+                                        <input class="form-check-input" type="checkbox" id="notif_nuevas_reservas" checked>
+                                        <label class="form-check-label" for="notif_nuevas_reservas">
+                                            Nuevas reservas
+                                        </label>
+                                    </div>
+                                    <div class="form-check mb-2">
+                                        <input class="form-check-input" type="checkbox" id="notif_cancelaciones" checked>
+                                        <label class="form-check-label" for="notif_cancelaciones">
+                                            Cancelaciones
+                                        </label>
+                                    </div>
+                                    <div class="form-check mb-2">
+                                        <input class="form-check-input" type="checkbox" id="notif_pagos" checked>
+                                        <label class="form-check-label" for="notif_pagos">
+                                            Confirmaciones de pago
+                                        </label>
+                                    </div>
+                                    <div class="form-check mb-2">
+                                        <input class="form-check-input" type="checkbox" id="notif_recordatorios" checked>
+                                        <label class="form-check-label" for="notif_recordatorios">
+                                            Recordatorios automáticos
+                                        </label>
+                                    </div>
+                                    <div class="form-check mb-2">
+                                        <input class="form-check-input" type="checkbox" id="notif_reportes" checked>
+                                        <label class="form-check-label" for="notif_reportes">
+                                            Reportes diarios
+                                        </label>
+                                    </div>
+                                </div>
+                            </div>
+                            <hr>
+                            <button class="btn btn-info">
+                                <i class="fas fa-save me-2"></i>Guardar Configuración
+                            </button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Sección: Seguridad -->
+                <div class="tab-pane fade" id="seguridad" role="tabpanel">
+                    <div class="card shadow-sm">
+                        <div class="card-header bg-warning text-dark">
+                            <h5 class="mb-0"><i class="fas fa-shield-alt me-2"></i>Seguridad</h5>
+                        </div>
+                        <div class="card-body">
+                            <div class="row">
+                                <div class="col-md-6">
+                                    <h6><i class="fas fa-lock me-2"></i>Configuración de Contraseñas</h6>
+                                    <div class="mb-3">
+                                        <label for="min_password_length" class="form-label">Longitud Mínima de Contraseña</label>
+                                        <input type="number" class="form-control" id="min_password_length" value="8" min="6">
+                                    </div>
+                                    <div class="form-check mb-2">
+                                        <input class="form-check-input" type="checkbox" id="require_uppercase" checked>
+                                        <label class="form-check-label" for="require_uppercase">
+                                            Requerir mayúsculas
+                                        </label>
+                                    </div>
+                                    <div class="form-check mb-2">
+                                        <input class="form-check-input" type="checkbox" id="require_numbers" checked>
+                                        <label class="form-check-label" for="require_numbers">
+                                            Requerir números
+                                        </label>
+                                    </div>
+                                    <div class="form-check mb-2">
+                                        <input class="form-check-input" type="checkbox" id="require_special" checked>
+                                        <label class="form-check-label" for="require_special">
+                                            Requerir caracteres especiales
+                                        </label>
+                                    </div>
+                                </div>
+                                <div class="col-md-6">
+                                    <h6><i class="fas fa-user-lock me-2"></i>Sesión y Autenticación</h6>
+                                    <div class="mb-3">
+                                        <label for="session_timeout" class="form-label">Tiempo de Sesión (minutos)</label>
+                                        <input type="number" class="form-control" id="session_timeout" value="30" min="5">
+                                    </div>
+                                    <div class="form-check mb-2">
+                                        <input class="form-check-input" type="checkbox" id="force_ssl" checked>
+                                        <label class="form-check-label" for="force_ssl">
+                                            Forzar conexión HTTPS
+                                        </label>
+                                    </div>
+                                    <div class="form-check mb-2">
+                                        <input class="form-check-input" type="checkbox" id="enable_2fa">
+                                        <label class="form-check-label" for="enable_2fa">
+                                            Habilitar autenticación de dos factores
+                                        </label>
+                                    </div>
+                                    <div class="form-check mb-2">
+                                        <input class="form-check-input" type="checkbox" id="log_login_attempts" checked>
+                                        <label class="form-check-label" for="log_login_attempts">
+                                            Registrar intentos de login
+                                        </label>
+                                    </div>
+                                </div>
+                            </div>
+                            <hr>
+                            <button class="btn btn-warning">
+                                <i class="fas fa-save me-2"></i>Guardar Configuración
+                            </button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Sección: Backup y Restauración -->
+                <div class="tab-pane fade" id="backup" role="tabpanel">
+                    <div class="card shadow-sm">
+                        <div class="card-header bg-secondary text-white">
+                            <h5 class="mb-0"><i class="fas fa-database me-2"></i>Backup y Restauración</h5>
+                        </div>
+                        <div class="card-body">
+                            <div class="row">
+                                <div class="col-md-6">
+                                    <h6><i class="fas fa-download me-2"></i>Backup Automático</h6>
+                                    <div class="form-check form-switch mb-2">
+                                        <input class="form-check-input" type="checkbox" id="backup_automatico" checked>
+                                        <label class="form-check-label" for="backup_automatico">
+                                            Habilitar backup automático
+                                        </label>
+                                    </div>
+                                    <div class="mb-3">
+                                        <label for="frecuencia_backup" class="form-label">Frecuencia de Backup</label>
+                                        <select class="form-select" id="frecuencia_backup">
+                                            <option value="daily" selected>Diario</option>
+                                            <option value="weekly">Semanal</option>
+                                            <option value="monthly">Mensual</option>
+                                        </select>
+                                    </div>
+                                    <div class="mb-3">
+                                        <label for="retener_backups" class="form-label">Retener Backups (días)</label>
+                                        <input type="number" class="form-control" id="retener_backups" value="30" min="1">
+                                    </div>
+                                    <button class="btn btn-primary" onclick="ConfiguracionUtils.crearBackup()">
+                                        <i class="fas fa-download me-2"></i>Crear Backup Manual
+                                    </button>
+                                </div>
+                                <div class="col-md-6">
+                                    <h6><i class="fas fa-upload me-2"></i>Restauración</h6>
+                                    <div class="mb-3">
+                                        <label for="archivo_backup" class="form-label">Seleccionar Archivo de Backup</label>
+                                        <input type="file" class="form-control" id="archivo_backup" accept=".sql,.zip">
+                                    </div>
+                                    <button class="btn btn-warning" onclick="ConfiguracionUtils.restaurarBackup()">
+                                        <i class="fas fa-upload me-2"></i>Restaurar desde Backup
+                                    </button>
+                                    <hr>
+                                    <h6><i class="fas fa-history me-2"></i>Backups Recientes</h6>
+                                    <div class="table-responsive">
+                                        <table class="table table-sm">
+                                            <thead>
+                                                <tr>
+                                                    <th>Fecha</th>
+                                                    <th>Tamaño</th>
+                                                    <th>Acciones</th>
+                                                </tr>
+                                            </thead>
+                                            <tbody>
+                                                <tr>
+                                                    <td>2024-01-15 02:00</td>
+                                                    <td>2.5 MB</td>
+                                                    <td>
+                                                        <button class="btn btn-sm btn-outline-primary">Descargar</button>
+                                                        <button class="btn btn-sm btn-outline-warning">Restaurar</button>
+                                                    </td>
+                                                </tr>
+                                            </tbody>
+                                        </table>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Sección: Integraciones -->
+                <div class="tab-pane fade" id="integracion" role="tabpanel">
+                    <div class="card shadow-sm">
+                        <div class="card-header bg-dark text-white">
+                            <h5 class="mb-0"><i class="fas fa-plug me-2"></i>Integraciones</h5>
+                        </div>
+                        <div class="card-body">
+                            <div class="row">
+                                <div class="col-md-6">
+                                    <h6><i class="fab fa-google me-2"></i>Google Analytics</h6>
+                                    <div class="mb-3">
+                                        <label for="ga_tracking_id" class="form-label">ID de Seguimiento</label>
+                                        <input type="text" class="form-control" id="ga_tracking_id" placeholder="GA-XXXXXXXXX-X">
+                                    </div>
+                                    <div class="form-check form-switch mb-2">
+                                        <input class="form-check-input" type="checkbox" id="enable_analytics">
+                                        <label class="form-check-label" for="enable_analytics">
+                                            Habilitar Google Analytics
+                                        </label>
+                                    </div>
+                                </div>
+                                <div class="col-md-6">
+                                    <h6><i class="fab fa-facebook me-2"></i>Redes Sociales</h6>
+                                    <div class="mb-3">
+                                        <label for="facebook_page" class="form-label">Página de Facebook</label>
+                                        <input type="url" class="form-control" id="facebook_page" placeholder="https://facebook.com/...">
+                                    </div>
+                                    <div class="mb-3">
+                                        <label for="instagram_page" class="form-label">Página de Instagram</label>
+                                        <input type="url" class="form-control" id="instagram_page" placeholder="https://instagram.com/...">
+                                    </div>
+                                </div>
+                            </div>
+                            <hr>
+                            <button class="btn btn-dark">
+                                <i class="fas fa-save me-2"></i>Guardar Integraciones
+                            </button>
+                        </div>
             </div>
         </div>
 
-        <div class="text-end">
-            <button type="submit" class="btn btn-success">
-                <i class="fas fa-save me-2"></i>Guardar Cambios
+                <!-- Sección: Gestionar Cuenta -->
+                <div class="tab-pane fade" id="cuenta" role="tabpanel">
+                    <div class="card shadow-sm">
+                        <div class="card-header bg-danger text-white">
+                            <h5 class="mb-0"><i class="fas fa-trash-alt me-2"></i>Gestionar Cuenta</h5>
+                        </div>
+                        <div class="card-body">
+                            <div class="row">
+                                <div class="col-md-6">
+                                    <h6><i class="fas fa-pause me-2"></i>Pausar Cuenta</h6>
+                                    <p class="text-muted">Temporalmente desactiva tu cuenta de administrador.</p>
+                                    <button class="btn btn-warning" onclick="pausarCuenta()">
+                                        <i class="fas fa-pause me-2"></i>Pausar Cuenta
+                                    </button>
+                                </div>
+                                <div class="col-md-6">
+                                    <h6><i class="fas fa-trash me-2"></i>Eliminar Cuenta</h6>
+                                    <p class="text-muted">Elimina permanentemente tu cuenta. Esta acción no se puede deshacer.</p>
+                                    <button class="btn btn-danger" onclick="eliminarCuenta()">
+                                        <i class="fas fa-trash me-2"></i>Eliminar Cuenta
             </button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
         </div>
-    </form>
+    </div>
 </div>
+
+
+
+<script src="{{ url_for('static', filename='js/configuracion.js') }}"></script>
 {% endblock %}

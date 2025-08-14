@@ -109,6 +109,10 @@
                 <button type="submit" class="login-btn">
                     <i class="fas fa-user-plus me-2"></i> REGISTRARSE
                 </button>
+                <div class="text-center" style="color:#9ca3af; font-size:.9rem; margin-top:.25rem;">Otras formas de registro/inicio de sesión</div>
+                <a href="{{ url_for('auth.login_google') }}" class="login-btn google-btn" aria-label="Entrar con Google" title="Entrar con Google">
+                    <i class="fab fa-google"></i>
+                </a>
             </div>
         </form>
             </div>

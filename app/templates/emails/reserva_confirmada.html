@@ -1,0 +1,225 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Reserva Confirmada - Flash Reserver</title>
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            line-height: 1.6;
+            color: #333;
+            margin: 0;
+            padding: 0;
+            background-color: #f4f4f4;
+        }
+        .container {
+            max-width: 600px;
+            margin: 20px auto;
+            background-color: #ffffff;
+            border-radius: 10px;
+            box-shadow: 0 0 20px rgba(0,0,0,0.1);
+            overflow: hidden;
+        }
+        .header {
+            background: linear-gradient(135deg, #007bff 0%, #0056b3 100%);
+            color: white;
+            padding: 30px 20px;
+            text-align: center;
+        }
+        .header h1 {
+            margin: 0;
+            font-size: 28px;
+            font-weight: 300;
+        }
+        .header .logo {
+            font-size: 48px;
+            margin-bottom: 10px;
+        }
+        .content {
+            padding: 40px 30px;
+            background-color: #ffffff;
+        }
+        .success-icon {
+            text-align: center;
+            font-size: 64px;
+            color: #28a745;
+            margin-bottom: 20px;
+        }
+        .reserva-details {
+            background-color: #f8f9fa;
+            border-radius: 8px;
+            padding: 25px;
+            margin: 25px 0;
+            border-left: 4px solid #007bff;
+        }
+        .detail-row {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 15px;
+            padding-bottom: 10px;
+            border-bottom: 1px solid #e9ecef;
+        }
+        .detail-row:last-child {
+            border-bottom: none;
+            margin-bottom: 0;
+        }
+        .detail-label {
+            font-weight: 600;
+            color: #495057;
+        }
+        .detail-value {
+            color: #007bff;
+            font-weight: 500;
+        }
+        .message {
+            font-size: 16px;
+            line-height: 1.8;
+            color: #495057;
+            margin-bottom: 25px;
+        }
+        .cta-button {
+            display: inline-block;
+            background: linear-gradient(135deg, #28a745 0%, #20c997 100%);
+            color: white;
+            padding: 15px 30px;
+            text-decoration: none;
+            border-radius: 25px;
+            font-weight: 600;
+            text-align: center;
+            margin: 20px 0;
+            transition: transform 0.2s ease;
+        }
+        .cta-button:hover {
+            transform: translateY(-2px);
+        }
+        .footer {
+            background-color: #f8f9fa;
+            padding: 25px 30px;
+            text-align: center;
+            color: #6c757d;
+            font-size: 14px;
+        }
+        .social-links {
+            margin: 20px 0;
+        }
+        .social-links a {
+            display: inline-block;
+            margin: 0 10px;
+            color: #007bff;
+            text-decoration: none;
+        }
+        .qr-code {
+            text-align: center;
+            margin: 20px 0;
+            padding: 20px;
+            background-color: #f8f9fa;
+            border-radius: 8px;
+        }
+        .qr-code img {
+            max-width: 150px;
+            height: auto;
+        }
+        @media (max-width: 600px) {
+            .container {
+                margin: 10px;
+                border-radius: 8px;
+            }
+            .content, .footer {
+                padding: 20px;
+            }
+            .header {
+                padding: 20px;
+            }
+            .header h1 {
+                font-size: 24px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <div class="logo">⚽</div>
+            <h1>Flash Reserver</h1>
+            <p>Tu plataforma de reservas deportivas</p>
+        </div>
+        
+        <div class="content">
+            <div class="success-icon">✅</div>
+            
+            <h2 style="text-align: center; color: #28a745; margin-bottom: 30px;">
+                ¡Reserva Confirmada!
+            </h2>
+            
+            <div class="message">
+                <p>Hola <strong>{{ usuario.nombre }}</strong>,</p>
+                <p>Tu reserva ha sido confirmada exitosamente. Aquí tienes todos los detalles:</p>
+            </div>
+            
+            <div class="reserva-details">
+                <div class="detail-row">
+                    <span class="detail-label">ID de Reserva:</span>
+                    <span class="detail-value">#{{ datos.reserva_id }}</span>
+                </div>
+                <div class="detail-row">
+                    <span class="detail-label">Fecha:</span>
+                    <span class="detail-value">{{ datos.fecha }}</span>
+                </div>
+                <div class="detail-row">
+                    <span class="detail-label">Hora:</span>
+                    <span class="detail-value">{{ datos.hora }}</span>
+                </div>
+                <div class="detail-row">
+                    <span class="detail-label">Cancha:</span>
+                    <span class="detail-value">{{ datos.cancha_nombre if datos.cancha_nombre else 'Cancha Deportiva' }}</span>
+                </div>
+                <div class="detail-row">
+                    <span class="detail-label">Estado:</span>
+                    <span class="detail-value" style="color: #28a745;">Confirmada</span>
+                </div>
+            </div>
+            
+            <div style="text-align: center;">
+                <a href="{{ datos.url_plataforma }}" class="cta-button">
+                    Ver Mis Reservas
+                </a>
+            </div>
+            
+            <div class="message">
+                <p><strong>Recordatorios importantes:</strong></p>
+                <ul style="color: #495057;">
+                    <li>Llega 10 minutos antes de tu hora reservada</li>
+                    <li>Trae tu implemento deportivo</li>
+                    <li>Si no puedes asistir, cancela con al menos 2 horas de anticipación</li>
+                </ul>
+            </div>
+            
+            {% if datos.qr_code %}
+            <div class="qr-code">
+                <p><strong>Código QR para acceso:</strong></p>
+                <img src="{{ datos.qr_code }}" alt="Código QR de reserva">
+            </div>
+            {% endif %}
+        </div>
+        
+        <div class="footer">
+            <p><strong>¿Tienes alguna pregunta?</strong></p>
+            <p>Contacta con nuestro equipo de soporte:</p>
+            <p>📧 soporte@flashreserver.com<br>
+            📱 +1 (555) 123-4567</p>
+            
+            <div class="social-links">
+                <a href="#">Facebook</a> |
+                <a href="#">Twitter</a> |
+                <a href="#">Instagram</a>
+            </div>
+            
+            <p style="margin-top: 20px; font-size: 12px; color: #adb5bd;">
+                Este es un email automático generado por Flash Reserver.<br>
+                Por favor no respondas a este mensaje.
+            </p>
+        </div>
+    </div>
+</body>
+</html>
